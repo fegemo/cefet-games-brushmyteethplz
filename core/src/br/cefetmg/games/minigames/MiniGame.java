@@ -1,11 +1,10 @@
 package br.cefetmg.games.minigames;
 
-import br.cefetmg.games.logic.play.MiniGameState;
+import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -20,7 +19,6 @@ public abstract class MiniGame {
     public static final int INSTRUCTIONS_TIME = 4000;
     
     protected final BaseScreen screen;
-    protected final int difficulty;
     protected final long initialTime;
     protected long playingInitialTime;
     protected final long maxDuration;
@@ -31,9 +29,14 @@ public abstract class MiniGame {
     
     private final BitmapFont messagesFont;
     
-    public MiniGame(BaseScreen screen, int difficulty, long maxDuration)  {
+    public MiniGame(BaseScreen screen, float difficulty, long maxDuration)  {
+        if (difficulty < 0 || difficulty > 1) {
+        throw new IllegalArgumentException(
+                "A dificuldade (difficulty) de um minigame deve ser um número"
+                        + "entre 0 e 1. Você passou o número " + difficulty
+                        + ".");
+        }
         this.screen = screen;
-        this.difficulty = difficulty;
         this.maxDuration = maxDuration;
         this.initialTime = TimeUtils.millis();
         this.state = MiniGameState.INSTRUCTIONS;
@@ -42,6 +45,7 @@ public abstract class MiniGame {
         this.rand = new Random();
         this.timer = new Timer();
         this.timer.stop();
+        this.configureDifficultyParameters(difficulty);
     }
     
     public final void handleInput() {
@@ -54,7 +58,7 @@ public abstract class MiniGame {
                 }
                 break;
             case PLAYING:
-                onHandleInput();
+                onHandlePlayingInput();
                 break;
         }
     }
@@ -143,14 +147,12 @@ public abstract class MiniGame {
         }
     }
     
-    public abstract void onHandleInput();
+    protected abstract void configureDifficultyParameters(float difficulty);
+    public abstract void onHandlePlayingInput();
     public abstract void onUpdate(float dt);
     public abstract void onDrawInstructions();
     public abstract void onDrawGame();
     
-    public abstract void onChallengeSolved();
-    public abstract void onChallengeFailed();
-
     private void transitionTo(MiniGameState newState) {
         switch (newState) {
             case PLAYING:

@@ -42,7 +42,7 @@ public class PlayingGamesScreen extends BaseScreen {
             if (currentGame == null) {
                 BitmapFont font = super.assets.get("fonts/sawasdee.fnt", BitmapFont.class);
                 font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-                currentGame = new ShootTheCaries(this, 10, 10000); 
+                currentGame = new ShootTheCaries(this, 0, 10000); 
             }
             currentGame.update(dt);
         }

@@ -1,4 +1,4 @@
-package br.cefetmg.games.logic.play;
+package br.cefetmg.games.minigames.util;
 
 /**
  *
