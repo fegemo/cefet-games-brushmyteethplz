@@ -1,12 +1,13 @@
 package br.cefetmg.games.logic.gamechooser;
 
-import br.cefetmg.games.minigames.MiniGame;
-import com.badlogic.gdx.utils.Array;
+import java.util.Set;
 
 /**
  *
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
 public interface MiniGameChooser {
-    MiniGame choose(Array<Class> availableGameClasses);
+    MiniGameParams next();
+    int getNumberOfPlannedGames();
+    void setAvailableGames(Set<Class> availableGames);
 }

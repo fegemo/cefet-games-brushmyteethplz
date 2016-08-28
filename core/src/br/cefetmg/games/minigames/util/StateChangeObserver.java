@@ -4,10 +4,6 @@ package br.cefetmg.games.minigames.util;
  *
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
-public enum MiniGameState {
-    INSTRUCTIONS,
-    PLAYING,
-    WON,
-    FAILED,
-    ENDED
+public interface StateChangeObserver {
+    void onStateChanged(MiniGameState state);
 }

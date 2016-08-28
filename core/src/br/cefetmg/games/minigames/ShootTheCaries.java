@@ -1,6 +1,8 @@
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.minigames.util.DifficultyCurve;
+import br.cefetmg.games.minigames.util.StateChangeObserver;
+import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,9 +30,10 @@ public class ShootTheCaries extends MiniGame {
     private int totalEnemies;
     private int spawnInterval;
 
-    public ShootTheCaries(BaseScreen screen, float difficulty,
-            long maxDuration) {
-        super(screen, difficulty, maxDuration);
+    public ShootTheCaries(BaseScreen screen, Float difficulty,
+            Long maxDuration, StateChangeObserver observer) {
+        super(screen, difficulty, maxDuration,
+                TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.enemies = new Array<Sprite>();
         this.cariesTexture = this.screen.assets.get(
                 "shoot-the-caries/caries.png", Texture.class);
@@ -55,9 +58,23 @@ public class ShootTheCaries extends MiniGame {
             }
         };
         // spawnInterval * 15% para mais ou para menos
-        float nextSpawnMillis = this.spawnInterval * 
-                (rand.nextFloat() / 3 + 0.15f);
-        super.timer.scheduleTask(t, nextSpawnMillis/1000f);
+        float nextSpawnMillis = this.spawnInterval
+                * (rand.nextFloat() / 3 + 0.15f);
+        super.timer.scheduleTask(t, nextSpawnMillis / 1000f);
+    }
+
+    private void spawnEnemy() {
+        Vector2 position = new Vector2(rand.nextFloat(), rand.nextFloat());
+        position.scl(
+                this.screen.bounds.width - cariesTexture.getWidth()
+                * initialEnemyScale,
+                this.screen.bounds.height - cariesTexture.getHeight()
+                * initialEnemyScale);
+
+        Sprite enemy = new Sprite(cariesTexture);
+        enemy.setPosition(position.x, position.y);
+        enemy.setScale(initialEnemyScale);
+        enemies.add(enemy);
     }
 
     @Override
@@ -68,7 +85,7 @@ public class ShootTheCaries extends MiniGame {
                 .getCurveValueBetween(difficulty, 0.15f, 0.4f);
         this.spawnInterval = (int) DifficultyCurve.S_NEGATIVE
                 .getCurveValueBetween(difficulty, 500, 1500);
-        this.totalEnemies = (int) Math.ceil((float)maxDuration / spawnInterval) - 3;
+        this.totalEnemies = (int) Math.ceil((float) maxDuration / spawnInterval) - 3;
 
         System.out.println("initialEnemyScale = " + initialEnemyScale);
         System.out.println("minimumEnemyScale = " + minimumEnemyScale);
@@ -100,7 +117,7 @@ public class ShootTheCaries extends MiniGame {
                     // se tiver matado todos os inimigos, o desafio
                     // está resolvido
                     if (this.enemiesKilled >= this.totalEnemies) {
-                        super.challengeSolved = true;
+                        super.challengeSolved();
                     }
 
                     // pára de iterar, porque senão o tiro pode pegar em mais
@@ -109,18 +126,6 @@ public class ShootTheCaries extends MiniGame {
                 }
             }
         }
-    }
-
-    private void spawnEnemy() {
-        Vector2 position = new Vector2(rand.nextFloat(), rand.nextFloat());
-        position.scl(
-                this.screen.bounds.width - cariesTexture.getWidth() * initialEnemyScale,
-                this.screen.bounds.height - cariesTexture.getHeight() * initialEnemyScale);
-
-        Sprite enemy = new Sprite(cariesTexture);
-        enemy.setPosition(position.x, position.y);
-        enemy.setScale(initialEnemyScale);
-        enemies.add(enemy);
     }
 
     @Override
