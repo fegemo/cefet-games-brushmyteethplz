@@ -214,12 +214,6 @@ public class ShooTheTartarus extends MiniGame {
     }
 
     @Override
-    public void onDrawInstructions() {
-        float y = this.screen.bounds.height * 0.75f;
-        super.screen.drawCenterAlignedText("Espante o tártaro", 1, y);
-    }
-
-    @Override
     public void onDrawGame() {
         for (Tooth tooth : this.teeth) {
             tooth.draw(super.screen.batch);
@@ -228,6 +222,11 @@ public class ShooTheTartarus extends MiniGame {
             tart.draw(super.screen.batch);
         }
         toothBrush.draw(super.screen.batch);
+    }
+    
+    @Override
+    public String getInstructions() {
+        return "Espante o tártaro";
     }
 
     class ToothBrush extends AnimatedSprite {

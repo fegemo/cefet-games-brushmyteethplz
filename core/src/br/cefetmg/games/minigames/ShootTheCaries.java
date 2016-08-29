@@ -138,9 +138,8 @@ public class ShootTheCaries extends MiniGame {
     }
 
     @Override
-    public void onDrawInstructions() {
-        float y = this.screen.bounds.height * 0.75f;
-        super.screen.drawCenterAlignedText("Acerte as cáries", 1, y);
+    public String getInstructions() {
+        return "Acerte as cáries";
     }
 
     @Override

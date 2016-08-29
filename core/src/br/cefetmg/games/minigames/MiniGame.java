@@ -47,8 +47,8 @@ public abstract class MiniGame {
                     + ".");
         }
         this.screen = screen;
-        this.challengeSolved = endOfGameSituation == 
-                TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS;
+        this.challengeSolved = endOfGameSituation
+                == TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS;
         this.maxDuration = maxDuration;
         this.stateObserver = observer;
         this.initialTime = TimeUtils.millis();
@@ -137,6 +137,11 @@ public abstract class MiniGame {
         this.countdown.draw(this.screen.batch);
     }
 
+    private void drawInstructions() {
+        float y = this.screen.bounds.height * 0.75f;
+        this.screen.drawCenterAlignedText(this.getInstructions(), 1, y);
+    }
+
     protected void drawMessage(String message, float scale) {
         messagesFont.setColor(Color.BLACK);
         this.screen.drawCenterAlignedText(message, scale,
@@ -153,7 +158,7 @@ public abstract class MiniGame {
         switch (this.state) {
             case INSTRUCTIONS:
                 drawCountdown();
-                onDrawInstructions();
+                drawInstructions();
                 break;
 
             case PLAYING:
@@ -184,12 +189,12 @@ public abstract class MiniGame {
         this.state = newState;
         this.stateObserver.onStateChanged(state);
     }
-    
+
     protected void challengeFailed() {
         this.challengeSolved = false;
         transitionTo(MiniGameState.FAILED);
     }
-    
+
     protected void challengeSolved() {
         this.challengeSolved = true;
         transitionTo(MiniGameState.WON);
@@ -201,8 +206,7 @@ public abstract class MiniGame {
 
     public abstract void onUpdate(float dt);
 
-    public abstract void onDrawInstructions();
-
     public abstract void onDrawGame();
 
+    public abstract String getInstructions();
 }
