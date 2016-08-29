@@ -38,7 +38,7 @@ public abstract class MiniGame {
     private boolean challengeSolved;
     private StateChangeObserver stateObserver;
 
-    public MiniGame(BaseScreen screen, Float difficulty, Long maxDuration,
+    public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
             TimeoutBehavior endOfGameSituation, StateChangeObserver observer) {
         if (difficulty < 0 || difficulty > 1) {
             throw new IllegalArgumentException(
@@ -137,27 +137,9 @@ public abstract class MiniGame {
         this.countdown.draw(this.screen.batch);
     }
 
-    protected void drawCenterAlignedText(String text, float scale, float y) {
-        if (scale > 1) {
-            throw new IllegalArgumentException("Pediu-se para escrever texto "
-                    + "com tamanho maior que 100% da fonte, mas isso acarreta "
-                    + "em perda de qualidade do texto. Em vez disso, use uma "
-                    + "fonte maior. O valor de 'scale' deve ser sempre menor "
-                    + "que 1.");
-        }
-        final float horizontalPadding = 0.05f;
-        messagesFont.setColor(Color.BLACK);
-        messagesFont.getData().setScale(scale);
-        messagesFont.draw(this.screen.batch,
-                text,
-                0 + horizontalPadding * this.screen.bounds.width, y,
-                this.screen.bounds.width * (1 - horizontalPadding * 2),
-                Align.center, true);
-    }
-
     protected void drawMessage(String message, float scale) {
         messagesFont.setColor(Color.BLACK);
-        drawCenterAlignedText(message, scale,
+        this.screen.drawCenterAlignedText(message, scale,
                 this.screen.bounds.getHeight() / 2);
     }
 

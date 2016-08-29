@@ -30,9 +30,9 @@ public class ShootTheCaries extends MiniGame {
     private int totalEnemies;
     private int spawnInterval;
 
-    public ShootTheCaries(BaseScreen screen, Float difficulty,
-            Long maxDuration, StateChangeObserver observer) {
-        super(screen, difficulty, maxDuration,
+    public ShootTheCaries(BaseScreen screen,
+            StateChangeObserver observer, float difficulty) {
+        super(screen, difficulty, 10000,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.enemies = new Array<Sprite>();
         this.cariesTexture = this.screen.assets.get(
@@ -85,12 +85,8 @@ public class ShootTheCaries extends MiniGame {
                 .getCurveValueBetween(difficulty, 0.15f, 0.4f);
         this.spawnInterval = (int) DifficultyCurve.S_NEGATIVE
                 .getCurveValueBetween(difficulty, 500, 1500);
-        this.totalEnemies = (int) Math.ceil((float) maxDuration / spawnInterval) - 3;
-
-        System.out.println("initialEnemyScale = " + initialEnemyScale);
-        System.out.println("minimumEnemyScale = " + minimumEnemyScale);
-        System.out.println("spawnInterval = " + spawnInterval);
-        System.out.println("totalEnemies = " + totalEnemies);
+        this.totalEnemies = (int) Math.ceil((float) maxDuration
+                / spawnInterval) - 3;
     }
 
     @Override
@@ -144,7 +140,7 @@ public class ShootTheCaries extends MiniGame {
     @Override
     public void onDrawInstructions() {
         float y = this.screen.bounds.height * 0.75f;
-        super.drawCenterAlignedText("Acerte as cáries", 1, y);
+        super.screen.drawCenterAlignedText("Acerte as cáries", 1, y);
     }
 
     @Override

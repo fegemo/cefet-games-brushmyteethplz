@@ -1,7 +1,7 @@
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.minigames.util.DifficultyCurve;
-import br.cefetmg.games.minigames.util.MultiAnimatedSprite;
+import br.cefetmg.games.graphics.MultiAnimatedSprite;
 import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
@@ -39,9 +39,9 @@ public class ShooTheTartarus extends MiniGame {
     private int spawnInterval;
     private int totalTeeth;
 
-    public ShooTheTartarus(BaseScreen screen, Float difficulty,
-            Long maxDuration, StateChangeObserver observer) {
-        super(screen, difficulty, maxDuration,
+    public ShooTheTartarus(BaseScreen screen,
+            StateChangeObserver observer, float difficulty) {
+        super(screen, difficulty, 10000,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothbrushTexture = super.screen.assets.get(
                 "shoo-the-tartarus/toothbrush-spritesheet.png", Texture.class);
@@ -165,8 +165,6 @@ public class ShooTheTartarus extends MiniGame {
                 .getCurveValueBetween(difficulty, 500, 1500);
         this.totalTeeth = (int) Math.ceil(DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 0, 2)) + 1;
-
-        System.out.println("this.totalTeeth = " + this.totalTeeth);
     }
 
     @Override
@@ -189,7 +187,7 @@ public class ShooTheTartarus extends MiniGame {
     private void toothWasHurt(Tooth tooth, Tartarus enemy) {
         this.enemies.removeValue(enemy, false);
         this.numberOfBrokenTeeth += tooth.wasHurt() ? 1 : 0;
-        System.out.println("numberOfBrokenTeeth = " + numberOfBrokenTeeth);
+
         if (this.numberOfBrokenTeeth >= this.totalTeeth) {
             super.challengeFailed();
         }
@@ -218,7 +216,7 @@ public class ShooTheTartarus extends MiniGame {
     @Override
     public void onDrawInstructions() {
         float y = this.screen.bounds.height * 0.75f;
-        super.drawCenterAlignedText("Espante o tártaro", 1, y);
+        super.screen.drawCenterAlignedText("Espante o tártaro", 1, y);
     }
 
     @Override

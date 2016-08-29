@@ -1,40 +1,34 @@
 package br.cefetmg.games.screens;
 
-import br.cefetmg.games.logic.gamechooser.MiniGameChooser;
-import br.cefetmg.games.logic.gamechooser.MiniGameParams;
-import br.cefetmg.games.logic.gamechooser.SequentialMiniGameChooser;
+import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
-import br.cefetmg.games.minigames.ShooTheTartarus;
-import br.cefetmg.games.minigames.ShootTheCaries;
+import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
+import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
+import br.cefetmg.games.minigames.util.MiniGameFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.StateChangeObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
-public class PlayingGamesScreen extends BaseScreen implements StateChangeObserver {
+public class PlayingGamesScreen extends BaseScreen
+        implements StateChangeObserver {
 
     private MiniGame currentGame;
-    private final MiniGameChooser chooser;
+    private final GameSequencer sequencer;
+    private PlayScreenState state;
 
     public PlayingGamesScreen(Game game) {
         super(game);
-        super.assets.load("fonts/sawasdee-24.fnt", BitmapFont.class);
-        super.assets.load("fonts/sawasdee-50.fnt", BitmapFont.class);
-        super.assets.load("fonts/sawasdee-100.fnt", BitmapFont.class);
-        super.assets.load("fonts/sawasdee-150.fnt", BitmapFont.class);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
         super.assets.load("shoot-the-caries/caries.png", Texture.class);
@@ -46,11 +40,12 @@ public class PlayingGamesScreen extends BaseScreen implements StateChangeObserve
         super.assets.load("shoo-the-tartarus/tooth.png", Texture.class);
         super.assets.load("debug-rectangle.png", Texture.class);
 
-        chooser = new SequentialMiniGameChooser(10);
-        Set<Class> available = new HashSet<Class>();
-        available.add(ShootTheCaries.class);
-        available.add(ShooTheTartarus.class);
-        chooser.setAvailableGames(available);
+        this.state = PlayScreenState.PLAYING;
+        this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
+                Arrays.asList(
+                        new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory())
+        ), this, this);
     }
 
     @Override
@@ -61,18 +56,25 @@ public class PlayingGamesScreen extends BaseScreen implements StateChangeObserve
 
     @Override
     public void handleInput() {
-        if (currentGame != null) {
-            currentGame.handleInput();
+        if (this.currentGame != null) {
+            this.currentGame.handleInput();
+        }
+        
+        if (this.state != PlayScreenState.PLAYING) {
+            if (Gdx.input.justTouched()) {
+                // volta para o menu principal
+                super.game.setScreen(new MenuScreen(super.game));
+            }
         }
     }
 
     @Override
     public void update(float dt) {
         if (super.assets.update()) {
-            if (currentGame == null) {
-                nextGame();
+            if (this.currentGame == null) {
+                advance();
             }
-            currentGame.update(dt);
+            this.currentGame.update(dt);
         }
     }
 
@@ -81,25 +83,22 @@ public class PlayingGamesScreen extends BaseScreen implements StateChangeObserve
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.batch.setProjectionMatrix(super.camera.combined);
         super.batch.begin();
-        if (currentGame != null) {
-            currentGame.draw();
+        if (this.currentGame != null) {
+            this.currentGame.draw();
+        }
+        if (this.state != PlayScreenState.PLAYING) {
+            drawEndGame();
         }
         super.batch.end();
     }
 
-    private void nextGame() {
-        MiniGameParams next = chooser.next();
-        try {
-            currentGame = (MiniGame) next
-                    .getMiniGame()
-                    .getDeclaredConstructor(BaseScreen.class, Float.class, 
-                            Long.class, StateChangeObserver.class)
-                    .newInstance(this, next.getDifficulty(), 
-                            next.getMaxDuration(), this);
-        } catch (Exception ex) {
-            Logger.getLogger(PlayingGamesScreen.class.getName()).log(Level.SEVERE, null, ex);
+    private void advance() {
+        if (sequencer.hasNextGame()) {
+            this.currentGame = sequencer.nextGame();
+        } else {
+            // mostra mensagem de fim
+            this.state = PlayScreenState.FINISHED_GAME_OVER;
         }
-
     }
 
     @Override
@@ -110,12 +109,23 @@ public class PlayingGamesScreen extends BaseScreen implements StateChangeObserve
                 Timer.instance().scheduleTask(new Task() {
                     @Override
                     public void run() {
-                        nextGame();
+                        advance();
                     }
 
                 }, 1.5f);
                 break;
         }
+    }
+
+    private void drawEndGame() {
+        super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
+                + "ao Menu", 0.5f, super.bounds.height * 0.35f);
+    }
+
+    enum PlayScreenState {
+        PLAYING,
+        FINISHED_GAME_OVER,
+        FINISHED_WON
     }
 
 }

@@ -1,4 +1,4 @@
-package br.cefetmg.games.minigames.util;
+package br.cefetmg.games.graphics;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import java.util.Map;
