@@ -26,6 +26,7 @@ public class PlayingGamesScreen extends BaseScreen
     private MiniGame currentGame;
     private final GameSequencer sequencer;
     private PlayScreenState state;
+    private int lives;
 
     public PlayingGamesScreen(Game game) {
         super(game);
@@ -41,6 +42,7 @@ public class PlayingGamesScreen extends BaseScreen
         super.assets.load("debug-rectangle.png", Texture.class);
 
         this.state = PlayScreenState.PLAYING;
+        this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
                         new ShootTheCariesFactory(),
@@ -93,11 +95,15 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void advance() {
-        if (sequencer.hasNextGame()) {
-            this.currentGame = sequencer.nextGame();
+        if (this.state != PlayScreenState.PLAYING) {
+            return;
+        }
+        
+        if (this.sequencer.hasNextGame()) {
+            this.currentGame = this.sequencer.nextGame();
         } else {
-            // mostra mensagem de fim
-            this.state = PlayScreenState.FINISHED_GAME_OVER;
+            // mostra mensagem de vitória
+            this.transitionTo(PlayScreenState.FINISHED_WON);
         }
     }
 
@@ -106,6 +112,9 @@ public class PlayingGamesScreen extends BaseScreen
         switch (state) {
             case WON:
             case FAILED:
+                if (state == MiniGameState.FAILED) {
+                    loseLife();
+                }
                 Timer.instance().scheduleTask(new Task() {
                     @Override
                     public void run() {
@@ -120,6 +129,22 @@ public class PlayingGamesScreen extends BaseScreen
     private void drawEndGame() {
         super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
                 + "ao Menu", 0.5f, super.bounds.height * 0.35f);
+    }
+    
+    private void loseLife() {
+        this.lives--;
+        if (this.lives == 0) {
+            transitionTo(PlayScreenState.FINISHED_GAME_OVER);
+        }
+    }
+    
+    private void transitionTo(PlayScreenState newState) {
+        switch (newState) {
+            case FINISHED_GAME_OVER:
+                break;
+                
+        }
+        this.state = newState;
     }
 
     enum PlayScreenState {
