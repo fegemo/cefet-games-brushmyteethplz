@@ -105,13 +105,11 @@ public class Hud {
     }
 
     public void startEndingTimer(final long endingTime) {
-        System.out.println("chamou na hud");
         timer.scheduleTask(new Task() {
             
             @Override
             public void run() {
                 long remainingTime = endingTime - TimeUtils.millis();
-                System.out.println("remainingTime = " + remainingTime);
                 if (remainingTime > 0) {
                     timeLabel.setText(String.format("%02d",
                             (int) Math.round(remainingTime / 1000f)));

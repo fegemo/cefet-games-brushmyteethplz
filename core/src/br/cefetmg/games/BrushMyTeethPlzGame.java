@@ -11,7 +11,7 @@ public class BrushMyTeethPlzGame
 
     @Override
     public void create() {
-        this.setScreen(new SplashScreen(this));
+        this.setScreen(new SplashScreen(this, null));
     }
     
     

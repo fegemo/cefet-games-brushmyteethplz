@@ -29,8 +29,8 @@ public class SplashScreen extends BaseScreen {
      *
      * @param game O jogo dono desta tela.
      */
-    public SplashScreen(Game game) {
-        super(game);
+    public SplashScreen(Game game, BaseScreen previous) {
+        super(game, previous);
     }
 
     /**
@@ -52,7 +52,7 @@ public class SplashScreen extends BaseScreen {
      * Navega para a tela de Menu.
      */
     private void navigateToMenuScreen() {
-        game.setScreen(new MenuScreen(game));
+        game.setScreen(new MenuScreen(game, this));
     }
 
     /**

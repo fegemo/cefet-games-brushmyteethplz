@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -30,9 +29,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public abstract class BaseScreen extends ScreenAdapter {
 
     public final Game game;
+    protected final BaseScreen previous;
     public final SpriteBatch batch;
     public final OrthographicCamera camera;
-    public Rectangle bounds;
     public Viewport viewport;
     public final AssetManager assets;
     private BitmapFont messagesFont;
@@ -41,11 +40,13 @@ public abstract class BaseScreen extends ScreenAdapter {
      * Cria uma instância de tela.
      * 
      * @param game O jogo do qual a nova instância pertence.
+     * @param previous A tela anterior, que levou a esta. Caso esta seja 
+     * a primeira tela, o valor deve ser null.
      */
-    public BaseScreen(Game game) {
+    public BaseScreen(Game game, BaseScreen previous) {
         this.game = game;
+        this.previous = previous;
         this.batch = new SpriteBatch();
-        this.bounds = new Rectangle();
         this.camera = new OrthographicCamera();
         this.viewport = new FitViewport(
                 Config.WORLD_WIDTH,
@@ -55,6 +56,13 @@ public abstract class BaseScreen extends ScreenAdapter {
         this.assets = new AssetManager();
         this.assets.load("fonts/sawasdee-24.fnt", BitmapFont.class);
         this.assets.load("fonts/sawasdee-50.fnt", BitmapFont.class);
+    }
+    
+    @Override
+    public void show() {
+        if (previous != null) {
+            previous.dispose();
+        }
     }
 
     /**
@@ -126,6 +134,12 @@ public abstract class BaseScreen extends ScreenAdapter {
                 worldWidth * (1 - horizontalPadding * 2),
                 Align.center,
                 true);
+    }
+    
+    @Override
+    public void dispose() {
+        batch.dispose();
+        messagesFont.dispose();
     }
 
     /**

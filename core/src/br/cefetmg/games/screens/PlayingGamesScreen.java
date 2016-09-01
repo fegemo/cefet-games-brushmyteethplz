@@ -30,8 +30,8 @@ public class PlayingGamesScreen extends BaseScreen
     private PlayScreenState state;
     private int lives;
 
-    public PlayingGamesScreen(Game game) {
-        super(game);
+    public PlayingGamesScreen(Game game, BaseScreen previous) {
+        super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
         super.assets.load("shoot-the-caries/caries.png", Texture.class);
@@ -70,7 +70,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
-                super.game.setScreen(new MenuScreen(super.game));
+                super.game.setScreen(new MenuScreen(super.game, previous));
             }
         }
     }
@@ -108,6 +108,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameIndex());
+            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
@@ -135,6 +136,12 @@ public class PlayingGamesScreen extends BaseScreen
         }
         this.state = newState;
     }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        Gdx.input.setCursorCatched(false);
+    }
 
     @Override
     public void onStateChanged(MiniGameState state) {
@@ -157,7 +164,6 @@ public class PlayingGamesScreen extends BaseScreen
 
     @Override
     public void onTimeEnding(long endingTime) {
-        System.out.println("chamou no PlayingScreen");
         this.hud.startEndingTimer(endingTime);
     }
 

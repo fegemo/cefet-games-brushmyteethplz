@@ -21,8 +21,8 @@ public class MenuScreen extends BaseScreen {
      *
      * @param game o jogo dono desta tela.
      */
-    public MenuScreen(Game game) {
-        super(game);
+    public MenuScreen(Game game, BaseScreen previous) {
+        super(game, previous);
     }
 
     /**
@@ -93,7 +93,7 @@ public class MenuScreen extends BaseScreen {
      * Navega para a tela de jogo.
      */
     private void navigateToMicroGameScreen() {
-        game.setScreen(new PlayingGamesScreen(game));
+        game.setScreen(new PlayingGamesScreen(game, this));
     }
 
 }

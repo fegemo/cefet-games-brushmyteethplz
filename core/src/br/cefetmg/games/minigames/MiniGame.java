@@ -38,7 +38,7 @@ public abstract class MiniGame {
     private final Texture grayMask;
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
-
+    
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
             TimeoutBehavior endOfGameSituation, final GameStateObserver observer) {
         if (difficulty < 0 || difficulty > 1) {
@@ -222,4 +222,6 @@ public abstract class MiniGame {
     public abstract void onDrawGame();
 
     public abstract String getInstructions();
+    
+    public abstract boolean shouldHideMousePointer();
 }

@@ -230,6 +230,11 @@ public class ShooTheTartarus extends MiniGame {
         return "Espante o tártaro";
     }
 
+    @Override
+    public boolean shouldHideMousePointer() {
+        return true;
+    }
+
     class ToothBrush extends AnimatedSprite {
 
         static final int FRAME_WIDTH = 120;

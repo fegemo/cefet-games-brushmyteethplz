@@ -154,4 +154,9 @@ public class ShootTheCaries extends MiniGame {
         target.draw(this.screen.batch);
     }
 
+    @Override
+    public boolean shouldHideMousePointer() {
+        return true;
+    }
+
 }
