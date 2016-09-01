@@ -1,63 +1,94 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.TimeUtils;
 
 /**
+ * A tela de <em>splash</em> (inicial, com a logomarca) do jogo.
  *
  * @author Flávio Coutinho - fegemo <coutinho@decom.cefetmg.br>
  */
 public class SplashScreen extends BaseScreen {
 
-    private long initialTime;
-    private final Sprite logo;
+    /**
+     * Momento em que a tela foi mostrada (em milissegundos).
+     */
+    private long timeWhenScreenShowedUp;
 
+    /**
+     * Uma {@link Sprite} que contém a logo da empresa CEFET-GAMES.
+     */
+    private Sprite logo;
+
+    /**
+     * Cria uma nova tela de <em>splash</em>.
+     *
+     * @param game O jogo dono desta tela.
+     */
     public SplashScreen(Game game) {
         super(game);
-        this.logo = new Sprite(new Texture("images/cefet-games-logo.png"));
-        this.logo.getTexture().setFilter(
-                Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-    }
-    
-    @Override
-    public void show() {
-        initialTime = TimeUtils.millis();
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-    }
-    
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        this.logo.setCenter(super.bounds.width/2f, super.bounds.height/2f);
-    }
-    
-    private void navigateToMenuScreen() {
-        this.game.setScreen(new MenuScreen(this.game));
     }
 
+    /**
+     * Configura parâmetros iniciais da tela.
+     */
+    @Override
+    public void show() {
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        timeWhenScreenShowedUp = TimeUtils.millis();
+        logo = new Sprite(new Texture("images/cefet-games-logo.png"));
+        logo.getTexture().setFilter(
+                Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        logo.setCenter(
+                super.viewport.getWorldWidth() / 2,
+                super.viewport.getWorldHeight() / 2);
+    }
+
+    /**
+     * Navega para a tela de Menu.
+     */
+    private void navigateToMenuScreen() {
+        game.setScreen(new MenuScreen(game));
+    }
+
+    /**
+     * Verifica se houve <em>input</em> do jogador.
+     */
     @Override
     public void handleInput() {
+        // se o jogador apertar alguma tecla, clicar com o mouse ou 
+        // tocar a tela, pula direto para a próxima tela.
         if (Gdx.input.justTouched()) {
             navigateToMenuScreen();
         }
     }
 
+    /**
+     * Atualiza a lógica da tela de acordo com o tempo.
+     *
+     * @param dt Tempo desde a última chamada.
+     */
     @Override
     public void update(float dt) {
-        if (TimeUtils.timeSinceMillis(initialTime) >= 3000) {
+        // verifica se o tempo em que se passou na tela é maior do que o máximo
+        // para que possamos navegar para a próxima tela.
+        if (TimeUtils.timeSinceMillis(timeWhenScreenShowedUp)
+                >= Config.TIME_ON_SPLASH_SCREEN) {
             navigateToMenuScreen();
         }
     }
 
+    /**
+     * Desenha a {@link Sprite} com a logomarca.
+     */
     @Override
     public void draw() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        super.batch.begin();
-        this.logo.draw(super.batch);
-        super.batch.end();
+        batch.begin();
+        logo.draw(batch);
+        batch.end();
     }
 }

@@ -64,12 +64,14 @@ public class ShootTheCaries extends MiniGame {
     }
 
     private void spawnEnemy() {
+        // pega x e y entre 0 e 1
         Vector2 position = new Vector2(rand.nextFloat(), rand.nextFloat());
+        // multiplica x e y pela largura e altura da tela
         position.scl(
-                this.screen.bounds.width - cariesTexture.getWidth()
+                this.screen.viewport.getWorldWidth() - cariesTexture.getWidth()
                 * initialEnemyScale,
-                this.screen.bounds.height - cariesTexture.getHeight()
-                * initialEnemyScale);
+                this.screen.viewport.getWorldHeight()
+                - cariesTexture.getHeight() * initialEnemyScale);
 
         Sprite enemy = new Sprite(cariesTexture);
         enemy.setPosition(position.x, position.y);
@@ -93,7 +95,7 @@ public class ShootTheCaries extends MiniGame {
     public void onHandlePlayingInput() {
         // atualiza a posição do alvo de acordo com o mouse
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        this.screen.camera.unproject(click);
+        super.screen.viewport.unproject(click);
         this.target.setPosition(click.x - this.target.getWidth() / 2,
                 click.y - this.target.getHeight() / 2);
 

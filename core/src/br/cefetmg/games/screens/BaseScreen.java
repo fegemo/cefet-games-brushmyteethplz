@@ -2,17 +2,29 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- *
+ * Uma tela do jogo.
+ * 
+ * O jogo é dividido em várias telas (Splash, Menu, PlayingGame etc.) e o 
+ * código relativo a cada uma delas é uma instância de uma subclasse de
+ * BaseScreen.
+ * 
+ * Cada BaseScreen possui uma {@link SpriteBatch} própria, bem como duas fontes
+ * ({@link BitmapFont}) padrão para escrever texto na tela: Sawasdee 24pt e 
+ * Sawasdee 50pt.
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
 public abstract class BaseScreen extends ScreenAdapter {
@@ -21,26 +33,48 @@ public abstract class BaseScreen extends ScreenAdapter {
     public final SpriteBatch batch;
     public final OrthographicCamera camera;
     public Rectangle bounds;
+    public Viewport viewport;
     public final AssetManager assets;
     private BitmapFont messagesFont;
 
+    /**
+     * Cria uma instância de tela.
+     * 
+     * @param game O jogo do qual a nova instância pertence.
+     */
     public BaseScreen(Game game) {
         this.game = game;
         this.batch = new SpriteBatch();
-        this.camera = new OrthographicCamera();
         this.bounds = new Rectangle();
+        this.camera = new OrthographicCamera();
+        this.viewport = new FitViewport(
+                Config.WORLD_WIDTH,
+                Config.WORLD_HEIGHT,
+                this.camera
+        );
         this.assets = new AssetManager();
         this.assets.load("fonts/sawasdee-24.fnt", BitmapFont.class);
         this.assets.load("fonts/sawasdee-50.fnt", BitmapFont.class);
     }
 
+    /**
+     * Atualiza as dimensões da tela de pintura ({@link Viewport}).
+     * @param width nova largura da janela.
+     * @param height nova altura da janela.
+     */
     @Override
     public void resize(int width, int height) {
-        this.bounds.setSize(height * Config.DESIRED_ASPECT_RATIO, height);
-        this.camera.setToOrtho(false, this.bounds.width, this.bounds.height);
-        this.bounds.setPosition(0, 0);
+        this.viewport.update(width, height, true);
     }
 
+    /**
+     * Invoca as funções de atualização de lógica, recepção de <em>input</em> 
+     * e de desenho.
+     * 
+     * Além disso, assegura de que os desenhos
+     * @param dt Quanto tempo se passou desde a última vez que a função foi
+     * chamada.
+     */
     @Override
     public final void render(float dt) {
         if (this.assets.update()) {
@@ -49,10 +83,28 @@ public abstract class BaseScreen extends ScreenAdapter {
             }
             handleInput();
             update(dt);
+
+            // define o sistema de coordenadas (projeção) a ser usada pelo
+            // spriteBatch
+            this.batch.setProjectionMatrix(this.camera.combined);
+
+            // limpa a tela para que possa ser redesenhada
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            // desenha o conteúdo da tela
             draw();
         }
     }
-    
+
+    /**
+     * Escreve um texto centralizado na tela, com uma escala {@code scale} e
+     * na altura {@code y}.
+     * 
+     * @param text O texto a ser escrito.
+     * @param scale O tamanho do texto, que deve ser ]0,1].
+     * @param y A altura do mundo de jogo onde o texto deve ser renderizado. 
+     * Deve estar entre  [0 (baixo), Config.WORLD_HEIGHT-altura-do-texto]. 
+     */
     public void drawCenterAlignedText(String text, float scale, float y) {
         if (scale > 1) {
             throw new IllegalArgumentException("Pediu-se para escrever texto "
@@ -64,17 +116,37 @@ public abstract class BaseScreen extends ScreenAdapter {
         final float horizontalPadding = 0.05f;
         messagesFont.setColor(Color.BLACK);
         messagesFont.getData().setScale(scale);
-        messagesFont.draw(this.batch,
+
+        final float worldWidth = this.viewport.getWorldWidth();
+        messagesFont.draw(
+                this.batch,
                 text,
-                0 + horizontalPadding * this.bounds.width, y,
-                this.bounds.width * (1 - horizontalPadding * 2),
-                Align.center, true);
+                0 + horizontalPadding * worldWidth,
+                y,
+                worldWidth * (1 - horizontalPadding * 2),
+                Align.center,
+                true);
     }
 
+    /**
+     * Executa ações relativas ao <em>input</em> do jogador.
+     * 
+     * Use {@code Gdx.input.*} para perguntar se eventos de <em>input</em> 
+     * estão acontecendo.
+     */
     public abstract void handleInput();
 
+    /**
+     * Atualiza a lógica da tela.
+     * 
+     * @param dt Quanto tempo se passou desde a última vez que a função foi
+     * chamada.
+     */
     public abstract void update(float dt);
 
+    /**
+     * Desenha o conteúdo da tela.
+     */
     public abstract void draw();
 
 }

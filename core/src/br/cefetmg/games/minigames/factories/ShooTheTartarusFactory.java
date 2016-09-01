@@ -2,7 +2,6 @@ package br.cefetmg.games.minigames.factories;
 
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.ShooTheTartarus;
-import br.cefetmg.games.minigames.util.MiniGameFactory;
 import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.screens.BaseScreen;
 

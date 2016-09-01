@@ -78,8 +78,8 @@ public class ShooTheTartarus extends MiniGame {
                         frames[0][2],
                         2);
                 tooth.setCenter(
-                        super.screen.bounds.width / 2f,
-                        super.screen.bounds.height / 2f);
+                        super.screen.viewport.getWorldWidth() / 2f,
+                        super.screen.viewport.getWorldHeight() / 2f);
                 this.teeth.add(tooth);
             }
             break;
@@ -95,8 +95,8 @@ public class ShooTheTartarus extends MiniGame {
                     tooth.setCenter(
                             // 3/7 e 4/7 da largura da tela
 //                            super.screen.bounds.width / 4f * (i*2+1),
-                            super.screen.bounds.width / 7f * (i+3),
-                            super.screen.bounds.height / 2f);
+                            super.screen.viewport.getWorldWidth() / 7f * (i+3),
+                            super.screen.viewport.getWorldHeight() / 2f);
                     this.teeth.add(tooth);
                 }
                 break;
@@ -112,9 +112,9 @@ public class ShooTheTartarus extends MiniGame {
                             frames[0][2],
                             2);
                     tooth.setCenter(
-                            super.screen.bounds.width / 2
+                            super.screen.viewport.getWorldWidth() / 2
                             + MathUtils.cosDeg(angle) * radius,
-                            super.screen.bounds.height / 2
+                            super.screen.viewport.getWorldHeight() / 2
                             + MathUtils.sinDeg(angle) * radius);
                     this.teeth.add(tooth);
                 }
@@ -131,18 +131,18 @@ public class ShooTheTartarus extends MiniGame {
         boolean appearFromSides = MathUtils.randomBoolean();
         if (appearFromSides) {
             tartarusPosition.x = MathUtils.randomBoolean()
-                    ? super.screen.bounds.x - Tartarus.FRAME_WIDTH
-                    : super.screen.bounds.width;
+                    ? -Tartarus.FRAME_WIDTH
+                    : super.screen.viewport.getWorldWidth();
             tartarusPosition.y = MathUtils.random(
-                    super.screen.bounds.y - Tartarus.FRAME_HEIGHT,
-                    super.screen.bounds.height);
+                    -Tartarus.FRAME_HEIGHT,
+                    super.screen.viewport.getWorldHeight());
         } else {
             tartarusPosition.y = MathUtils.randomBoolean()
-                    ? super.screen.bounds.y - Tartarus.FRAME_HEIGHT
-                    : super.screen.bounds.height;
+                    ? -Tartarus.FRAME_HEIGHT
+                    : super.screen.viewport.getWorldHeight();
             tartarusPosition.x = MathUtils.random(
-                    super.screen.bounds.x - Tartarus.FRAME_WIDTH,
-                    super.screen.bounds.width);
+                    -Tartarus.FRAME_WIDTH,
+                    super.screen.viewport.getWorldWidth());
         }
         Vector2 tartarusSpeed = tartarusGoal
                 .sub(tartarusPosition)
@@ -171,7 +171,8 @@ public class ShooTheTartarus extends MiniGame {
     public void onHandlePlayingInput() {
         // atualiza a posição do alvo de acordo com o mouse
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        this.screen.camera.unproject(click);
+//        this.screen.camera.unproject(click);
+        super.screen.viewport.unproject(click);
         this.toothBrush.setCenter(click.x, click.y);
 
         // verifica se a cabeça da escova está próxima dos tártarus

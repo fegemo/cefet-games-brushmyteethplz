@@ -73,7 +73,8 @@ public abstract class MiniGame {
         this.countdown.setUseFrameRegionSize(true);
         this.countdown.setCenterFrames(true);
         this.countdown.setCenter(
-                screen.bounds.width / 2f, screen.bounds.height / 2f);
+                screen.viewport.getWorldWidth() / 2f, 
+                screen.viewport.getWorldHeight() / 2f);
         this.countdown.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
         this.grayMask = screen.assets.get("images/gray-mask.png",
                 Texture.class);
@@ -132,26 +133,28 @@ public abstract class MiniGame {
 
     private void drawCountdown() {
         this.countdown.setCenter(
-                screen.bounds.width / 2f, screen.bounds.height / 2f);
+                screen.viewport.getWorldWidth() / 2f,
+                screen.viewport.getWorldHeight() / 2f);
         this.countdown.setScale(getCurrentCountdownScale());
         this.countdown.draw(this.screen.batch);
     }
 
     private void drawInstructions() {
-        float y = this.screen.bounds.height * 0.75f;
+        float y = this.screen.viewport.getWorldHeight() * 0.75f;
         this.screen.drawCenterAlignedText(this.getInstructions(), 1, y);
     }
 
     protected void drawMessage(String message, float scale) {
         messagesFont.setColor(Color.BLACK);
         this.screen.drawCenterAlignedText(message, scale,
-                this.screen.bounds.getHeight() / 2);
+                this.screen.viewport.getWorldHeight() / 2);
     }
 
     private void drawMask() {
         this.screen.batch.draw(grayMask,
                 0, 0,
-                this.screen.bounds.width, this.screen.bounds.height);
+                this.screen.viewport.getWorldWidth(),
+                this.screen.viewport.getWorldHeight());
     }
 
     public final void draw() {

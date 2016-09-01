@@ -4,7 +4,7 @@ import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
-import br.cefetmg.games.minigames.util.MiniGameFactory;
+import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.StateChangeObserver;
 import com.badlogic.gdx.Game;
@@ -83,7 +83,6 @@ public class PlayingGamesScreen extends BaseScreen
     @Override
     public void draw() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        super.batch.setProjectionMatrix(super.camera.combined);
         super.batch.begin();
         if (this.currentGame != null) {
             this.currentGame.draw();
@@ -128,7 +127,7 @@ public class PlayingGamesScreen extends BaseScreen
 
     private void drawEndGame() {
         super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
-                + "ao Menu", 0.5f, super.bounds.height * 0.35f);
+                + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
     }
     
     private void loseLife() {

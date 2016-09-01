@@ -1,7 +1,10 @@
 package br.cefetmg.games.minigames.util;
 
 /**
- *
+ * Curvas de dificuldade.
+ * 
+ * Retornar um valor de y dado um valor de x, de acordo com o tipo da curva.
+ * 
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
 public enum DifficultyCurve {

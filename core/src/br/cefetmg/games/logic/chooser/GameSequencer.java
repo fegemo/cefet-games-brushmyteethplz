@@ -2,7 +2,7 @@ package br.cefetmg.games.logic.chooser;
 
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.util.DifficultyCurve;
-import br.cefetmg.games.minigames.util.MiniGameFactory;
+import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.math.MathUtils;
@@ -49,8 +49,8 @@ public class GameSequencer {
                 .toArray()[gameIndex];
         
         previousGames.add(factory);
-        return factory.createMiniGame(screen, observer, DifficultyCurve
-                .LINEAR.getCurveValue(getProgress()));
+        return factory.createMiniGame(screen, observer, 
+                DifficultyCurve.LINEAR.getCurveValue(getProgress()));
     }
 
 }
