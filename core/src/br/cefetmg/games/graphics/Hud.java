@@ -3,6 +3,7 @@ package br.cefetmg.games.graphics;
 import br.cefetmg.games.Config;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -36,6 +37,8 @@ public class Hud {
     private Label timeLabel;
 
     private Timer timer;
+    
+    private Sound timerSound;
 
     public Hud(BaseScreen screen) {
         stage = new Stage(screen.viewport, screen.batch);
@@ -68,7 +71,8 @@ public class Hud {
         table.add(sequenceIndexLabel).uniformX();
 
         stage.addActor(table);
-        stage.setDebugAll(false);
+        
+        timerSound = Gdx.audio.newSound(Gdx.files.internal("ui/tick-tock.mp3"));
     }
 
     public void update(float dt) {
@@ -113,6 +117,7 @@ public class Hud {
                 if (remainingTime > 0) {
                     timeLabel.setText(String.format("%02d",
                             (int) Math.round(remainingTime / 1000f)));
+                    timerSound.play();
                 } else {
                     timeLabel.setText("");
                 }

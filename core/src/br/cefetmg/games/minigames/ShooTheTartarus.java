@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.HashMap;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import com.badlogic.gdx.audio.Sound;
 
 /**
  *
@@ -29,6 +30,8 @@ public class ShooTheTartarus extends MiniGame {
     private final ToothBrush toothBrush;
     private final Texture tartarusTexture;
     private final Texture toothTexture;
+    private final Array<Sound> tartarusAppearingSound;
+    private final Sound toothBreakingSound;
     private final Array<Tartarus> enemies;
     private final Array<Tooth> teeth;
     private int numberOfBrokenTeeth;
@@ -50,6 +53,15 @@ public class ShooTheTartarus extends MiniGame {
                 "shoo-the-tartarus/tartarus-spritesheet.png", Texture.class);
         this.toothTexture = super.screen.assets.get(
                 "shoo-the-tartarus/tooth.png", Texture.class);
+        this.tartarusAppearingSound = new Array<Sound>(3);
+        this.tartarusAppearingSound.addAll(screen.assets.get(
+                "shoo-the-tartarus/appearing1.wav", Sound.class),
+                screen.assets.get(
+                        "shoo-the-tartarus/appearing2.wav", Sound.class),
+                screen.assets.get(
+                        "shoo-the-tartarus/appearing3.wav", Sound.class));
+        this.toothBreakingSound = screen.assets.get(
+                "shoo-the-tartarus/tooth-breaking.wav", Sound.class);
         this.enemies = new Array<Tartarus>();
         this.teeth = new Array<Tooth>();
         this.numberOfBrokenTeeth = 0;
@@ -94,8 +106,7 @@ public class ShooTheTartarus extends MiniGame {
                             2);
                     tooth.setCenter(
                             // 3/7 e 4/7 da largura da tela
-//                            super.screen.bounds.width / 4f * (i*2+1),
-                            super.screen.viewport.getWorldWidth() / 7f * (i+3),
+                            super.screen.viewport.getWorldWidth() / 7f * (i + 3),
                             super.screen.viewport.getWorldHeight() / 2f);
                     this.teeth.add(tooth);
                 }
@@ -153,6 +164,12 @@ public class ShooTheTartarus extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
+        
+        // toca um efeito sonoro
+        Sound sound = tartarusAppearingSound.random();
+        long id = sound.play(0.5f);
+        sound.setPan(id, tartarusPosition.x < screen.viewport.getWorldWidth()
+                ? -1 : 1, 1);
     }
 
     @Override
@@ -171,7 +188,6 @@ public class ShooTheTartarus extends MiniGame {
     public void onHandlePlayingInput() {
         // atualiza a posição do alvo de acordo com o mouse
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-//        this.screen.camera.unproject(click);
         super.screen.viewport.unproject(click);
         this.toothBrush.setCenter(click.x, click.y);
 
@@ -192,6 +208,7 @@ public class ShooTheTartarus extends MiniGame {
         if (this.numberOfBrokenTeeth >= this.totalTeeth) {
             super.challengeFailed();
         }
+        toothBreakingSound.play();
     }
 
     @Override
@@ -224,7 +241,7 @@ public class ShooTheTartarus extends MiniGame {
         }
         toothBrush.draw(super.screen.batch);
     }
-    
+
     @Override
     public String getInstructions() {
         return "Espante o tártaro";

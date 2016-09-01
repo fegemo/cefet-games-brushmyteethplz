@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import com.badlogic.gdx.audio.Sound;
 
 /**
  *
@@ -22,6 +23,8 @@ public class ShootTheCaries extends MiniGame {
     private final Sprite target;
     private final Texture cariesTexture;
     private final Texture targetTexture;
+    private final Sound cariesAppearingSound;
+    private final Sound cariesDyingSound;
     private int enemiesKilled;
     private int spawnedEnemies;
 
@@ -39,6 +42,10 @@ public class ShootTheCaries extends MiniGame {
                 "shoot-the-caries/caries.png", Texture.class);
         this.targetTexture = this.screen.assets.get(
                 "shoot-the-caries/target.png", Texture.class);
+        this.cariesAppearingSound = this.screen.assets.get(
+                "shoot-the-caries/caries1.mp3", Sound.class);
+        this.cariesDyingSound = this.screen.assets.get(
+                "shoot-the-caries/caries2.mp3", Sound.class);
         this.target = new Sprite(targetTexture);
         this.target.setOriginCenter();
         this.enemiesKilled = 0;
@@ -77,6 +84,9 @@ public class ShootTheCaries extends MiniGame {
         enemy.setPosition(position.x, position.y);
         enemy.setScale(initialEnemyScale);
         enemies.add(enemy);
+        
+        // toca um efeito sonoro
+        cariesAppearingSound.play(0.5f);
     }
 
     @Override
@@ -112,6 +122,7 @@ public class ShootTheCaries extends MiniGame {
                     this.enemiesKilled++;
                     // remove o inimigo do array
                     this.enemies.removeValue(sprite, true);
+                    cariesDyingSound.play();
                     // se tiver matado todos os inimigos, o desafio
                     // está resolvido
                     if (this.enemiesKilled >= this.totalEnemies) {
