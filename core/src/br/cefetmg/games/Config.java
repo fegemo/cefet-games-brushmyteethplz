@@ -39,5 +39,20 @@ public class Config {
             = (float) WORLD_WIDTH / (float) WORLD_HEIGHT;
     
     
+    /**
+     * Tempo em que a tela de splash fica sendo mostrada.
+     */
     public static final long TIME_ON_SPLASH_SCREEN = 3000;
+    
+    
+    /**
+     * Número de vidas do jogador.
+     */
+    public static final int MAX_LIVES = 3;
+    
+    /**
+     * A quantos milissegundos faltando para o término do minigame deve
+     * aparecer o contador regressivo na HUD.
+     */
+    public static final long MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT = 3000;
 }

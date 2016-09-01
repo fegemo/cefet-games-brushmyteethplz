@@ -1,5 +1,6 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
@@ -25,6 +26,7 @@ public class PlayingGamesScreen extends BaseScreen
 
     private MiniGame currentGame;
     private final GameSequencer sequencer;
+    private final Hud hud;
     private PlayScreenState state;
     private int lives;
 
@@ -48,12 +50,15 @@ public class PlayingGamesScreen extends BaseScreen
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory())
         ), this, this);
+        this.hud = new Hud(this);
+
     }
 
     @Override
     public void show() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.input.setCursorCatched(true);
+        hud.create();
     }
 
     @Override
@@ -61,7 +66,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.currentGame != null) {
             this.currentGame.handleInput();
         }
-        
+
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
@@ -77,6 +82,7 @@ public class PlayingGamesScreen extends BaseScreen
                 advance();
             }
             this.currentGame.update(dt);
+            hud.update(dt);
         }
     }
 
@@ -91,19 +97,43 @@ public class PlayingGamesScreen extends BaseScreen
             drawEndGame();
         }
         super.batch.end();
+        hud.draw();
     }
 
     private void advance() {
         if (this.state != PlayScreenState.PLAYING) {
             return;
         }
-        
+
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
+            hud.setGameIndex(sequencer.getGameIndex());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
         }
+    }
+
+    private void drawEndGame() {
+        super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
+                + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
+    }
+
+    private void loseLife() {
+        this.lives--;
+        hud.setLives(lives);
+        if (this.lives == 0) {
+            transitionTo(PlayScreenState.FINISHED_GAME_OVER);
+        }
+    }
+
+    private void transitionTo(PlayScreenState newState) {
+        switch (newState) {
+            case FINISHED_GAME_OVER:
+                break;
+
+        }
+        this.state = newState;
     }
 
     @Override
@@ -125,25 +155,10 @@ public class PlayingGamesScreen extends BaseScreen
         }
     }
 
-    private void drawEndGame() {
-        super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
-                + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
-    }
-    
-    private void loseLife() {
-        this.lives--;
-        if (this.lives == 0) {
-            transitionTo(PlayScreenState.FINISHED_GAME_OVER);
-        }
-    }
-    
-    private void transitionTo(PlayScreenState newState) {
-        switch (newState) {
-            case FINISHED_GAME_OVER:
-                break;
-                
-        }
-        this.state = newState;
+    @Override
+    public void onTimeEnding(long endingTime) {
+        System.out.println("chamou no PlayingScreen");
+        this.hud.startEndingTimer(endingTime);
     }
 
     enum PlayScreenState {

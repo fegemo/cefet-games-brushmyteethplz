@@ -39,7 +39,7 @@ public class GameSequencer {
         return previousGames.size() < numberOfGames;
     }
 
-    private float getProgress() {
+    private float getSequenceProgress() {
         return ((float) previousGames.size()) / numberOfGames;
     }
 
@@ -50,7 +50,11 @@ public class GameSequencer {
         
         previousGames.add(factory);
         return factory.createMiniGame(screen, observer, 
-                DifficultyCurve.LINEAR.getCurveValue(getProgress()));
+                DifficultyCurve.LINEAR.getCurveValue(getSequenceProgress()));
+    }
+
+    public int getGameIndex() {
+        return previousGames.size();
     }
 
 }

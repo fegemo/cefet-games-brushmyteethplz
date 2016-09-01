@@ -1,5 +1,6 @@
 package br.cefetmg.games.minigames;
 
+import br.cefetmg.games.Config;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
@@ -10,9 +11,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 
@@ -39,7 +40,7 @@ public abstract class MiniGame {
     private StateChangeObserver stateObserver;
 
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
-            TimeoutBehavior endOfGameSituation, StateChangeObserver observer) {
+            TimeoutBehavior endOfGameSituation, final StateChangeObserver observer) {
         if (difficulty < 0 || difficulty > 1) {
             throw new IllegalArgumentException(
                     "A dificuldade (difficulty) de um minigame deve ser um "
@@ -73,7 +74,7 @@ public abstract class MiniGame {
         this.countdown.setUseFrameRegionSize(true);
         this.countdown.setCenterFrames(true);
         this.countdown.setCenter(
-                screen.viewport.getWorldWidth() / 2f, 
+                screen.viewport.getWorldWidth() / 2f,
                 screen.viewport.getWorldHeight() / 2f);
         this.countdown.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
         this.grayMask = screen.assets.get("images/gray-mask.png",
@@ -110,8 +111,8 @@ public abstract class MiniGame {
                 break;
 
             case PLAYING:
-                if (TimeUtils.timeSinceMillis(initialTime)
-                        > INSTRUCTIONS_TIME + maxDuration) {
+                if (TimeUtils.timeSinceMillis(playingInitialTime)
+                        > maxDuration) {
                     transitionTo(challengeSolved
                             ? MiniGameState.WON
                             : MiniGameState.FAILED);
@@ -182,6 +183,15 @@ public abstract class MiniGame {
         switch (newState) {
             case PLAYING:
                 playingInitialTime = TimeUtils.millis();
+                this.timer.scheduleTask(new Task() {
+                    @Override
+                    public void run() {
+                        stateObserver.onTimeEnding(TimeUtils.millis() 
+                                + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT 
+                                + 300);
+                    }
+                }, (maxDuration - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
+                        / 1000f);
                 timer.start();
                 break;
             case WON:

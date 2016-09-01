@@ -6,4 +6,5 @@ package br.cefetmg.games.minigames.util;
  */
 public interface StateChangeObserver {
     void onStateChanged(MiniGameState state);
+    void onTimeEnding(long remainingTime);
 }
