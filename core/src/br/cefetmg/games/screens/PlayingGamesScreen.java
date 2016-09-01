@@ -35,22 +35,6 @@ public class PlayingGamesScreen extends BaseScreen
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
-        super.assets.load("shoot-the-caries/caries.png", Texture.class);
-        super.assets.load("shoot-the-caries/target.png", Texture.class);
-        super.assets.load("shoot-the-caries/caries1.mp3", Sound.class);
-        super.assets.load("shoot-the-caries/caries2.mp3", Sound.class);
-        super.assets.load("shoo-the-tartarus/toothbrush-spritesheet.png",
-                Texture.class);
-        super.assets.load("shoo-the-tartarus/tartarus-spritesheet.png",
-                Texture.class);
-        super.assets.load("shoo-the-tartarus/tooth.png", Texture.class);
-        super.assets.load("shoo-the-tartarus/appearing1.wav",
-                Sound.class);
-        super.assets.load("shoo-the-tartarus/appearing2.wav",
-                Sound.class);
-        super.assets.load("shoo-the-tartarus/appearing3.wav",
-                Sound.class);
-        super.assets.load("shoo-the-tartarus/tooth-breaking.wav", Sound.class);
 
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
@@ -60,7 +44,6 @@ public class PlayingGamesScreen extends BaseScreen
                         new ShooTheTartarusFactory())
         ), this, this);
         this.hud = new Hud(this);
-
     }
 
     @Override
@@ -116,7 +99,7 @@ public class PlayingGamesScreen extends BaseScreen
 
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
-            hud.setGameIndex(sequencer.getGameIndex());
+            hud.setGameIndex(sequencer.getGameNumber());
             Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
