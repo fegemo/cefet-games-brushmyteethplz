@@ -2,7 +2,6 @@ package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.graphics.MultiAnimatedSprite;
-import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
@@ -18,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.HashMap;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
+import br.cefetmg.games.minigames.util.GameStateObserver;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ShooTheTartarus extends MiniGame {
     private int totalTeeth;
 
     public ShooTheTartarus(BaseScreen screen,
-            StateChangeObserver observer, float difficulty) {
+            GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothbrushTexture = super.screen.assets.get(

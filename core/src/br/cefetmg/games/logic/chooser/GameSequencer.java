@@ -3,11 +3,11 @@ package br.cefetmg.games.logic.chooser;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
-import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.math.MathUtils;
 import java.util.ArrayList;
 import java.util.Set;
+import br.cefetmg.games.minigames.util.GameStateObserver;
 
 /**
  *
@@ -19,11 +19,11 @@ public class GameSequencer {
     private final Set<MiniGameFactory> availableGames;
     private final ArrayList<MiniGameFactory> previousGames;
     private final BaseScreen screen;
-    private final StateChangeObserver observer;
+    private final GameStateObserver observer;
 
     public GameSequencer(int numberOfGames,
             Set<MiniGameFactory> availableGames, BaseScreen screen,
-            StateChangeObserver observer) {
+            GameStateObserver observer) {
         if (numberOfGames <= 0) {
             throw new IllegalArgumentException("Tentou-se criar um "
                     + "GameSequencer com 0 jogos. Deve haver ao menos 1.");

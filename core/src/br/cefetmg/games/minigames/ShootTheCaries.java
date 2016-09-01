@@ -1,7 +1,6 @@
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.minigames.util.DifficultyCurve;
-import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
+import br.cefetmg.games.minigames.util.GameStateObserver;
 
 /**
  *
@@ -31,7 +31,7 @@ public class ShootTheCaries extends MiniGame {
     private int spawnInterval;
 
     public ShootTheCaries(BaseScreen screen,
-            StateChangeObserver observer, float difficulty) {
+            GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.enemies = new Array<Sprite>();

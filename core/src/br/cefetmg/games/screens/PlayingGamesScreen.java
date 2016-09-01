@@ -7,7 +7,6 @@ import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
-import br.cefetmg.games.minigames.util.StateChangeObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,13 +15,14 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Arrays;
 import java.util.HashSet;
+import br.cefetmg.games.minigames.util.GameStateObserver;
 
 /**
  *
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
 public class PlayingGamesScreen extends BaseScreen
-        implements StateChangeObserver {
+        implements GameStateObserver {
 
     private MiniGame currentGame;
     private final GameSequencer sequencer;

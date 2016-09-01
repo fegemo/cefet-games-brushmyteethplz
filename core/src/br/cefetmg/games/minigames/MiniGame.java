@@ -2,7 +2,6 @@ package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.Config;
 import br.cefetmg.games.minigames.util.MiniGameState;
-import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
+import br.cefetmg.games.minigames.util.GameStateObserver;
 
 /**
  *
@@ -37,10 +37,10 @@ public abstract class MiniGame {
     private final AnimatedSprite countdown;
     private final Texture grayMask;
     private boolean challengeSolved;
-    private StateChangeObserver stateObserver;
+    private GameStateObserver stateObserver;
 
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
-            TimeoutBehavior endOfGameSituation, final StateChangeObserver observer) {
+            TimeoutBehavior endOfGameSituation, final GameStateObserver observer) {
         if (difficulty < 0 || difficulty > 1) {
             throw new IllegalArgumentException(
                     "A dificuldade (difficulty) de um minigame deve ser um "

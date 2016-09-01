@@ -2,9 +2,9 @@ package br.cefetmg.games.minigames.factories;
 
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.ShootTheCaries;
-import br.cefetmg.games.minigames.util.StateChangeObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
+import br.cefetmg.games.minigames.util.GameStateObserver;
 
 /**
  *
@@ -14,7 +14,7 @@ public class ShootTheCariesFactory implements MiniGameFactory {
 
     @Override
     public MiniGame createMiniGame(BaseScreen screen,
-            StateChangeObserver observer, float difficulty) {
+            GameStateObserver observer, float difficulty) {
         return new ShootTheCaries(screen, observer, difficulty);
     }
     
