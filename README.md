@@ -132,6 +132,7 @@ a janela? Há pelo menos 3 possibilidades:
   jogador
 
 ![](docs/fit-viewport-1.png)
+![](docs/arrow.png)
 ![](docs/fit-viewport-2.png)
 
 É possível e bem simples fazer qualquer uma dessas formas na LibGDX. Optamos
