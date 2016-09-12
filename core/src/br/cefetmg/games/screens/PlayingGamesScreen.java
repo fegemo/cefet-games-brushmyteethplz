@@ -5,6 +5,7 @@ import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
+import br.cefetmg.games.minigames.factories.AngryToothsFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
@@ -40,8 +41,9 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory())
+                       // new ShootTheCariesFactory(),
+                       // new ShooTheTartarusFactory(),
+                        new AngryToothsFactory())
         ), this, this);
         this.hud = new Hud(this);
     }
