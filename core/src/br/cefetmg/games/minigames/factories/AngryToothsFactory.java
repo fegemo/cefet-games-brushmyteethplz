@@ -10,6 +10,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.screens.BaseScreen;
 import br.cefetmg.games.minigames.AngryTooths;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.audio.Sound;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class AngryToothsFactory implements MiniGameFactory{
               put("angry-tooths/boca.png",Texture.class);
               put("angry-tooths/background.jpg",Texture.class);
               put("angry-tooths/dente_region.png",Texture.class);
+              put("angry-tooths/missile.mp3",Sound.class);
             }
         };
     }

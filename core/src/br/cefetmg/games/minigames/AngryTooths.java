@@ -35,6 +35,7 @@ public class AngryTooths extends MiniGame{
     private final Texture toothTexture;
     private final Texture mouthTexture;
     private final Texture backgroundTexture;
+    private final Sound toothSound;
     private final Tooth tooth;
     private final Mouth mouth;
     private final Background background;
@@ -51,24 +52,29 @@ public class AngryTooths extends MiniGame{
     private boolean trigger;
     private boolean trigger_velocidade;
     private boolean trigger_velocidade_boca;
+    private boolean trigger_click;
     private float difficulty;
     
     public AngryTooths(BaseScreen screen, GameStateObserver observer,float difficulty) {
         super(screen, difficulty, 10000, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         
+        this.toothSound = super.screen.assets.get("angry-tooths/missile.mp3",Sound.class);
+        
         this.toothTexture = super.screen.assets.get("angry-tooths/dente_region.png",Texture.class);
         TextureRegion[][] tooth_regions = TextureRegion.split(toothTexture,
                 Tooth.TOOTH_TEXTURE_W, Tooth.TOOTH_TEXTURE_H);
         this.tooth = new Tooth(tooth_regions[0][0],tooth_regions[0][1],tooth_regions[0][2]);
-        this.tooth.setSize(50,70);
+        this.tooth.setSize(40,60);
         this.tooth.setCenter(DENTE_X,DENTE_Y);
         
         this.trigger = false;
         this.trigger_velocidade = false;
         this.trigger_velocidade_boca = true;
+        this.trigger_click = true;
         
         this.mouthTexture = super.screen.assets.get("angry-tooths/boca.png",Texture.class);
         this.mouth = new Mouth(mouthTexture);
+        this.mouth.scale(0.7f);
         this.mouth.setCenter(MOUTH_X,MOUTH_Y);
         this.velocidade_boca = 0;
         
@@ -99,7 +105,8 @@ public class AngryTooths extends MiniGame{
             tooth.integra(dt);
             tooth.update(dt);
         }
-        if(tooth.getBoundingRectangle().overlaps(mouth.getBoundingRectangle())){
+        if(mouth.getBoundingRectangle().contains(tooth.getBoundingRectangle()) && 
+                tooth.getX() > mouth.getX() + 40){
             super.challengeSolved();
         }
         if(tooth.getY() < LIMITE_ERRO){
@@ -132,19 +139,27 @@ public class AngryTooths extends MiniGame{
 
                 @Override
                 public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                    click = new Vector3(Gdx.input.getX(),Gdx.input.getY(),0);
-                    screen.viewport.unproject(click);
-                    posicao_inicial = new Vector3(click.x,click.y,0);
+                    if(trigger_click){
+                        click = new Vector3(Gdx.input.getX(), Gdx.input.getY(),0);
+                        screen.viewport.unproject(click);
+                        posicao_inicial = new Vector3(click.x,click.y,0);
+                    }
                     return false;
                 }
 
                 @Override
                 public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                    click = new Vector3(Gdx.input.getX(),Gdx.input.getY(),0);
-                    screen.viewport.unproject(click);
-                    posicao_final = new Vector3(click.x,click.y,0);
-                    trigger = true;
-                    trigger_velocidade = true;
+                    if(posicao_inicial != null && trigger_click == true){
+                        click = new Vector3(Gdx.input.getX(),Gdx.input.getY(),0);
+                        screen.viewport.unproject(click);
+                        posicao_final = new Vector3(click.x,click.y,0);
+                        trigger = true;
+                        trigger_velocidade = true;
+                        if(trigger_click){
+                            toothSound.play();
+                            trigger_click = false;
+                        }
+                    }
                     return false;
                 }
 
@@ -169,8 +184,8 @@ public class AngryTooths extends MiniGame{
     @Override
     public void onDrawGame(){
         this.background.draw(super.screen.batch);
-        this.tooth.draw(super.screen.batch);
         this.mouth.draw(super.screen.batch);
+        this.tooth.draw(super.screen.batch);
     }
 
     @Override
@@ -206,7 +221,7 @@ public class AngryTooths extends MiniGame{
                 final TextureRegion bigSmileTooth){
             super(seriousTooth);
             posicao = new Vector3(DENTE_X,DENTE_Y,0);
-            velocidade_escalar = 50;
+            velocidade_escalar = 100;
             gravidade = new Vector3(0,2,0);
             rotacao = 90;
             this.seriousTooth = seriousTooth;
@@ -220,13 +235,16 @@ public class AngryTooths extends MiniGame{
         }
 
         public void atua_gravidade(){
-            velocidade = velocidade.sub(gravidade);
+            if(velocidade != null)
+                velocidade = velocidade.sub(gravidade);
         }
          
         public void integra(float delta) {
-            posicao.x += velocidade.x * delta;
-            posicao.y += velocidade.y * delta;
-            posicao.z += velocidade.z * delta;
+            if(velocidade != null){
+                posicao.x += velocidade.x * delta;
+                posicao.y += velocidade.y * delta;
+                posicao.z += velocidade.z * delta;
+            }
         }
         
         public void update(float dt) {
@@ -248,17 +266,23 @@ public class AngryTooths extends MiniGame{
     class Mouth extends Sprite{
         private Vector3 posicao;
         private Vector3 velocidade;
-        private float MAX_DISTANCE;
-        private float MIN_DISTANCE;
-        private float velocidade_escalar;
+        private float MAX_DISTANCE_X;
+        private float MIN_DISTANCE_X;
+        private float MAX_DISTANCE_Y;
+        private float MIN_DISTANCE_Y;
+        private float velocidade_escalar_x;
+        private float velocidade_escalar_y;
         
         public Mouth(final Texture mouth_texture){
             super(mouth_texture);
             posicao = new Vector3(MOUTH_X,MOUTH_Y,0);
             velocidade = new Vector3(0,0,0);
-            MAX_DISTANCE = 50;
-            MIN_DISTANCE = 150;
-            velocidade_escalar = 70;
+            MAX_DISTANCE_X = 50;
+            MIN_DISTANCE_X = 150;
+            MAX_DISTANCE_Y = 300;
+            MIN_DISTANCE_Y = 100;
+            velocidade_escalar_x = 150;
+            velocidade_escalar_y = 50;
         }
         
         public void update(float dt) {
@@ -266,14 +290,20 @@ public class AngryTooths extends MiniGame{
         }
          
         public void atua_dificuldade_velocidade_inicial(float difficulty){
-            velocidade.x = (difficulty*10)*velocidade_escalar;
+            velocidade.x = (difficulty*10)*velocidade_escalar_x;
+            velocidade.y = (difficulty*10)*velocidade_escalar_y;
         }
         
         public void movimento_alternado(){
-           if(posicao.x > MOUTH_X+MAX_DISTANCE){
-               velocidade = velocidade.scl(-1);
-           }else if(posicao.x < MOUTH_X-MIN_DISTANCE){
-               velocidade = velocidade.scl(-1);
+           if(posicao.x > MOUTH_X+MAX_DISTANCE_X){
+               velocidade.x = velocidade.x*-1;
+           }else if(posicao.x < MOUTH_X-MIN_DISTANCE_X){
+               velocidade.x = velocidade.x*-1;
+           }
+           if(posicao.y > MOUTH_Y+MAX_DISTANCE_Y){
+               velocidade.y = velocidade.y*-1;
+           }else if(posicao.y < MOUTH_Y-MIN_DISTANCE_Y){
+               velocidade.y = velocidade.y*-1;
            }
         }
          
