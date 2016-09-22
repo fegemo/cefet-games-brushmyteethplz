@@ -34,12 +34,15 @@ public class AngryTooths extends MiniGame{
 
     private final Texture toothTexture;
     private final Texture mouthTexture;
+    private final Texture backgroundTexture;
     private final Tooth tooth;
     private final Mouth mouth;
+    private final Background background;
     private final int DENTE_X = 100;
     private final int DENTE_Y = 200;
     private final int MOUTH_X = 1000;
     private final int MOUTH_Y = 200;
+    private final int LIMITE_ERRO = 50;
     private Vector3 click;
     private Vector3 velocidade_inicial;
     private float velocidade_boca;
@@ -53,9 +56,11 @@ public class AngryTooths extends MiniGame{
     public AngryTooths(BaseScreen screen, GameStateObserver observer,float difficulty) {
         super(screen, difficulty, 10000, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         
-        this.toothTexture = super.screen.assets.get("angry-tooths/dente.png",Texture.class);
-        this.tooth = new Tooth(toothTexture);
-        this.tooth.setSize(40,40);
+        this.toothTexture = super.screen.assets.get("angry-tooths/dente_region.png",Texture.class);
+        TextureRegion[][] tooth_regions = TextureRegion.split(toothTexture,
+                Tooth.TOOTH_TEXTURE_W, Tooth.TOOTH_TEXTURE_H);
+        this.tooth = new Tooth(tooth_regions[0][0],tooth_regions[0][1],tooth_regions[0][2]);
+        this.tooth.setSize(50,70);
         this.tooth.setCenter(DENTE_X,DENTE_Y);
         
         this.trigger = false;
@@ -66,6 +71,9 @@ public class AngryTooths extends MiniGame{
         this.mouth = new Mouth(mouthTexture);
         this.mouth.setCenter(MOUTH_X,MOUTH_Y);
         this.velocidade_boca = 0;
+        
+        this.backgroundTexture = super.screen.assets.get("angry-tooths/background.jpg",Texture.class);
+        this.background = new Background(backgroundTexture);
     }
     
     @Override
@@ -77,8 +85,6 @@ public class AngryTooths extends MiniGame{
     @Override
     public void onHandlePlayingInput(){
     }
-
-    
     
     @Override
     public void onUpdate(float dt){
@@ -96,6 +102,9 @@ public class AngryTooths extends MiniGame{
         if(tooth.getBoundingRectangle().overlaps(mouth.getBoundingRectangle())){
             super.challengeSolved();
         }
+        if(tooth.getY() < LIMITE_ERRO){
+            super.challengeFailed();
+        }
         if(trigger_velocidade_boca){
             mouth.atua_dificuldade_velocidade_inicial(difficulty);
             trigger_velocidade_boca = false;
@@ -103,21 +112,22 @@ public class AngryTooths extends MiniGame{
         mouth.movimento_alternado();
         mouth.integra(dt);
         mouth.update(dt);
+        tooth.troca_sprite();
         Gdx.input.setInputProcessor(
             new InputProcessor(){
                 @Override
                 public boolean keyDown(int keycode) {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    return false;
                 }
 
                 @Override
                 public boolean keyUp(int keycode) {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    return false;
                 }
 
                 @Override
                 public boolean keyTyped(char character) {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    return false;
                 }
 
                 @Override
@@ -150,7 +160,7 @@ public class AngryTooths extends MiniGame{
 
                 @Override
                 public boolean scrolled(int amount) {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    return false;
                 }
             }
        );
@@ -158,18 +168,25 @@ public class AngryTooths extends MiniGame{
 
     @Override
     public void onDrawGame(){
+        this.background.draw(super.screen.batch);
         this.tooth.draw(super.screen.batch);
         this.mouth.draw(super.screen.batch);
     }
 
     @Override
     public String getInstructions(){
-        return "Mova o dente";
+        return "Acerte a boca";
     }
     
     @Override
     public boolean shouldHideMousePointer(){
-        return true;
+        return false;
+    }
+    
+    class Background extends Sprite{
+        public Background(final Texture backgroundTexture){
+            super(backgroundTexture);
+        }
     }
     
     class Tooth extends Sprite{
@@ -177,15 +194,24 @@ public class AngryTooths extends MiniGame{
         private Vector3 velocidade;
         private float velocidade_escalar;
         private Vector3 gravidade; 
+        static final int TOOTH_TEXTURE_H = 720;
+        static final int TOOTH_TEXTURE_W = 460;
         private float rotacao;
         private float orientacao;
+        private final TextureRegion seriousTooth;
+        private final TextureRegion smileTooth;
+        private final TextureRegion bigSmileTooth;
         
-        public Tooth(final Texture toothTexture){
-            super(toothTexture);
+        public Tooth(final TextureRegion seriousTooth,final TextureRegion smileTooth,
+                final TextureRegion bigSmileTooth){
+            super(seriousTooth);
             posicao = new Vector3(DENTE_X,DENTE_Y,0);
             velocidade_escalar = 50;
             gravidade = new Vector3(0,2,0);
             rotacao = 90;
+            this.seriousTooth = seriousTooth;
+            this.smileTooth = smileTooth;
+            this.bigSmileTooth = bigSmileTooth;
         }
          
         public void inicia_velocidade(Vector3 velocidade){
@@ -205,6 +231,16 @@ public class AngryTooths extends MiniGame{
         
         public void update(float dt) {
             super.setPosition(posicao.x,posicao.y);
+        }
+        
+        public void troca_sprite(){
+            if(super.getX() <= 300){
+                super.setRegion(seriousTooth);
+            }else if(super.getX() <= 600 && super.getX() > 300){
+                super.setRegion(smileTooth);
+            }else{
+                super.setRegion(bigSmileTooth);
+            }
         }
 
     }

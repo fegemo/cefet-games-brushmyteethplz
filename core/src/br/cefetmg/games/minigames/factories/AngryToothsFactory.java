@@ -29,7 +29,8 @@ public class AngryToothsFactory implements MiniGameFactory{
         return new HashMap<String, Class>(){
             {
               put("angry-tooths/boca.png",Texture.class);
-              put("angry-tooths/dente.png",Texture.class);
+              put("angry-tooths/background.jpg",Texture.class);
+              put("angry-tooths/dente_region.png",Texture.class);
             }
         };
     }
