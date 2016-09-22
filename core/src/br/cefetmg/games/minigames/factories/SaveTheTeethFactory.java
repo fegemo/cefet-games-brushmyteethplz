@@ -29,7 +29,7 @@ public class SaveTheTeethFactory implements MiniGameFactory {
     public Map<String, Class> getAssetsToPreload() {
         return new HashMap<String, Class>() {
             {
-                put("save-the-teeth/boca.png", Texture.class);
+                put("save-the-teeth/boca-spritesheet.png", Texture.class);
                 put("save-the-teeth/bad.png", Texture.class);
                 put("save-the-teeth/cursor.png", Texture.class);
                 put("save-the-teeth/good.png", Texture.class);
