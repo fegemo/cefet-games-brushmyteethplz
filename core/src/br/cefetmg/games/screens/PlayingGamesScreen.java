@@ -6,6 +6,7 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.AngryToothsFactory;
+import br.cefetmg.games.minigames.factories.CarieSwordFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
@@ -43,7 +44,8 @@ public class PlayingGamesScreen extends BaseScreen
                 Arrays.asList(
                        // new ShootTheCariesFactory(),
                        // new ShooTheTartarusFactory(),
-                        new AngryToothsFactory())
+                        new AngryToothsFactory(),
+                        new CarieSwordFactory())
         ), this, this);
         this.hud = new Hud(this);
     }
