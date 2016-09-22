@@ -2,7 +2,10 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
+import br.cefetmg.games.minigames.DefenseOfFluorine;
 import br.cefetmg.games.minigames.MiniGame;
+import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
+import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
@@ -40,8 +43,10 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory())
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory())
+                        //new ShootTheCariesFactory(),
+                        //new ShooTheTartarusFactory())
         ), this, this);
         this.hud = new Hud(this);
     }
