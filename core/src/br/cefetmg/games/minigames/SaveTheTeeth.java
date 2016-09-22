@@ -5,12 +5,12 @@
  */
 package br.cefetmg.games.minigames;
 
-import br.cefetmg.games.graphics.MultiAnimatedSprite;
 import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -19,7 +19,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-import static java.lang.Math.abs;
 import java.util.Random;
 
 /**
@@ -28,6 +27,9 @@ import java.util.Random;
  */
 public class SaveTheTeeth extends MiniGame {
     
+    private final Texture backGroundTexture;    
+    private final Sound backGroundSound;
+
     private int foodSpawnInterval;
     private final Texture MouthTexture;
     private final Texture CursorTexture;
@@ -41,6 +43,7 @@ public class SaveTheTeeth extends MiniGame {
     private final Texture BadFoodSpritesheet;
     private final TextureRegion[][] BadFoodTextures;
     private float foodSpeed;
+    private final Sprite bg;
 
     public SaveTheTeeth(BaseScreen screen, GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
@@ -55,6 +58,13 @@ public class SaveTheTeeth extends MiniGame {
         this.mouthFrames=TextureRegion.split(MouthTexture,Mouth.FRAME_WIDTH,Mouth.FRAME_HEIGHT);
         this.mouth=new Mouth(mouthFrames[0][0],mouthFrames[0][1],mouthFrames[0][2],2);
         this.cursor=new Cursor(CursorTexture);
+        this.backGroundSound = screen.assets.get(
+                "save-the-teeth/fundo.wav", Sound.class);
+        this.backGroundTexture = super.screen.assets.get(
+                "save-the-teeth/background.jpg", Texture.class);
+        
+        this.bg = new Sprite(backGroundTexture);
+        this.bg.setSize(super.screen.viewport.getWorldWidth(),super.screen.viewport.getWorldHeight());
         
         super.timer.scheduleTask(new Timer.Task() {
             @Override
@@ -62,6 +72,7 @@ public class SaveTheTeeth extends MiniGame {
                 throwFood();
             }
         }, 0, this.foodSpawnInterval / 1000f);
+        backGroundSound.play();
     }
 
     @Override
@@ -82,6 +93,7 @@ public class SaveTheTeeth extends MiniGame {
                 if(s.getBoundingRectangle().overlaps(cursor.getBoundingRectangle())){
                     if(food.get(i).getIsGood()){
                         if(mouth.touchedGoodFood() == 0){
+                            backGroundSound.stop();
                             super.challengeFailed();
                         }
                     }
@@ -108,6 +120,7 @@ public class SaveTheTeeth extends MiniGame {
 
     @Override
     public void onDrawGame() {
+        bg.draw(super.screen.batch);
         mouth.draw(super.screen.batch);
         cursor.draw(super.screen.batch);
         for(Food f : this.food){
