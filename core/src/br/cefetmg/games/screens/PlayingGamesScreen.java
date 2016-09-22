@@ -3,6 +3,7 @@ package br.cefetmg.games.screens;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
+import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
@@ -39,7 +40,7 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-                Arrays.asList(new PutTheBracesFactory())
+                Arrays.asList(new PutTheBracesFactory(),new EscoveOsDentesFactory())
         ), this, this);
         this.hud = new Hud(this);
     }
