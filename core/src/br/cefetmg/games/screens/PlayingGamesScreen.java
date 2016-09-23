@@ -3,10 +3,15 @@ package br.cefetmg.games.screens;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
+<<<<<<< HEAD
 import br.cefetmg.games.minigames.factories.GallowsFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.SmashItFactory;
+=======
+import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
+import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
+>>>>>>> da518e55c4873bee90e119a7e3aba8f02e7aa213
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
@@ -43,9 +48,13 @@ public class PlayingGamesScreen extends BaseScreen
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
                         new ShootTheCariesFactory(),
+<<<<<<< HEAD
                         new ShooTheTartarusFactory(),
                         new GallowsFactory(),
                         new SmashItFactory())
+=======
+                        new ShooTheTartarusFactory())
+>>>>>>> da518e55c4873bee90e119a7e3aba8f02e7aa213
         ), this, this);
         this.hud = new Hud(this);
     }
