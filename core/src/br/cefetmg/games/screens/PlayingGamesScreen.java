@@ -41,8 +41,8 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-                Arrays.asList(//new ShootTheCariesFactory(),
-                        //new ShooTheTartarusFactory(),
+                Arrays.asList(new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
                         new FleeTheTartarusFactory(), 
                         new CollectItensFactory()
                 )
