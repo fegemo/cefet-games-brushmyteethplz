@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Sound; 
 
 /**
  *
