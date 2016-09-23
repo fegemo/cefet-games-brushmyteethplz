@@ -6,12 +6,9 @@ import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer.Task;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 //import com.badlogic.gdx.audio.Sound;
 
 /**
@@ -143,7 +140,7 @@ public class CleanTheTooth extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Limpe os dentes (clique na pasta de dente antes de limpar cada dente)";
+        return "Limpe os dentes (clique antes na pasta de dentes)";
     }
 
     @Override

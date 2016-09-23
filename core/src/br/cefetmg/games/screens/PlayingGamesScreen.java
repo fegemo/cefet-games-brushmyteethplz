@@ -41,8 +41,8 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
-//                       new ShootTheCariesFactory(),
-//                        new ShooTheTartarusFactory(),
+                       new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
                         new CleanTheToothFactory())
         ), this, this);
         this.hud = new Hud(this);
