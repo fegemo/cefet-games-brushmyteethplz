@@ -44,7 +44,7 @@ public abstract class MiniGame {
         if (difficulty < 0 || difficulty > 1) {
             throw new IllegalArgumentException(
                     "A dificuldade (difficulty) de um minigame deve ser um "
-                    + "número entre 0 e 1. Você passou o número " + difficulty
+                    + "numero entre 0 e 1. Voce passou o numero " + difficulty
                     + ".");
         }
         this.screen = screen;
@@ -88,7 +88,7 @@ public abstract class MiniGame {
     public final void handleInput() {
         switch (this.state) {
             case INSTRUCTIONS:
-                // se apertar qualquer tecla durante as instruções, pula para
+                // se apertar qualquer tecla durante as instrucoes, pula para
                 // o jogo
                 if (Gdx.input.justTouched()) {
                     transitionTo(MiniGameState.PLAYING);
