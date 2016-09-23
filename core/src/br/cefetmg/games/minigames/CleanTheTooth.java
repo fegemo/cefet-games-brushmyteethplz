@@ -36,7 +36,7 @@ public class CleanTheTooth extends MiniGame {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.bocaTexture = this.screen.assets.get(
-                "clean-the-tooth/boca.png", Texture.class);
+                "clean-the-tooth/mouth2.png", Texture.class);
         this.targetTexture = this.screen.assets.get(
                 "clean-the-tooth/toothbrush.png", Texture.class);
         this.denteTexture = this.screen.assets.get(
@@ -54,14 +54,19 @@ public class CleanTheTooth extends MiniGame {
         
         for(int i=0;i<this.totalTeeth/2;i++){
             Tooth d = new Tooth(this.denteSujoTexture,this.denteTexture);
-            d.setPosition(340 + 90*i,530);
+            d.setPosition(340 + 90*i,500);
             d.rotate(180);
             this.dentes.add(d);
         }
         
         for(int i = this.totalTeeth/2;i<this.totalTeeth;i++){
             Tooth d = new Tooth(this.denteSujoTexture,this.denteTexture);
-            d.setPosition(340 + 90*(i-this.totalTeeth/2),150);
+            if(i == this.totalTeeth/2 || i == 13){
+               d.setPosition(340 + 90*(i-this.totalTeeth/2),240); 
+            }
+            else{
+                d.setPosition(340 + 90*(i-this.totalTeeth/2),210);
+            }
             this.dentes.add(d);
         }
         
