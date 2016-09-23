@@ -41,7 +41,9 @@ public class CleanTheToothFactory implements MiniGameFactory {
                 put("clean-the-tooth/clean.png", Texture.class);
                 put("clean-the-tooth/dirty.png", Texture.class);
                 put("clean-the-tooth/toothbrush.png", Texture.class);
+                put("clean-the-tooth/chargedtoothbrush.png", Texture.class);
                 put("clean-the-tooth/mouth2.png", Texture.class);
+                put("clean-the-tooth/toothpaste.png", Texture.class);
             }
         };
     }

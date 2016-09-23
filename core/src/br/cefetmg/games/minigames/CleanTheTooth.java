@@ -24,12 +24,16 @@ public class CleanTheTooth extends MiniGame {
     private final Array<Tooth> dentes;
     private final Texture bocaTexture;
     private final Sprite boca;
-    private final Texture targetTexture;
+    private final Sprite pasta;
+    private final Texture toothbrushTexture;
+    private final Texture chargedtoothbrushTexture;
     private final Texture denteTexture;
     private final Texture denteSujoTexture;
+    private final Texture pastaTexture;
     private int cleanTeeth;
     private int totalTeeth;
     private int spawnInterval;
+    private boolean chargedToothbrush;
 
     public CleanTheTooth(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
@@ -37,19 +41,26 @@ public class CleanTheTooth extends MiniGame {
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.bocaTexture = this.screen.assets.get(
                 "clean-the-tooth/mouth2.png", Texture.class);
-        this.targetTexture = this.screen.assets.get(
+        this.toothbrushTexture = this.screen.assets.get(
                 "clean-the-tooth/toothbrush.png", Texture.class);
+        this.chargedtoothbrushTexture = this.screen.assets.get(
+                "clean-the-tooth/chargedtoothbrush.png", Texture.class);
         this.denteTexture = this.screen.assets.get(
                 "clean-the-tooth/clean.png", Texture.class);
         this.denteSujoTexture = this.screen.assets.get(
                 "clean-the-tooth/dirty.png", Texture.class);
+        this.pastaTexture = this.screen.assets.get(
+                "clean-the-tooth/toothpaste.png", Texture.class);
         this.boca = new Sprite(bocaTexture);
+        this.pasta = new Sprite(pastaTexture);
+        this.pasta.setOriginCenter();
         boca.setCenterX(super.screen.viewport.getWorldWidth()/2);
         boca.setCenterY(super.screen.viewport.getWorldHeight()/2);
 //        this.boca.setPosition(super.screen.viewport.getWorldWidth()/2, super.screen.viewport.getWorldHeight()/2);
-        this.target = new Sprite(targetTexture);
+        this.target = new Sprite(toothbrushTexture);
         this.target.setOriginCenter();
         this.cleanTeeth = 0;
+        this.chargedToothbrush = false;
         this.dentes = new Array<Tooth>();
         
         for(int i=0;i<this.totalTeeth/2;i++){
@@ -92,25 +103,34 @@ public class CleanTheTooth extends MiniGame {
         this.target.setPosition(click.x - this.target.getWidth() / 2,
                 click.y - this.target.getHeight() / 2);
         if (Gdx.input.justTouched()) {
+            if(pasta.getBoundingRectangle().overlaps(target.getBoundingRectangle())){
+                this.chargedToothbrush = true;
+                this.target.setTexture(this.chargedtoothbrushTexture);
+            }
+            if(this.chargedToothbrush == true){
             // itera no array de dentes
-            for (int i = 0; i < dentes.size; i++) {
-                Tooth sprite = dentes.get(i);
-                // se há interseção entre o retângulo da sprite e do alvo,
-                // o dente foi clicado
-                if (sprite.getBoundingRectangle().overlaps(
-                        target.getBoundingRectangle())) {
-                    // contabiliza um dente limpo se dente estiver sujo
-                    if(!sprite.getIsClean()){
-                        this.cleanTeeth++;
-                    // muda textura do dente
-                        sprite.cleanTooth();
+                for (int i = 0; i < dentes.size; i++) {
+                    Tooth sprite = dentes.get(i);
+                    // se há interseção entre o retângulo da sprite e do alvo,
+                    // o dente foi clicado
+                    if (sprite.getBoundingRectangle().overlaps(
+                            target.getBoundingRectangle())) {
+                        // contabiliza um dente limpo se dente estiver sujo
+                        if(!sprite.getIsClean()){
+                            this.cleanTeeth++;
+                        // muda textura do dente
+                            sprite.cleanTooth();
+                        //descarrega escova
+                            this.chargedToothbrush = false;
+                            this.target.setTexture(this.toothbrushTexture);
+                        }
+                        // se tiver limpado todos os dentes, o desafio
+                        // está resolvido
+                        if (this.cleanTeeth >= this.totalTeeth) {
+                            super.challengeSolved();
+                        }
+                        break;
                     }
-                    // se tiver limpado todos os dentes, o desafio
-                    // está resolvido
-                    if (this.cleanTeeth >= this.totalTeeth) {
-                        super.challengeSolved();
-                    }
-                    break;
                 }
             }
         }
@@ -123,12 +143,13 @@ public class CleanTheTooth extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Limpe os dentes";
+        return "Limpe os dentes (clique na pasta de dente antes de limpar cada dente)";
     }
 
     @Override
     public void onDrawGame() {
         boca.draw(super.screen.batch);
+        pasta.draw(super.screen.batch);
         for (Tooth tooth : this.dentes) {
             tooth.draw(super.screen.batch);
         }
