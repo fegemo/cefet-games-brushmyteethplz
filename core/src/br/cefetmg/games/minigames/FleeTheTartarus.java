@@ -11,6 +11,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -27,21 +28,23 @@ import java.util.HashMap;
  *
  * @author afp11
  */
-public class NossoJogo1 extends MiniGame {
+public class FleeTheTartarus extends MiniGame {
     
     private final Array<Tartarus> enemies;
     private final Tooth tooth;
     
     private final Texture toothTexture;
     private final Texture tartarusTexture;
-    //private final Sound cariesAppearingSound;
 
     private int spawnInterval;
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
+    private final Array<Sound> tartarusAppearingSound;
+    
+    private final Sound venceu, perdeu;
 
     
-    public NossoJogo1(BaseScreen screen,
+    public FleeTheTartarus(BaseScreen screen,
             GameStateObserver observer, float difficulty){
         
         super(screen, difficulty, 10000,
@@ -49,11 +52,25 @@ public class NossoJogo1 extends MiniGame {
         
         this.enemies = new Array<Tartarus>();
         this.tartarusTexture = this.screen.assets.get(
-                "nosso-jogo-1/tartarus-spritesheet.png", Texture.class);
+                "flee-the-tartarus/tartarus-spritesheet.png", Texture.class);
         this.toothTexture = this.screen.assets.get(
-                "nosso-jogo-1/dente.png", Texture.class);
+                "flee-the-tartarus/dente.png", Texture.class);
         this.tooth = new Tooth(toothTexture);
         this.tooth.setOriginCenter();
+        
+        this.tartarusAppearingSound = new Array<Sound>(3);
+        this.tartarusAppearingSound.addAll(screen.assets.get(
+                "flee-the-tartarus/aperta2.mp3", Sound.class),
+                screen.assets.get(
+                        "flee-the-tartarus/aperta2.mp3", Sound.class),
+                screen.assets.get(
+                        "flee-the-tartarus/aperta2.mp3", Sound.class));
+        
+        this.venceu = screen.assets.get(
+                "flee-the-tartarus/venceu.mp3", Sound.class);
+        
+        this.perdeu = screen.assets.get(
+                "flee-the-tartarus/game-over.mp3", Sound.class);
         
         super.timer.scheduleTask(new Timer.Task() {
             @Override
@@ -87,9 +104,16 @@ public class NossoJogo1 extends MiniGame {
         for (Tartarus t : this.enemies) {
             float distance = tooth.getToothDistanceTo(t.getX(), t.getY());
             if (distance <= 100) {
+                perdeu.play();
                 super.challengeFailed();
             }
         }
+        
+        if ((this.initialTime + this.maxDuration + 3000) <= System.currentTimeMillis()){
+            venceu.play();
+            super.challengeSolved();
+        }
+        
     }
 
     @Override
@@ -111,11 +135,12 @@ public class NossoJogo1 extends MiniGame {
         for (Tartarus tart : this.enemies) {
             tart.draw(super.screen.batch);
         }
+        
     }
 
     @Override
     public String getInstructions() {
-        return "Fuja das cáries durante pelo menos 10 segundos.";
+        return "Fuja das cáries até acabar o tempo!";
     }
 
     @Override
@@ -186,34 +211,49 @@ public class NossoJogo1 extends MiniGame {
     
     private void spawnEnemy() {
 
-        Vector2 cariesPosition = new Vector2();
+        Vector2 tartarusPosition = new Vector2();
         
         boolean appearFromSides = MathUtils.randomBoolean();
         if (appearFromSides) {
-            cariesPosition.x = MathUtils.randomBoolean()
-                    ? -Tartarus.FRAME_WIDTH
-                    : super.screen.viewport.getScreenWidth();
-            cariesPosition.y = MathUtils.random(
-                    -Tartarus.FRAME_HEIGHT,
-                    super.screen.viewport.getScreenHeight());
+            boolean appearFromLeft = MathUtils.randomBoolean();
+            if (appearFromLeft){
+                tartarusPosition.x = 0;
+                tartarusPosition.y = MathUtils.random(
+                        -Tartarus.FRAME_HEIGHT,
+                        super.screen.viewport.getScreenHeight());
+            } else {
+                tartarusPosition.x = Tartarus.FRAME_WIDTH;
+                tartarusPosition.y = MathUtils.random(
+                        -Tartarus.FRAME_HEIGHT,
+                        super.screen.viewport.getScreenHeight());
+            }
         } else {
-            cariesPosition.y = MathUtils.randomBoolean()
-                    ? -Tartarus.FRAME_HEIGHT
-                    : super.screen.viewport.getScreenHeight();
-            cariesPosition.x = MathUtils.random(
-                    -Tartarus.FRAME_WIDTH,
-                    super.screen.viewport.getScreenWidth());
+            boolean appearFromBottom = MathUtils.randomBoolean();
+            if (appearFromBottom){
+                tartarusPosition.y = 0;
+                tartarusPosition.x = MathUtils.random(
+                        -Tartarus.FRAME_WIDTH,
+                        super.screen.viewport.getScreenWidth());
+            } else {
+                tartarusPosition.y = Tartarus.FRAME_HEIGHT;
+                tartarusPosition.x = MathUtils.random(
+                        -Tartarus.FRAME_WIDTH,
+                        super.screen.viewport.getScreenWidth());
+            }
         }
+       
         
         Vector2 obj = new Vector2(tooth.getToothPosition());
         
-        Vector2 cariesSpeed = obj.sub(cariesPosition).nor()
+        Vector2 tartarusSpeed = obj.sub(tartarusPosition).nor()
                 .scl(5*this.maximumEnemySpeed);
 
         Tartarus enemy = new Tartarus(tartarusTexture);
-        enemy.setPosition(cariesPosition.x, cariesPosition.y);
-        enemy.setSpeed(cariesSpeed);
+        enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
+        enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
+        
+        tartarusAppearingSound.random().play(); //toca sempre a mesma musica
 
     }
 }

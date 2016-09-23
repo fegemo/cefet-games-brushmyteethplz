@@ -6,9 +6,8 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
-import br.cefetmg.games.minigames.factories.NossoJogo1Factory;
-import br.cefetmg.games.minigames.factories.NossoJogo2Factory;
-import br.cefetmg.games.minigames.factories.NossoJogo3Factory;
+import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
+import br.cefetmg.games.minigames.factories.CollectItensFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -42,12 +41,10 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-                Arrays.asList(
-                        /*new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        new NossoJogo1Factory(), 
-                        new NossoJogo2Factory(), */
-                        new NossoJogo3Factory()
+                Arrays.asList(//new ShootTheCariesFactory(),
+                        //new ShooTheTartarusFactory(),
+                        new FleeTheTartarusFactory(), 
+                        new CollectItensFactory()
                 )
         ), this, this);
         this.hud = new Hud(this);

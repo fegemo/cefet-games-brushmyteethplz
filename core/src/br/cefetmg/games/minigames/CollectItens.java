@@ -10,6 +10,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.utils.Timer.Task;
  *
  * @author afp11
  */
-public class NossoJogo3 extends MiniGame{
+public class CollectItens extends MiniGame{
     
     private final Array<Sprite> characters;    
 
@@ -50,24 +51,44 @@ public class NossoJogo3 extends MiniGame{
     private int totalLollipops, quantAtualLollipops;
     
     private int contador = 0;
+    private final Sound enemiesAppearing;
+    private final Sound friendsAppearing;
+    private final Sound collectItem;
+    private final Sound venceu;
+    private final Sound perdeu;
 
-    public NossoJogo3(BaseScreen screen,
+    public CollectItens(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.characters = new Array<Sprite>();
         
         this.toothpasteTexture = this.screen.assets.get(
-                "nosso-jogo-3/toothpaste.png", Texture.class);
+                "collect-itens/toothpaste.png", Texture.class);
         this.toothbrushTexture = this.screen.assets.get(
-                "nosso-jogo-3/toothbrush.png", Texture.class);
+                "collect-itens/toothbrush.png", Texture.class);
         this.lollipopTexture = this.screen.assets.get(
-                "nosso-jogo-3/lollipop.png", Texture.class);
+                "collect-itens/lollipop.png", Texture.class);
         this.candyTexture = this.screen.assets.get(
-                "nosso-jogo-3/candy.png", Texture.class);
+                "collect-itens/candy.png", Texture.class);
         
         this.smileTexture = this.screen.assets.get(
-                "nosso-jogo-3/smile.png", Texture.class);
+                "collect-itens/smile.png", Texture.class);
+        
+        
+        this.enemiesAppearing = screen.assets.get(
+                "collect-itens/aperta.mp3", Sound.class);
+        this.friendsAppearing = screen.assets.get(
+                "collect-itens/aperta.mp3", Sound.class);
+        
+        this.collectItem = screen.assets.get(
+                "collect-itens/aperta2.mp3", Sound.class);
+                
+        this.venceu = screen.assets.get(
+                "collect-itens/aplausos.mp3", Sound.class);
+        this.perdeu = screen.assets.get(
+                "collect-itens/game-over.mp3", Sound.class);
+        
         this.smile = new Sprite(smileTexture);
         this.smile.setOriginCenter();
         this.friendsCollected = 0;
@@ -132,7 +153,7 @@ public class NossoJogo3 extends MiniGame{
             lollipop.setScale(initialCharactersScale);
             this.characters.add(lollipop);
        
-            // toca um efeito sonoro
+            this.enemiesAppearing.play();
         }
     }
     
@@ -157,6 +178,7 @@ public class NossoJogo3 extends MiniGame{
             friends++;
        
             // toca um efeito sonoro
+            this.enemiesAppearing.play();
         }
     }
 
@@ -179,6 +201,7 @@ public class NossoJogo3 extends MiniGame{
             this.characters.add(toothpaste);
        
             // toca um efeito sonoro
+            this.friendsAppearing.play();
             
             friends++;
         }
@@ -203,6 +226,8 @@ public class NossoJogo3 extends MiniGame{
             this.characters.add(toothbrush);
         }
         // toca um efeito sonoro
+        this.friendsAppearing.play();
+        
     }
 
     @Override
@@ -218,10 +243,19 @@ public class NossoJogo3 extends MiniGame{
         this.enemies = (int) Math.ceil((float) maxDuration
                 / spawnInterval) - 3;
                
-        this.totalCandies = enemies / 2;
-        this.totalLollipops = enemies - this.totalCandies; 
-        this.totalToothbrush = totalCharacters / 2;
+        if ((totalCharacters % 2) == 0){
+            this.totalToothbrush = totalCharacters / 2;
+        } else {
+            this.totalToothbrush = (totalCharacters + 1) / 2;
+        }
         this.totalToothpaste = totalCharacters - this.totalToothbrush;
+        if ((totalCandies % 2) == 0){
+            this.totalCandies = enemies / 2;
+        } else {
+            this.totalCandies = (enemies + 1) / 2;
+        }
+        this.totalLollipops = enemies - this.totalCandies; 
+        
     }
 
     @Override
@@ -234,6 +268,7 @@ public class NossoJogo3 extends MiniGame{
 
         // verifica se matou um inimigo
         if (Gdx.input.justTouched()) {
+            this.collectItem.play();
             // itera no array de inimigos
             for (int i = 0; i < characters.size; i++) {
                 Sprite sprite = characters.get(i);
@@ -244,6 +279,7 @@ public class NossoJogo3 extends MiniGame{
                         // contabiliza um inimigo morto
                         this.friendsCollected++;
                     } else {
+                        this.perdeu.play();
                         this.challengeFailed();
                     }
                     // remove o inimigo do array
@@ -251,6 +287,7 @@ public class NossoJogo3 extends MiniGame{
                     // se tiver matado todos os inimigos, o desafio
                     // está resolvido
                     if (this.friendsCollected >= friends) {
+                        this.venceu.play();
                         super.challengeSolved();
                     }
 
@@ -285,9 +322,7 @@ public class NossoJogo3 extends MiniGame{
 
     @Override
     public void onDrawGame() {
-        
-        System.out.println("personagens cadastrados: " + characters.size);
-
+       
         for (int i = 0; i < characters.size; i++) {
             Sprite sprite = characters.get(i);
             sprite.draw(this.screen.batch);
