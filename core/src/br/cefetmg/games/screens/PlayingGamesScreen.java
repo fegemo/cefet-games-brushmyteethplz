@@ -4,12 +4,14 @@ import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
+import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.AngryToothsFactory;
 import br.cefetmg.games.minigames.factories.CarieSwordFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
+import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -20,7 +22,6 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.audio.Sound;
 
 /**
  *
@@ -49,7 +50,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new SaveTheTeethFactory(),
                         new FleeFromTartarusFactory(),
                         new AngryToothsFactory(),
-                        new CarieSwordFactory()
+                        new CarieSwordFactory(),
+                        new PutTheBracesFactory(),
+                        new EscoveOsDentesFactory()
                 )
         ), this, this);
         this.hud = new Hud(this);
