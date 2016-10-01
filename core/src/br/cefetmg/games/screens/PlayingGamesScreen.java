@@ -6,6 +6,8 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
+import br.cefetmg.games.minigames.factories.AngryToothsFactory;
+import br.cefetmg.games.minigames.factories.CarieSwordFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
@@ -45,7 +47,10 @@ public class PlayingGamesScreen extends BaseScreen
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
                         new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory())
+                        new FleeFromTartarusFactory(),
+                        new AngryToothsFactory(),
+                        new CarieSwordFactory()
+                )
         ), this, this);
         this.hud = new Hud(this);
     }
@@ -132,7 +137,7 @@ public class PlayingGamesScreen extends BaseScreen
         }
         this.state = newState;
     }
-    
+
     @Override
     public void dispose() {
         super.dispose();
