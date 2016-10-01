@@ -2,6 +2,7 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
+import br.cefetmg.games.minigames.factories.MouthLandingFactory;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
 import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
@@ -22,6 +23,9 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import com.badlogic.gdx.audio.Sound;
+import br.cefetmg.games.minigames.MiniGame;
+import br.cefetmg.games.minigames.factories.FleeFactory;
 
 /**
  *
@@ -52,7 +56,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new AngryToothsFactory(),
                         new CarieSwordFactory(),
                         new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory()
+                        new EscoveOsDentesFactory(),
+                        new FleeFactory(),
+                        new MouthLandingFactory()
                 )
         ), this, this);
         this.hud = new Hud(this);
