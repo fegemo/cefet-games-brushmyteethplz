@@ -51,18 +51,25 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
+                        // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
+                        // gabriel e juan
                         new SaveTheTeethFactory(),
                         new FleeFromTartarusFactory(),
+                        // higor e matheus
                         new AngryToothsFactory(),
                         new CarieSwordFactory(),
+                        // nicolas e henrique
                         new PutTheBracesFactory(),
                         new EscoveOsDentesFactory(),
+                        // lucas
                         new FleeFactory(),
                         new MouthLandingFactory(),
+                        // lindley e lucas
                         new GallowsFactory(),
                         new SmashItFactory(),
+                        // amanda e vinícius
                         new FleeTheTartarusFactory(), 
                         new CollectItensFactory()                        
                 )
