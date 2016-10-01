@@ -3,13 +3,14 @@ package br.cefetmg.games.screens;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.factories.MouthLandingFactory;
-import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
 import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
-import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.AngryToothsFactory;
 import br.cefetmg.games.minigames.factories.CarieSwordFactory;
+import br.cefetmg.games.minigames.factories.GallowsFactory;
+import br.cefetmg.games.minigames.factories.SmashItFactory;
+import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
+import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
 import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
@@ -23,7 +24,6 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.audio.Sound;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
 
@@ -58,7 +58,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new PutTheBracesFactory(),
                         new EscoveOsDentesFactory(),
                         new FleeFactory(),
-                        new MouthLandingFactory()
+                        new MouthLandingFactory(),
+                        new GallowsFactory(),
+                        new SmashItFactory()
                 )
         ), this, this);
         this.hud = new Hud(this);
