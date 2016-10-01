@@ -14,6 +14,8 @@ import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
 import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
+import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
+import br.cefetmg.games.minigames.factories.CollectItensFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -60,7 +62,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new FleeFactory(),
                         new MouthLandingFactory(),
                         new GallowsFactory(),
-                        new SmashItFactory()
+                        new SmashItFactory(),
+                        new FleeTheTartarusFactory(), 
+                        new CollectItensFactory()                        
                 )
         ), this, this);
         this.hud = new Hud(this);
