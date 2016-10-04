@@ -9,6 +9,8 @@ import br.cefetmg.games.minigames.factories.AngryToothsFactory;
 import br.cefetmg.games.minigames.factories.CarieSwordFactory;
 import br.cefetmg.games.minigames.factories.GallowsFactory;
 import br.cefetmg.games.minigames.factories.SmashItFactory;
+import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
+import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
@@ -51,27 +53,30 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
-                        // flávio
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        // gabriel e juan
-                        new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory(),
-                        // higor e matheus
-                        new AngryToothsFactory(),
-                        new CarieSwordFactory(),
-                        // nicolas e henrique
-                        new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory(),
-                        // lucas
-                        new FleeFactory(),
-                        new MouthLandingFactory(),
-                        // lindley e lucas
-                        new GallowsFactory(),
-                        new SmashItFactory(),
-                        // amanda e vinícius
-                        new FleeTheTartarusFactory(), 
-                        new CollectItensFactory()                        
+//                        // flávio
+//                        new ShootTheCariesFactory(),
+//                        new ShooTheTartarusFactory(),
+//                        // gabriel e juan
+//                        new SaveTheTeethFactory(),
+//                        new FleeFromTartarusFactory(),
+//                        // higor e matheus
+//                        new AngryToothsFactory(),
+//                        new CarieSwordFactory(),
+//                        // nicolas e henrique
+//                        new PutTheBracesFactory(),
+//                        new EscoveOsDentesFactory(),
+//                        // lucas
+//                        new FleeFactory(),
+//                        new MouthLandingFactory(),
+//                        // lindley e lucas
+//                        new GallowsFactory(),
+//                        new SmashItFactory(),
+//                        // amanda e vinícius
+//                        new FleeTheTartarusFactory(), 
+//                        new CollectItensFactory(),
+                        // daniel
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory()
                 )
         ), this, this);
         this.hud = new Hud(this);
