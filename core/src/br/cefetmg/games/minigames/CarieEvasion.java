@@ -105,9 +105,10 @@ public class CarieEvasion extends MiniGame {
     @Override
     public void onHandlePlayingInput() {
         // atualiza a posição do alvo de acordo com o mouse
-        
+        //Gdx.input.setCursorCatched(true);
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-      
+        
+        
         super.screen.viewport.unproject(click);
         this.superTooth.setCenter(click.x, click.y);
 
