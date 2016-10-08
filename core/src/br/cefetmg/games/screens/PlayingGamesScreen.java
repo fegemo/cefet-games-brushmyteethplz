@@ -11,6 +11,7 @@ import br.cefetmg.games.minigames.factories.GallowsFactory;
 import br.cefetmg.games.minigames.factories.SmashItFactory;
 import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
 import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
+import br.cefetmg.games.minigames.factories.CleanTheToothFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
@@ -76,7 +77,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new CollectItensFactory(),
                         // daniel
                         new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory()
+                        new DefenseOfFluorineFactory(),
+                        // carlos e bruno
+                        new CleanTheToothFactory()
                 )
         ), this, this);
         this.hud = new Hud(this);
