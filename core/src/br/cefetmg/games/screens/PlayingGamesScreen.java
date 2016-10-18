@@ -57,8 +57,9 @@ public class PlayingGamesScreen extends BaseScreen
                         // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
+                        new CollectItensFactory()
                         // gabriel e juan
-                        new SaveTheTeethFactory(),
+                        /*new SaveTheTeethFactory(),
                         new FleeFromTartarusFactory(),
                         // higor e matheus
                         new AngryToothsFactory(),
@@ -79,7 +80,7 @@ public class PlayingGamesScreen extends BaseScreen
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        new CleanTheToothFactory()
+                        new CleanTheToothFactory()*/
                 )
         ), this, this);
         this.hud = new Hud(this);

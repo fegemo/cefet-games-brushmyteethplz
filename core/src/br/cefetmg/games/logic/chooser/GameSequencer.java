@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Random;
 
 /**
  * Monta uma sequência de minigames a serem jogados.
@@ -59,9 +60,30 @@ public class GameSequencer {
     }
 
     private void determineGameSequence() {
+        
+        Random r = new Random();
+        int game = r.nextInt(availableGames.size());
+        
         for (int i = 0; i < numberOfGames; i++) {
-            indexSequence[i] = MathUtils.random(availableGames.size() - 1);
-        }
+            game = chooseGame(game);
+            indexSequence[i] = game;           
+        }  
+    }
+    
+    private int chooseGame(int oldGame){
+        
+        Random r = new Random();
+        int newGame = oldGame;
+        
+        if (availableGames.size() > 1){
+            while (newGame == oldGame){
+                newGame = r.nextInt(availableGames.size());
+            }
+        } else {
+            newGame = r.nextInt(availableGames.size());
+        }    
+        
+        return newGame;
     }
 
     private float getSequenceProgress() {
@@ -89,6 +111,7 @@ public class GameSequencer {
      * @return uma instância do próximo jogo.
      */
     public MiniGame nextGame() {
+                
         MiniGameFactory factory = (MiniGameFactory) availableGames
                 .toArray()[indexSequence[getGameNumber()]];
 
