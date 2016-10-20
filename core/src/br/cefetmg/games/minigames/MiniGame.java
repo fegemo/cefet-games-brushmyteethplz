@@ -39,7 +39,7 @@ public abstract class MiniGame {
     private final Texture grayMask;
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
-    
+
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
             TimeoutBehavior endOfGameSituation, final GameStateObserver observer) {
         if (difficulty < 0 || difficulty > 1) {
@@ -187,8 +187,8 @@ public abstract class MiniGame {
                 this.timer.scheduleTask(new Task() {
                     @Override
                     public void run() {
-                        stateObserver.onTimeEnding(TimeUtils.millis() 
-                                + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT 
+                        stateObserver.onTimeEnding(TimeUtils.millis()
+                                + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT
                                 + 300);
                     }
                 }, (maxDuration - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
@@ -201,7 +201,7 @@ public abstract class MiniGame {
                 break;
         }
         this.state = newState;
-        Hud.currentState=state;
+        Hud.currentState = state;
         this.stateObserver.onStateChanged(state);
     }
 
@@ -224,6 +224,6 @@ public abstract class MiniGame {
     public abstract void onDrawGame();
 
     public abstract String getInstructions();
-    
+
     public abstract boolean shouldHideMousePointer();
 }
