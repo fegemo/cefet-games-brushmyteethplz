@@ -1,6 +1,7 @@
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.Config;
+import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
@@ -200,6 +201,7 @@ public abstract class MiniGame {
                 break;
         }
         this.state = newState;
+        Hud.currentState=state;
         this.stateObserver.onStateChanged(state);
     }
 
