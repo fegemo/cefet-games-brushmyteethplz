@@ -117,6 +117,9 @@ public class Hud {
             @Override
             public void run() {   
                 long remainingTime = endingTime - TimeUtils.millis();
+                if(currentState!= null && currentState.equals(MiniGameState.WON)){
+                    remainingTime = 0;
+                } 
                 if (remainingTime > 0) {
                     timeLabel.setText(String.format("%02d",
                             (int) Math.round(remainingTime / 1000f)));
@@ -124,11 +127,9 @@ public class Hud {
                 }
                 else{
                     timeLabel.setText("");
-                }
-                if(currentState!= null && currentState.equals(MiniGameState.WON)){
-                    timeLabel.setText("");
                     timerSound.stop();
-                } 
+                }
+                
 
             }
         }, 0f, 1f, 4);
