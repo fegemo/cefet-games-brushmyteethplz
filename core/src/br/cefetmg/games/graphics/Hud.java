@@ -1,7 +1,9 @@
 package br.cefetmg.games.graphics;
 
 import br.cefetmg.games.Config;
+import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.screens.BaseScreen;
+import br.cefetmg.games.screens.PlayingGamesScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -39,6 +41,8 @@ public class Hud {
     private Timer timer;
     
     private Sound timerSound;
+    
+    public static MiniGameState currentState;
 
     public Hud(BaseScreen screen) {
         stage = new Stage(screen.viewport, screen.batch);
@@ -110,21 +114,27 @@ public class Hud {
 
     public void startEndingTimer(final long endingTime) {
         timer.scheduleTask(new Task() {
-            
             @Override
-            public void run() {
+            public void run() {   
                 long remainingTime = endingTime - TimeUtils.millis();
+                if(currentState!= null && currentState.equals(MiniGameState.WON)){
+                    remainingTime = 0;
+                } 
                 if (remainingTime > 0) {
                     timeLabel.setText(String.format("%02d",
                             (int) Math.round(remainingTime / 1000f)));
                     timerSound.play();
-                } else {
+                }
+                else{
                     timeLabel.setText("");
+                    timerSound.stop();
                 }
                 
+
             }
         }, 0f, 1f, 4);
     }
+
 
     class LifeHeart extends Actor {
 
