@@ -1,6 +1,7 @@
 package br.cefetmg.games.graphics;
 
 import br.cefetmg.games.Config;
+import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -37,8 +38,10 @@ public class Hud {
     private Label timeLabel;
 
     private Timer timer;
-    
+
     private Sound timerSound;
+
+    public static MiniGameState currentState;
 
     public Hud(BaseScreen screen) {
         stage = new Stage(screen.viewport, screen.batch);
@@ -71,7 +74,7 @@ public class Hud {
         table.add(sequenceIndexLabel).uniformX();
 
         stage.addActor(table);
-        
+
         timerSound = Gdx.audio.newSound(Gdx.files.internal("ui/tick-tock.mp3"));
     }
 
@@ -110,18 +113,21 @@ public class Hud {
 
     public void startEndingTimer(final long endingTime) {
         timer.scheduleTask(new Task() {
-            
             @Override
             public void run() {
                 long remainingTime = endingTime - TimeUtils.millis();
+                if (currentState != null && currentState.equals(MiniGameState.WON)) {
+                    remainingTime = 0;
+                }
                 if (remainingTime > 0) {
                     timeLabel.setText(String.format("%02d",
                             (int) Math.round(remainingTime / 1000f)));
                     timerSound.play();
                 } else {
                     timeLabel.setText("");
+                    timerSound.stop();
                 }
-                
+
             }
         }, 0f, 1f, 4);
     }
