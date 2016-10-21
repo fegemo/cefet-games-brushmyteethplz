@@ -5,6 +5,7 @@ import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
+import br.cefetmg.games.sounds.Sounds;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,9 +36,11 @@ public abstract class MiniGame {
     protected Timer timer;
 
     private final BitmapFont messagesFont;
+    private final Sounds sound;
     private final AnimatedSprite countdown;
     private final Texture grayMask;
     private boolean challengeSolved;
+    private boolean lastgame;
     private GameStateObserver stateObserver;
 
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
@@ -49,6 +52,7 @@ public abstract class MiniGame {
                     + ".");
         }
         this.screen = screen;
+        this.sound = new Sounds();
         this.challengeSolved = endOfGameSituation
                 == TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS;
         this.maxDuration = maxDuration;
@@ -196,7 +200,11 @@ public abstract class MiniGame {
                 timer.start();
                 break;
             case WON:
+                sound.playSucess();
+                timer.stop();
+                break;
             case FAILED:
+                sound.playFail();
                 timer.stop();
                 break;
         }
