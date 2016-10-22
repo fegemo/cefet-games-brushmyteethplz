@@ -84,7 +84,7 @@ public class PlayingGamesScreen extends BaseScreen
                         // carlos e bruno
                         new CleanTheToothFactory()
                 )
-        ), this, this);
+        ), 0, 1, this, this);
         this.hud = new Hud(this);
     }
 

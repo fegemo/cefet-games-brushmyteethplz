@@ -4,7 +4,6 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
 import br.cefetmg.games.screens.BaseScreen;
-import com.badlogic.gdx.math.MathUtils;
 import java.util.ArrayList;
 import java.util.Set;
 import br.cefetmg.games.minigames.util.GameStateObserver;
@@ -27,6 +26,8 @@ public class GameSequencer {
     private final BaseScreen screen;
     private final GameStateObserver observer;
     private Integer[] indexSequence;
+    private float finalDifficulty;
+    private float initialDifficulty;
 
     /**
      * Cria um novo sequenciador com um número de minigames igual a 
@@ -35,18 +36,24 @@ public class GameSequencer {
      * @param numberOfGames total de jogos que será criado para o jogador.
      * @param availableGames os tipos de minigames disponíveis para o 
      * sequenciador.
+     * @param initialDifficulty dificuldade usada para o primeiro MiniGame.
+     * Deve estar entre 0 e 1.
+     * @param finalDifficulty dificuldade usada para o último MiniGames.
+     * Deve estar entre 0 e 1.
      * @param screen a tela dona destes jogos.
      * @param observer um observador da mudança de estado dos jogos.
      */
-    public GameSequencer(int numberOfGames,
-            Set<MiniGameFactory> availableGames, BaseScreen screen,
-            GameStateObserver observer) {
+    public GameSequencer(int numberOfGames, Set<MiniGameFactory> availableGames,
+            float initialDifficulty, float finalDifficulty, 
+            BaseScreen screen, GameStateObserver observer) {
         if (numberOfGames <= 0) {
             throw new IllegalArgumentException("Tentou-se criar um "
                     + "GameSequencer com 0 jogos. Deve haver ao menos 1.");
         }
         this.numberOfGames = numberOfGames;
         this.availableGames = availableGames;
+        this.initialDifficulty = initialDifficulty;
+        this.finalDifficulty = finalDifficulty;
         this.screen = screen;
         this.observer = observer;
         previousGames = new ArrayList<MiniGameFactory>();
@@ -87,7 +94,7 @@ public class GameSequencer {
     }
 
     private float getSequenceProgress() {
-        return ((float) previousGames.size() - 1) / numberOfGames;
+        return Math.min(1, ((float) previousGames.size()) / (numberOfGames-1));
     }
 
     /**
@@ -114,10 +121,11 @@ public class GameSequencer {
                 
         MiniGameFactory factory = (MiniGameFactory) availableGames
                 .toArray()[indexSequence[getGameNumber()]];
-
+        float difficulty = DifficultyCurve.S.getCurveValueBetween(
+                getSequenceProgress(), initialDifficulty, finalDifficulty);
         previousGames.add(factory);
-        return factory.createMiniGame(screen, observer,
-                DifficultyCurve.LINEAR.getCurveValue(getSequenceProgress()));
+        
+        return factory.createMiniGame(screen, observer, difficulty);
     }
 
     /**
