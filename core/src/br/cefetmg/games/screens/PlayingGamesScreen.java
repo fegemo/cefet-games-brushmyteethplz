@@ -126,7 +126,10 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.lives == 0) {
             sound.playGameOver();
             transitionTo(PlayScreenState.FINISHED_GAME_OVER);
-        }else   sound.playFail();
+        }else if (this.sequencer.hasNextGame())
+            sound.playFail();
+        else
+            sound.playGameWin();
             
     }
 
