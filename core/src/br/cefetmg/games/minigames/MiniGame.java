@@ -38,6 +38,7 @@ public abstract class MiniGame {
     private final AnimatedSprite countdown;
     private final Texture grayMask;
     private boolean challengeSolved;
+    private boolean lastgame;
     private GameStateObserver stateObserver;
 
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
