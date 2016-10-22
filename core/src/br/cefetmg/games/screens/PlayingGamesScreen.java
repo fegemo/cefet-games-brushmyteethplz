@@ -76,7 +76,7 @@ public class PlayingGamesScreen extends BaseScreen
                         new GallowsFactory(),
                         new SmashItFactory(),
                         // amanda e vinícius
-                        new FleeTheTartarusFactory(), 
+                        new FleeTheTartarusFactory(),
                         new CollectItensFactory(),
                         // daniel
                         new CarieEvasionFactory(),
@@ -160,11 +160,12 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.lives == 0) {
             sound.playGameOver();
             transitionTo(PlayScreenState.FINISHED_GAME_OVER);
-        }else if (this.sequencer.hasNextGame())
+        } else if (this.sequencer.hasNextGame()) {
             sound.playFail();
-        else
+        } else {
             sound.playGameWin();
-            
+        }
+
     }
 
     private void transitionTo(PlayScreenState newState) {
@@ -186,9 +187,11 @@ public class PlayingGamesScreen extends BaseScreen
     public void onStateChanged(MiniGameState state) {
         switch (state) {
             case WON:
-                if (this.sequencer.hasNextGame())
-                      sound.playSucess();
-                else    sound.playGameWin();
+                if (this.sequencer.hasNextGame()) {
+                    sound.playSucess();
+                } else {
+                    sound.playGameWin();
+                }
             case FAILED:
                 if (state == MiniGameState.FAILED) {
                     loseLife();
