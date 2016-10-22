@@ -20,6 +20,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import com.badlogic.gdx.audio.Sound;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
+import br.cefetmg.games.sounds.Sounds;
 
 /**
  *
@@ -33,6 +34,7 @@ public class PlayingGamesScreen extends BaseScreen
     private final Hud hud;
     private PlayScreenState state;
     private int lives;
+    private final Sounds sound;
 
     public PlayingGamesScreen(Game game, BaseScreen previous) {
         super(game, previous);
@@ -41,6 +43,7 @@ public class PlayingGamesScreen extends BaseScreen
 
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
+        this.sound = new Sounds();
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
                         new ShootTheCariesFactory(),
@@ -121,8 +124,10 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives--;
         hud.setLives(lives);
         if (this.lives == 0) {
+            sound.playGameOver();
             transitionTo(PlayScreenState.FINISHED_GAME_OVER);
-        }
+        }else   sound.playFail();
+            
     }
 
     private void transitionTo(PlayScreenState newState) {
@@ -144,6 +149,9 @@ public class PlayingGamesScreen extends BaseScreen
     public void onStateChanged(MiniGameState state) {
         switch (state) {
             case WON:
+                if (this.sequencer.hasNextGame())
+                      sound.playSucess();
+                else    sound.playGameWin();
             case FAILED:
                 if (state == MiniGameState.FAILED) {
                     loseLife();
