@@ -23,6 +23,7 @@ public class TransitionEffect {
     public TransitionEffect(){
         this.alpha = 0;
         this.x = 0;
+        this.delta = 0;
     }
     public void update(Batch batch,ArrayList<Sprite> sprites){
         int i;
@@ -34,13 +35,20 @@ public class TransitionEffect {
         x += delta;
         Gdx.gl.glClearColor(1-alpha, 1-alpha, 1-alpha, 1);
     }
-    public void update(){
+    public void updateMenuOut(){
         alpha = timeFunction(x);
         x += delta;
         Gdx.gl.glClearColor(1-alpha, 1-alpha, 1-alpha, 1);
     }
+    
+    public void updateMenuIn(){
+        alpha = timeFunction(x);
+        x += delta;
+        Gdx.gl.glClearColor(alpha, alpha, alpha, 1);
+    }
+    
     public boolean isFinished(){
-        if(alpha >= 1) {
+        if(x >= 1) {
             //Gdx.gl.glClearColor(1, 1, 1, 1);
             return true;
         }
@@ -48,6 +56,9 @@ public class TransitionEffect {
     }
     public void setDelta(float value){
         this.delta = value;
+    }
+    public void setX(float value){
+        this.x = value;
     }
     public float timeFunction(float x){
         return (float) x*x*x*x;

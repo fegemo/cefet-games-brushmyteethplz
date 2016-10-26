@@ -35,7 +35,10 @@ public class PlayingGamesScreen extends BaseScreen
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-
+    private TransitionEffect transition;
+    private float i;
+    private boolean menu;
+    
     public PlayingGamesScreen(Game game, BaseScreen previous) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
@@ -52,6 +55,7 @@ public class PlayingGamesScreen extends BaseScreen
                         new MouthLandingFactory())
         ), this, this);
         this.hud = new Hud(this);
+        this.transition = new TransitionEffect();
     }
 
     @Override
@@ -59,6 +63,7 @@ public class PlayingGamesScreen extends BaseScreen
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.input.setCursorCatched(true);
         hud.create();
+        i = 0;
     }
 
     @Override
@@ -69,7 +74,9 @@ public class PlayingGamesScreen extends BaseScreen
 
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
+                
                 // volta para o menu principal
+                
                 super.game.setScreen(new MenuScreen(super.game, previous));
             }
         }
@@ -104,7 +111,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             return;
         }
-
+        
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
