@@ -4,6 +4,7 @@ import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
@@ -17,6 +18,7 @@ public class MenuScreen extends BaseScreen {
     private TextureRegion background;
     private TransitionEffect transition;
     private int touched;
+    private Sprite screenTransition;
     /**
      * Cria uma nova tela de menu.
      *
@@ -31,7 +33,7 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void show() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
 
         // instancia a textura e a região de textura (usada para repetir)
         background = new TextureRegion(new Texture("menu-background.png"));
@@ -54,6 +56,9 @@ public class MenuScreen extends BaseScreen {
         transition = new TransitionEffect();
         transition.setDelta(0.01f);
         touched = 0;
+        super.assets.load("images/transicao.jpg", Texture.class);
+        screenTransition = new Sprite(new Texture("images/transicao.jpg"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
+        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
     }
 
     /**
@@ -94,11 +99,15 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void draw() {
         if(touched == 2){
-            transition.updateMenuOut();
+            batch.begin();
+            transition.fadeOut(batch, screenTransition);
+            batch.end();
         }
         
         if (touched == 0) {
-            transition.updateMenuIn();
+            batch.begin();
+            transition.fadeIn(batch, screenTransition);
+            batch.end();
         }
         
         if(touched < 3){
