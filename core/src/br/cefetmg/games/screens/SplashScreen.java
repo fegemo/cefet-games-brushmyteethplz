@@ -33,9 +33,9 @@ public class SplashScreen extends BaseScreen {
     private TransitionEffect transition;
 
     /**
-     * ArrayList auxiliar no processo de transição de tela
+     * Sprite auxiliar no processo de transição de tela
      */
-    private ArrayList<Sprite> sprites;
+    private Sprite screenTransition;
     /**
      * Cria uma nova tela de <em>splash</em>.
      *
@@ -60,8 +60,9 @@ public class SplashScreen extends BaseScreen {
                 super.viewport.getWorldHeight() / 2);
         transition = new TransitionEffect();
         transition.setDelta(0.01f);
-        sprites = new ArrayList<Sprite>();
-        sprites.add(logo);
+        super.assets.load("images/transicao.jpg", Texture.class);
+        screenTransition = new Sprite(new Texture("images/transicao.jpg"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
+        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
     }
 
     /**
@@ -104,7 +105,8 @@ public class SplashScreen extends BaseScreen {
     @Override
     public void draw() {
         batch.begin();
-        transition.update(batch, sprites);
+        logo.draw(batch);
+        transition.fadeOut(batch, screenTransition);
         if(transition.isFinished()){
             navigateToMenuScreen();
         }

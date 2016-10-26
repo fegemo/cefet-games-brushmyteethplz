@@ -25,26 +25,15 @@ public class TransitionEffect {
         this.x = 0;
         this.delta = 0;
     }
-    public void update(Batch batch,ArrayList<Sprite> sprites){
-        int i;
-        for(i = 0;i < sprites.size();i++){
-            actualSprite = sprites.get(i);
-            actualSprite.draw(batch,1-alpha);
-        }
+    public void fadeOut(Batch batch,Sprite sprite){
         alpha = timeFunction(x);
+        sprite.draw(batch,alpha);
         x += delta;
-        Gdx.gl.glClearColor(1-alpha, 1-alpha, 1-alpha, 1);
     }
-    public void updateMenuOut(){
+    public void fadeIn(Batch batch,Sprite sprite){
+        sprite.draw(batch,1-alpha);
         alpha = timeFunction(x);
         x += delta;
-        Gdx.gl.glClearColor(1-alpha, 1-alpha, 1-alpha, 1);
-    }
-    
-    public void updateMenuIn(){
-        alpha = timeFunction(x);
-        x += delta;
-        Gdx.gl.glClearColor(alpha, alpha, alpha, 1);
     }
     
     public boolean isFinished(){
