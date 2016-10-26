@@ -31,7 +31,7 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void show() {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
 
         // instancia a textura e a região de textura (usada para repetir)
         background = new TextureRegion(new Texture("menu-background.png"));
@@ -64,11 +64,16 @@ public class MenuScreen extends BaseScreen {
         // se qualquer interação é feita (teclado, mouse pressionado, tecla
         // tocada), navega para a próxima tela (de jogo)
         if (Gdx.input.justTouched()) {
-            touched = 1;
+            touched = 2;
         }
         if(transition.isFinished()){
-            touched = 2;
-            navigateToMicroGameScreen();
+            if(touched == 0) {
+                touched = 1;
+                transition.setX(0.0f);
+            }else {
+                touched = 3;
+                navigateToMicroGameScreen();
+            }
         }
     }
 
@@ -88,10 +93,15 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void draw() {
-        if(touched == 1){
-            transition.update();
+        if(touched == 2){
+            transition.updateMenuOut();
         }
-        if(touched < 2){
+        
+        if (touched == 0) {
+            transition.updateMenuIn();
+        }
+        
+        if(touched < 3){
             batch.begin();
             batch.draw(background, 0, 0,
                     viewport.getWorldWidth(),

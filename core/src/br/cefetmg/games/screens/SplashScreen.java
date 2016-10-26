@@ -104,11 +104,6 @@ public class SplashScreen extends BaseScreen {
     @Override
     public void draw() {
         batch.begin();
-        /*
-        logo.draw(batch, 1-i);
-        Gdx.gl.glClearColor(1-i, 1-i, 1-i, 1);
-        i += 0.01f;
-        */
         transition.update(batch, sprites);
         if(transition.isFinished()){
             navigateToMenuScreen();
