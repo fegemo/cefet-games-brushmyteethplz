@@ -15,7 +15,8 @@ public class MenuScreen extends BaseScreen {
 
     private static final int NUMBER_OF_TILED_BACKGROUND_TEXTURE = 7;
     private TextureRegion background;
-
+    private TransitionEffect transition;
+    private int touched;
     /**
      * Cria uma nova tela de menu.
      *
@@ -30,7 +31,7 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void show() {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
 
         // instancia a textura e a região de textura (usada para repetir)
         background = new TextureRegion(new Texture("menu-background.png"));
@@ -50,6 +51,9 @@ public class MenuScreen extends BaseScreen {
                 (int) (background.getTexture().getHeight()
                 * NUMBER_OF_TILED_BACKGROUND_TEXTURE
                 / Config.DESIRED_ASPECT_RATIO));
+        transition = new TransitionEffect();
+        transition.setDelta(0.01f);
+        touched = 0;
     }
 
     /**
@@ -60,7 +64,16 @@ public class MenuScreen extends BaseScreen {
         // se qualquer interação é feita (teclado, mouse pressionado, tecla
         // tocada), navega para a próxima tela (de jogo)
         if (Gdx.input.justTouched()) {
-            navigateToMicroGameScreen();
+            touched = 2;
+        }
+        if(transition.isFinished()){
+            if(touched == 0) {
+                touched = 1;
+                transition.setX(0.0f);
+            }else {
+                touched = 3;
+                navigateToMicroGameScreen();
+            }
         }
     }
 
@@ -80,13 +93,23 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void draw() {
-        batch.begin();
-        batch.draw(background, 0, 0,
-                viewport.getWorldWidth(),
-                viewport.getWorldHeight());
-        drawCenterAlignedText("Pressione qualquer tecla para jogar",
-                1f, viewport.getWorldHeight() * 0.35f);
-        batch.end();
+        if(touched == 2){
+            transition.updateMenuOut();
+        }
+        
+        if (touched == 0) {
+            transition.updateMenuIn();
+        }
+        
+        if(touched < 3){
+            batch.begin();
+            batch.draw(background, 0, 0,
+                    viewport.getWorldWidth(),
+                    viewport.getWorldHeight());
+            drawCenterAlignedText("Pressione qualquer tecla para jogar",
+                    1f, viewport.getWorldHeight() * 0.35f);
+            batch.end();
+        }
     }
 
     /**

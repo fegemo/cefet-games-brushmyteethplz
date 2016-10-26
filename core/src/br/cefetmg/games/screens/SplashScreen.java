@@ -3,9 +3,12 @@ package br.cefetmg.games.screens;
 import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
+import java.util.ArrayList;
 
 /**
  * A tela de <em>splash</em> (inicial, com a logomarca) do jogo.
@@ -23,7 +26,16 @@ public class SplashScreen extends BaseScreen {
      * Uma {@link Sprite} que contém a logo da empresa CEFET-GAMES.
      */
     private Sprite logo;
+    
+    /**
+     * Um objeto para criação do efeito de transição entre telas
+     */
+    private TransitionEffect transition;
 
+    /**
+     * ArrayList auxiliar no processo de transição de tela
+     */
+    private ArrayList<Sprite> sprites;
     /**
      * Cria uma nova tela de <em>splash</em>.
      *
@@ -46,6 +58,10 @@ public class SplashScreen extends BaseScreen {
         logo.setCenter(
                 super.viewport.getWorldWidth() / 2,
                 super.viewport.getWorldHeight() / 2);
+        transition = new TransitionEffect();
+        transition.setDelta(0.01f);
+        sprites = new ArrayList<Sprite>();
+        sprites.add(logo);
     }
 
     /**
@@ -88,7 +104,10 @@ public class SplashScreen extends BaseScreen {
     @Override
     public void draw() {
         batch.begin();
-        logo.draw(batch);
+        transition.update(batch, sprites);
+        if(transition.isFinished()){
+            navigateToMenuScreen();
+        }
         batch.end();
     }
 }
