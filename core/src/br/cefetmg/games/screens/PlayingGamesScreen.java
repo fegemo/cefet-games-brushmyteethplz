@@ -32,6 +32,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
  *
@@ -46,7 +47,11 @@ public class PlayingGamesScreen extends BaseScreen
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-
+    private TransitionEffect transition;
+    private float i;
+    private boolean menu;
+    private Sprite screenTransition;
+    
     public PlayingGamesScreen(Game game, BaseScreen previous) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
@@ -86,6 +91,12 @@ public class PlayingGamesScreen extends BaseScreen
                 )
         ), 0, 1, this, this);
         this.hud = new Hud(this);
+        this.transition = new TransitionEffect();
+        this.transition.setDelta(0.01f);
+        menu = false;
+        super.assets.load("images/transicao.jpg", Texture.class);
+        screenTransition = new Sprite(new Texture("images/transicao.jpg"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
+        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
     }
 
     @Override
@@ -93,6 +104,7 @@ public class PlayingGamesScreen extends BaseScreen
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.input.setCursorCatched(true);
         hud.create();
+        i = 0;
     }
 
     @Override
@@ -104,7 +116,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
-                super.game.setScreen(new MenuScreen(super.game, previous));
+                menu = true;
             }
         }
     }
@@ -128,6 +140,13 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.draw();
         }
         if (this.state != PlayScreenState.PLAYING) {
+            if(menu){
+                transition.fadeOut(batch, screenTransition);
+                if(transition.isFinished()) {
+                    menu = false;
+                    super.game.setScreen(new MenuScreen(super.game, previous));
+                }
+            }
             drawEndGame();
         }
         super.batch.end();
@@ -138,7 +157,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             return;
         }
-
+        
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());

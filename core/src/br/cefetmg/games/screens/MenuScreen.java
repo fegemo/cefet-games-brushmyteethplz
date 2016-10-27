@@ -4,6 +4,7 @@ import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
@@ -17,6 +18,7 @@ public class MenuScreen extends BaseScreen {
     private TextureRegion background;
     private TransitionEffect transition;
     private int touched;
+    private Sprite screenTransition;
     /**
      * Cria uma nova tela de menu.
      *
@@ -54,6 +56,9 @@ public class MenuScreen extends BaseScreen {
         transition = new TransitionEffect();
         transition.setDelta(0.01f);
         touched = 0;
+        super.assets.load("images/transicao.jpg", Texture.class);
+        screenTransition = new Sprite(new Texture("images/transicao.jpg"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
+        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
     }
 
     /**
@@ -64,11 +69,16 @@ public class MenuScreen extends BaseScreen {
         // se qualquer interação é feita (teclado, mouse pressionado, tecla
         // tocada), navega para a próxima tela (de jogo)
         if (Gdx.input.justTouched()) {
-            touched = 1;
+            touched = 2;
         }
         if(transition.isFinished()){
-            touched = 2;
-            navigateToMicroGameScreen();
+            if(touched == 0) {
+                touched = 1;
+                transition.setX(0.0f);
+            }else {
+                touched = 3;
+                navigateToMicroGameScreen();
+            }
         }
     }
 
@@ -88,10 +98,19 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void draw() {
-        if(touched == 1){
-            transition.update();
+        if(touched == 2){
+            batch.begin();
+            transition.fadeOut(batch, screenTransition);
+            batch.end();
         }
-        if(touched < 2){
+        
+        if (touched == 0) {
+            batch.begin();
+            transition.fadeIn(batch, screenTransition);
+            batch.end();
+        }
+        
+        if(touched < 3){
             batch.begin();
             batch.draw(background, 0, 0,
                     viewport.getWorldWidth(),
