@@ -28,5 +28,9 @@ public class MultiAnimatedSprite extends AnimatedSprite {
 
         super.setAnimation(animations.get(animationName));
     }
+    
+    public Animation getAnimation(String animationName){
+        return animations.get(animationName);
+    }
 
 }

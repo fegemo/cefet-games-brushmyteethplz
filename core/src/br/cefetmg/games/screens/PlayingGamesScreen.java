@@ -2,11 +2,23 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
-import br.cefetmg.games.minigames.MiniGame;
+import br.cefetmg.games.minigames.factories.MouthLandingFactory;
+import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
+import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
+import br.cefetmg.games.minigames.factories.AngryToothsFactory;
+import br.cefetmg.games.minigames.factories.CarieSwordFactory;
+import br.cefetmg.games.minigames.factories.GallowsFactory;
+import br.cefetmg.games.minigames.factories.SmashItFactory;
+import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
+import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
+import br.cefetmg.games.minigames.factories.CleanTheToothFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
+import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
 import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
+import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
+import br.cefetmg.games.minigames.factories.CollectItensFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -17,6 +29,9 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import br.cefetmg.games.minigames.MiniGame;
+import br.cefetmg.games.minigames.factories.FleeFactory;
+import br.cefetmg.games.sounds.Sounds;
 
 /**
  *
@@ -30,6 +45,7 @@ public class PlayingGamesScreen extends BaseScreen
     private final Hud hud;
     private PlayScreenState state;
     private int lives;
+    private final Sounds sound;
 
     public PlayingGamesScreen(Game game, BaseScreen previous) {
         super(game, previous);
@@ -38,9 +54,37 @@ public class PlayingGamesScreen extends BaseScreen
 
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
+        this.sound = new Sounds();
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-                Arrays.asList(new PutTheBracesFactory())
-        ), this, this);
+                Arrays.asList(
+                        // flávio
+                        new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
+                        // gabriel e juan
+                        new SaveTheTeethFactory(),
+                        new FleeFromTartarusFactory(),
+                        // higor e matheus
+                        new AngryToothsFactory(),
+                        new CarieSwordFactory(),
+                        // nicolas e henrique
+                        new PutTheBracesFactory(),
+                        new EscoveOsDentesFactory(),
+                        // lucas
+                        new FleeFactory(),
+                        new MouthLandingFactory(),
+                        // lindley e lucas
+                        new GallowsFactory(),
+                        new SmashItFactory(),
+                        // amanda e vinícius
+                        new FleeTheTartarusFactory(),
+                        new CollectItensFactory(),
+                        // daniel
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory(),
+                        // carlos e bruno
+                        new CleanTheToothFactory()
+                )
+        ), 0, 1, this, this);
         this.hud = new Hud(this);
     }
 
@@ -114,8 +158,14 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives--;
         hud.setLives(lives);
         if (this.lives == 0) {
+            sound.playGameOver();
             transitionTo(PlayScreenState.FINISHED_GAME_OVER);
+        } else if (this.sequencer.hasNextGame()) {
+            sound.playFail();
+        } else {
+            sound.playGameWin();
         }
+
     }
 
     private void transitionTo(PlayScreenState newState) {
@@ -126,7 +176,7 @@ public class PlayingGamesScreen extends BaseScreen
         }
         this.state = newState;
     }
-    
+
     @Override
     public void dispose() {
         super.dispose();
@@ -137,6 +187,11 @@ public class PlayingGamesScreen extends BaseScreen
     public void onStateChanged(MiniGameState state) {
         switch (state) {
             case WON:
+                if (this.sequencer.hasNextGame()) {
+                    sound.playSucess();
+                } else {
+                    sound.playGameWin();
+                }
             case FAILED:
                 if (state == MiniGameState.FAILED) {
                     loseLife();
