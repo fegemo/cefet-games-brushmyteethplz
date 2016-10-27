@@ -38,7 +38,6 @@ public class TransitionEffect {
     
     public boolean isFinished(){
         if(x >= 1) {
-            //Gdx.gl.glClearColor(1, 1, 1, 1);
             return true;
         }
         return false;

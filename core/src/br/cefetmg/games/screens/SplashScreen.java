@@ -27,15 +27,7 @@ public class SplashScreen extends BaseScreen {
      */
     private Sprite logo;
     
-    /**
-     * Um objeto para criação do efeito de transição entre telas
-     */
-    private TransitionEffect transition;
 
-    /**
-     * Sprite auxiliar no processo de transição de tela
-     */
-    private Sprite screenTransition;
     /**
      * Cria uma nova tela de <em>splash</em>.
      *
@@ -58,11 +50,6 @@ public class SplashScreen extends BaseScreen {
         logo.setCenter(
                 super.viewport.getWorldWidth() / 2,
                 super.viewport.getWorldHeight() / 2);
-        transition = new TransitionEffect();
-        transition.setDelta(0.01f);
-        super.assets.load("images/transicao.jpg", Texture.class);
-        screenTransition = new Sprite(new Texture("images/transicao.jpg"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
-        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
     }
 
     /**
