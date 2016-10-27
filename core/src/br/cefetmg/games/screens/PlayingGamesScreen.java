@@ -230,6 +230,7 @@ public class PlayingGamesScreen extends BaseScreen
                     }
 
                 }, 1.5f);
+                Gdx.input.setCursorCatched(false);
                 break;
         }
     }
