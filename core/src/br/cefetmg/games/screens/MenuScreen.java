@@ -4,6 +4,7 @@ import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
@@ -15,7 +16,6 @@ public class MenuScreen extends BaseScreen {
 
     private static final int NUMBER_OF_TILED_BACKGROUND_TEXTURE = 7;
     private TextureRegion background;
-
     /**
      * Cria uma nova tela de menu.
      *
@@ -50,6 +50,7 @@ public class MenuScreen extends BaseScreen {
                 (int) (background.getTexture().getHeight()
                 * NUMBER_OF_TILED_BACKGROUND_TEXTURE
                 / Config.DESIRED_ASPECT_RATIO));
+        
     }
 
     /**
@@ -60,7 +61,16 @@ public class MenuScreen extends BaseScreen {
         // se qualquer interação é feita (teclado, mouse pressionado, tecla
         // tocada), navega para a próxima tela (de jogo)
         if (Gdx.input.justTouched()) {
-            navigateToMicroGameScreen();
+            transitionState = states.fadeOut;
+        }
+        if(transition.isFinished()){
+            if(transitionState == states.fadeIn) {
+                transitionState = states.doNothing;
+                transition.setX(0.0f);
+            }else {
+                transitionState = states.stopDrawing;
+                navigateToMicroGameScreen();
+            }
         }
     }
 
@@ -80,13 +90,29 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void draw() {
-        batch.begin();
-        batch.draw(background, 0, 0,
-                viewport.getWorldWidth(),
-                viewport.getWorldHeight());
-        drawCenterAlignedText("Pressione qualquer tecla para jogar",
-                1f, viewport.getWorldHeight() * 0.35f);
-        batch.end();
+       
+        
+        if (transitionState == states.fadeIn) {
+            batch.begin();
+            transition.fadeIn(batch, screenTransition);
+            batch.end();
+        }
+        
+         if(transitionState == states.fadeOut){
+            batch.begin();
+            transition.fadeOut(batch, screenTransition);
+            batch.end();
+        }
+        
+        if(transitionState != states.stopDrawing){
+            batch.begin();
+            batch.draw(background, 0, 0,
+                    viewport.getWorldWidth(),
+                    viewport.getWorldHeight());
+            drawCenterAlignedText("Pressione qualquer tecla para jogar",
+                    1f, viewport.getWorldHeight() * 0.35f);
+            batch.end();
+        }
     }
 
     /**
