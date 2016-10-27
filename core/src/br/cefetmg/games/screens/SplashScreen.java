@@ -4,9 +4,12 @@ import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.TimeUtils;
+import java.util.ArrayList;
 
 /**
  * A tela de <em>splash</em> (inicial, com a logomarca) do jogo.
@@ -127,6 +130,10 @@ public class SplashScreen extends BaseScreen {
     public void draw() {
         batch.begin();
         animatedLogo.draw(batch);
+        transition.fadeOut(batch, screenTransition);
+        if(transition.isFinished()){
+            navigateToMenuScreen();
+        }
         batch.end();
     }
 }

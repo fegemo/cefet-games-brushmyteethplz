@@ -177,6 +177,7 @@ public abstract class MiniGame {
                 drawMask();
                 drawMessage(this.state == MiniGameState.FAILED ? "Falhou!"
                         : "Conseguiu!", 1);
+                Gdx.gl.glClearColor(1, 1, 1, 1);
                 break;
         }
     }
