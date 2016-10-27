@@ -32,6 +32,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /**
  *
@@ -46,7 +47,8 @@ public class PlayingGamesScreen extends BaseScreen
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-
+    private boolean shouldTransitionToMenuScreen;
+    
     public PlayingGamesScreen(Game game, BaseScreen previous) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
@@ -86,6 +88,7 @@ public class PlayingGamesScreen extends BaseScreen
                 )
         ), 0, 1, this, this);
         this.hud = new Hud(this);
+        shouldTransitionToMenuScreen = false;
     }
 
     @Override
@@ -104,7 +107,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
-                super.game.setScreen(new MenuScreen(super.game, previous));
+                shouldTransitionToMenuScreen = true;
             }
         }
     }
@@ -128,6 +131,13 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.draw();
         }
         if (this.state != PlayScreenState.PLAYING) {
+            if(shouldTransitionToMenuScreen){
+                transition.fadeOut(batch, screenTransition);
+                if(transition.isFinished()) {
+                    shouldTransitionToMenuScreen = false;
+                    super.game.setScreen(new MenuScreen(super.game, previous));
+                }
+            }
             drawEndGame();
         }
         super.batch.end();
@@ -141,7 +151,7 @@ public class PlayingGamesScreen extends BaseScreen
         
         int posX = Math.round(Gdx.graphics.getWidth() / 2);
         int posY = Math.round(Gdx.graphics.getHeight() / 2);
-        
+
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
