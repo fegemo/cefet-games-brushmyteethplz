@@ -120,6 +120,13 @@ public class PlayingGamesScreen extends BaseScreen
             }
             this.currentGame.update(dt);
             hud.update(dt);
+            
+            switch (transitionState) {
+                case fadeIn:
+                case fadeOut:
+                    transition.update(dt);
+                    break;
+            }
         }
     }
 
