@@ -156,13 +156,20 @@ public class PlayingGamesScreen extends BaseScreen
             return;
         }
         
+        int posX = Math.round(Gdx.graphics.getWidth() / 2);
+        int posY = Math.round(Gdx.graphics.getHeight() / 2);
+
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
             Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
+   
+            Gdx.input.setCursorPosition(posX, posY);
+            
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
+            Gdx.input.setCursorCatched(false);
         }
     }
 
@@ -188,6 +195,7 @@ public class PlayingGamesScreen extends BaseScreen
     private void transitionTo(PlayScreenState newState) {
         switch (newState) {
             case FINISHED_GAME_OVER:
+                Gdx.input.setCursorCatched(false);
                 break;
 
         }
@@ -206,6 +214,7 @@ public class PlayingGamesScreen extends BaseScreen
             case WON:
                 if (this.sequencer.hasNextGame()) {
                     sound.playSucess();
+                    Gdx.input.setCursorCatched(false);
                 } else {
                     sound.playGameWin();
                 }
@@ -220,6 +229,7 @@ public class PlayingGamesScreen extends BaseScreen
                     }
 
                 }, 1.5f);
+                Gdx.input.setCursorCatched(false);
                 break;
         }
     }
