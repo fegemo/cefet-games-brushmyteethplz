@@ -45,7 +45,7 @@ public class Hud {
 
     public static MiniGameState currentState;
 
-    private boolean flag;
+    private boolean isClocking;
     
     public Hud(BaseScreen screen) {
         stage = new Stage(screen.viewport, screen.batch);
@@ -54,7 +54,7 @@ public class Hud {
     public void create() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         timer = new Timer();
-        flag=false;
+        isClocking=false;
         lifeTexture = new Texture("images/lives.png");
         clockTexture = new Texture("images/relogio.png");
         
@@ -129,15 +129,16 @@ public class Hud {
                     remainingTime = 0;
                 }
                 if (remainingTime > 0) {
-                     if(!flag){
+                    //verifica se relogio esta já esta rodando
+                     if(!isClocking){
                         clock.timeFinishing();
-                        flag=true;
+                        isClocking=true;
                     }
                     timerSound.play();
                 } else {
                     clock.stopClock();
                     timerSound.stop();
-                    flag=false;
+                    isClocking=false;
                 }
 
             }
