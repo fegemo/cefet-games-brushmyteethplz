@@ -150,7 +150,9 @@ public abstract class BaseScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        messagesFont.dispose();
+        if (messagesFont != null) {
+            messagesFont.dispose();
+        }
     }
 
     /**
