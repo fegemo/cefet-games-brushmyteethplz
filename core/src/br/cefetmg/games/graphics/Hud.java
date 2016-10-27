@@ -65,7 +65,7 @@ public class Hud {
         table.bottom();
         table.setFillParent(true);
 
-        LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
+        LabelStyle labelStyle = new Label.LabelStyle(font, Color.ORANGE);
         sequenceIndexLabel = new Label(
                 String.format("%03d", 1), labelStyle);
         

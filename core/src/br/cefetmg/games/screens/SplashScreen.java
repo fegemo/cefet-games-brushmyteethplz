@@ -61,6 +61,7 @@ public class SplashScreen extends BaseScreen {
                     super.viewport.getWorldWidth() / 2,
                     super.viewport.getWorldHeight() / 2);
         audio.play();
+        
     }
 
     /**
@@ -119,5 +120,6 @@ public class SplashScreen extends BaseScreen {
         batch.begin();
         logo.draw(batch);
         batch.end();
+  
     }
 }
