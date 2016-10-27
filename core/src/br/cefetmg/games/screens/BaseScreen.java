@@ -65,7 +65,7 @@ public abstract class BaseScreen extends ScreenAdapter {
         screenTransition = new Sprite(new Texture("images/transicao.png"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
         screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
         transition = new TransitionEffect();
-        transition.setDelta(0.01f);
+        transition.setDelta(0.025f);
         transitionState = states.fadeIn;
     }
     

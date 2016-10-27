@@ -83,6 +83,12 @@ public class MenuScreen extends BaseScreen {
     public void update(float dt) {
         float speed = dt * 0.25f;
         background.scroll(speed, -speed);
+        switch (transitionState) {
+            case fadeIn:
+            case fadeOut:
+                transition.update(dt);
+                break;
+        }
     }
 
     /**

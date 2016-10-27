@@ -42,7 +42,7 @@ public class Config {
     /**
      * Tempo em que a tela de splash fica sendo mostrada.
      */
-    public static final long TIME_ON_SPLASH_SCREEN = 4000;
+    public static final long TIME_ON_SPLASH_SCREEN = 3750;
     
     
     /**
