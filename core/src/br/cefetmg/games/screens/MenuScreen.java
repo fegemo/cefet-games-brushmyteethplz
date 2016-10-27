@@ -4,8 +4,14 @@ import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import br.cefetmg.games.Rank;
+import br.cefetmg.games.minigames.util.ActualMenuScreen;
+import br.cefetmg.games.minigames.util.GameOption;
+import br.cefetmg.games.minigames.util.Score;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import java.util.ArrayList;
 
 /**
  * Uma tela de Menu Principal do jogo.
@@ -16,6 +22,13 @@ public class MenuScreen extends BaseScreen {
 
     private static final int NUMBER_OF_TILED_BACKGROUND_TEXTURE = 7;
     private TextureRegion background;
+    
+    //***Alterações para o modo survival by Lindley and Lucas Viana
+    private final Sprite normalButton, survivalButton, rankingButton;
+    private ActualMenuScreen actualScreen;
+    private Rank rank;
+    //***Fim do bloco de alterações
+
     /**
      * Cria uma nova tela de menu.
      *
@@ -23,6 +36,23 @@ public class MenuScreen extends BaseScreen {
      */
     public MenuScreen(Game game, BaseScreen previous) {
         super(game, previous);
+        
+        //***Alterações para o modo survival by Lindley and Lucas Viana
+        //Carrega texturas para os botões do menu
+        normalButton = new Sprite(new Texture("buttons_menu/Normal.png"));
+        survivalButton = new Sprite(new Texture("buttons_menu/Survival.png"));
+        rankingButton = new Sprite(new Texture("buttons_menu/Ranking.png"));
+
+        //Define as posições dos botões
+        normalButton.setPosition(40 * viewport.getWorldWidth() / 200.0f, viewport.getWorldHeight() / 2.5f);
+        survivalButton.setPosition(25 + 80 * viewport.getWorldWidth() / 200.0f, viewport.getWorldHeight() / 2.5f);
+        rankingButton.setPosition(50 + 120 * viewport.getWorldWidth() / 200.0f, viewport.getWorldHeight() / 2.5f);
+
+        //Inicializa tela
+        actualScreen = ActualMenuScreen.MENU;
+        
+        rank = new Rank();
+        //***Fim do bloco de alterações
     }
 
     /**
@@ -50,7 +80,6 @@ public class MenuScreen extends BaseScreen {
                 (int) (background.getTexture().getHeight()
                 * NUMBER_OF_TILED_BACKGROUND_TEXTURE
                 / Config.DESIRED_ASPECT_RATIO));
-        
     }
 
     /**
@@ -58,18 +87,25 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void handleInput() {
+        /**
+         * Tratamento do click do mouse :: Lindley e Lucas Viana
+         */
+        Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        viewport.unproject(click);        
+        
         // se qualquer interação é feita (teclado, mouse pressionado, tecla
         // tocada), navega para a próxima tela (de jogo)
         if (Gdx.input.justTouched()) {
-            transitionState = states.fadeOut;
-        }
-        if(transition.isFinished()){
-            if(transitionState == states.fadeIn) {
-                transitionState = states.doNothing;
-                transition.setX(0.0f);
-            }else {
-                transitionState = states.stopDrawing;
-                navigateToMicroGameScreen();
+            if (actualScreen == ActualMenuScreen.MENU) {
+                if (normalButton.getBoundingRectangle().contains(click)) {
+                    navigateToMicroGameScreen(GameOption.NORMAL);
+                } else if (survivalButton.getBoundingRectangle().contains(click)) {
+                    navigateToMicroGameScreen(GameOption.SURVIVAL);
+                } else if (rankingButton.getBoundingRectangle().contains(click)) {
+                    actualScreen = ActualMenuScreen.RANKING;
+                }
+            } else {
+                actualScreen = ActualMenuScreen.MENU;
             }
         }
     }
@@ -96,36 +132,38 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void draw() {
-       
-        
-        if (transitionState == states.fadeIn) {
-            batch.begin();
-            transition.fadeIn(batch, screenTransition);
-            batch.end();
-        }
-        
-         if(transitionState == states.fadeOut){
-            batch.begin();
-            transition.fadeOut(batch, screenTransition);
-            batch.end();
-        }
-        
-        if(transitionState != states.stopDrawing){
-            batch.begin();
-            batch.draw(background, 0, 0,
-                    viewport.getWorldWidth(),
-                    viewport.getWorldHeight());
-            drawCenterAlignedText("Pressione qualquer tecla para jogar",
+        batch.begin();
+        batch.draw(background, 0, 0,
+                viewport.getWorldWidth(),
+                viewport.getWorldHeight());
+        //***Alterações para o modo survival by Lindley and Lucas Viana
+        //Desenhar ranking ou opcaos de jogo
+        if (actualScreen == ActualMenuScreen.MENU) {
+            drawCenterAlignedText("Selecione o modo de jogo",
                     1f, viewport.getWorldHeight() * 0.35f);
-            batch.end();
+
+            //Desenha botões;
+            normalButton.draw(this.batch);
+            survivalButton.draw(this.batch);
+            rankingButton.draw(this.batch);
+
+        } else {
+            ArrayList<Score> ranking = rank.getRanking();
+            for (int i = 0; i < ranking.size(); ++i) {
+                drawCenterAlignedText(ranking.get(i).getName()
+                        + " .......... " + ranking.get(i).getGames(),
+                        1.0f, viewport.getWorldHeight() - 50f * (i + 1));
+            }
         }
+        /**/
+        batch.end();
     }
 
     /**
      * Navega para a tela de jogo.
      */
-    private void navigateToMicroGameScreen() {
-        game.setScreen(new PlayingGamesScreen(game, this));
+    private void navigateToMicroGameScreen(GameOption option) {
+        game.setScreen(new PlayingGamesScreen(game, this, option));
     }
 
 }

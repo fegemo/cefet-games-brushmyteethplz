@@ -32,7 +32,9 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import br.cefetmg.games.logic.chooser.BaseGameSequencer;
+import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
+import br.cefetmg.games.minigames.util.GameOption;
 
 /**
  *
@@ -42,14 +44,14 @@ public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
     private MiniGame currentGame;
-    private final GameSequencer sequencer;
+    private final BaseGameSequencer sequencer;
     private final Hud hud;
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-    private boolean shouldTransitionToMenuScreen;
-    
-    public PlayingGamesScreen(Game game, BaseScreen previous) {
+    private final GameOption option;
+
+    public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
@@ -57,7 +59,10 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sound = new Sounds();
-        this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
+                this.option = option;
+
+        if (this.option == GameOption.NORMAL) {
+            this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
                         // flávio
                         new ShootTheCariesFactory(),
@@ -86,9 +91,39 @@ public class PlayingGamesScreen extends BaseScreen
                         // carlos e bruno
                         new CleanTheToothFactory()
                 )
-        ), 0, 1, this, this);
+            ), 0, 1, this, this);
+        } else {
+            this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // flávio
+                        new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
+                        // gabriel e juan
+                        new SaveTheTeethFactory(),
+                        new FleeFromTartarusFactory(),
+                        // higor e matheus
+                        new AngryToothsFactory(),
+                        new CarieSwordFactory(),
+                        // nicolas e henrique
+                        new PutTheBracesFactory(),
+                        new EscoveOsDentesFactory(),
+                        // lucas
+                        new FleeFactory(),
+                        new MouthLandingFactory(),
+                        // lindley e lucas
+                        new GallowsFactory(),
+                        new SmashItFactory(),
+                        // amanda e vinícius
+                        new FleeTheTartarusFactory(),
+                        new CollectItensFactory(),
+                        // daniel
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory(),
+                        // carlos e bruno
+                        new CleanTheToothFactory())
+            ), this, this);
+        } 
         this.hud = new Hud(this);
-        shouldTransitionToMenuScreen = false;
     }
 
     @Override
@@ -107,7 +142,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
-                shouldTransitionToMenuScreen = true;
+                super.game.setScreen(new MenuScreen(super.game, previous));
             }
         }
     }
@@ -138,13 +173,6 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.draw();
         }
         if (this.state != PlayScreenState.PLAYING) {
-            if(shouldTransitionToMenuScreen){
-                transition.fadeOut(batch, screenTransition);
-                if(transition.isFinished()) {
-                    shouldTransitionToMenuScreen = false;
-                    super.game.setScreen(new MenuScreen(super.game, previous));
-                }
-            }
             drawEndGame();
         }
         super.batch.end();
@@ -152,7 +180,11 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void advance() {
-        if (this.state != PlayScreenState.PLAYING) {
+        if (this.state != PlayScreenState.PLAYING
+                && option == GameOption.SURVIVAL) {
+            RankScreen ranque;
+            super.game.setScreen(ranque = new RankScreen(super.game, previous)); 
+            ranque.setPoints(sequencer.getGameNumber());
             return;
         }
         
@@ -174,8 +206,10 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void drawEndGame() {
-        super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
+        if(option == GameOption.NORMAL){
+            super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
                 + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
+        }
     }
 
     private void loseLife() {
