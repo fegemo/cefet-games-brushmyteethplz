@@ -1,5 +1,6 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.Config;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.factories.MouthLandingFactory;
@@ -160,6 +161,7 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
             Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
+            Gdx.input.setCursorPosition(Config.WORLD_WIDTH/3, Config.WORLD_HEIGHT/3);
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
@@ -206,6 +208,7 @@ public class PlayingGamesScreen extends BaseScreen
             case WON:
                 if (this.sequencer.hasNextGame()) {
                     sound.playSucess();
+                    Gdx.input.setCursorCatched(false);
                 } else {
                     sound.playGameWin();
                 }
