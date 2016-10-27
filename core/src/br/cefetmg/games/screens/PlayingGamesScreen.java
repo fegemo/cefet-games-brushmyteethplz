@@ -1,6 +1,5 @@
 package br.cefetmg.games.screens;
 
-import br.cefetmg.games.Config;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.factories.MouthLandingFactory;
