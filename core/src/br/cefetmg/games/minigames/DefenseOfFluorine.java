@@ -52,7 +52,7 @@ public class DefenseOfFluorine extends MiniGame {
     public DefenseOfFluorine(BaseScreen screen,GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
-        this.toothPasteTexture = super.screen.assets.get("defense-of-fluorine/toothpaste.png", Texture.class);
+        this.toothPasteTexture = super.screen.assets.get("defense-of-fluorine/toothPaste.png", Texture.class);
         this.fluorineTexture = super.screen.assets.get("defense-of-fluorine/fluorine.png", Texture.class);
         this.toothPaste = new ToothPaste(toothPasteTexture);
         this.tartarusTexture = super.screen.assets.get("shoo-the-tartarus/tartarus-spritesheet.png", Texture.class);
