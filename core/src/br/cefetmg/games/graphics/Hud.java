@@ -33,11 +33,9 @@ public class Hud {
 
     private Texture lifeTexture;
     private Texture clockTexture;
-    private Texture ponteiroTexture;
 
     private Label sequenceIndexLabel;
     private HorizontalGroup livesGroup;
-    private Label timeLabel;
     
     private Timer timer;
 
@@ -70,8 +68,7 @@ public class Hud {
         LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
         sequenceIndexLabel = new Label(
                 String.format("%03d", 1), labelStyle);
-        timeLabel = new Label("", labelStyle);
-
+        
         livesGroup = new HorizontalGroup();
         for (int i = 0; i < Config.MAX_LIVES; i++) {
             livesGroup.addActor(new LifeHeart(lifeTexture));
@@ -82,11 +79,9 @@ public class Hud {
         table.padBottom(10);
         
         table.add(clock).uniformX();
-        table.add(timeLabel).uniformX();
         table.add(livesGroup).uniformX();
         table.add(sequenceIndexLabel).uniformX();
 
-        
         stage.addActor(table);
         
         timerSound = Gdx.audio.newSound(Gdx.files.internal("ui/tick-tock.mp3"));
@@ -140,14 +135,11 @@ public class Hud {
                         clock.timeFinishing();
                         flag=true;
                     }
-                    timeLabel.setText(String.format("%02d",
-                            (int) Math.round(remainingTime / 1000f)));
                     timerSound.play();
                 } else {
-                    timeLabel.setText("");
+                    clock.stopClock();
                     timerSound.stop();
                     flag=false;
-                    clock.stopClock();
                 }
 
             }
@@ -163,7 +155,7 @@ public class Hud {
         Clock(Texture clockTexture) {
             TextureRegion[][] frames = TextureRegion
                     .split(clockTexture, FRAME_WIDTH, FRAME_HEIGHT);
-            Animation clock = new Animation(1f, frames[0][0], frames[0][1],frames[0][2],frames[0][3],frames[0][4]);
+            Animation clock = new Animation(2f, frames[0][0], frames[0][1],frames[0][2],frames[0][3],frames[0][4]);
             Animation empty = new Animation(1f, frames[0][5]);
             
             clock.setPlayMode(Animation.PlayMode.LOOP_REVERSED);
