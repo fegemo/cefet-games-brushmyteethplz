@@ -36,10 +36,7 @@ public class PlayingGamesScreen extends BaseScreen
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-    private TransitionEffect transition;
-    private float i;
-    private boolean menu;
-    private Sprite screenTransition;
+    private boolean shouldTransitionToMenuScreen;
     
     public PlayingGamesScreen(Game game, BaseScreen previous) {
         super(game, previous);
@@ -57,12 +54,7 @@ public class PlayingGamesScreen extends BaseScreen
                         new MouthLandingFactory())
         ), this, this);
         this.hud = new Hud(this);
-        this.transition = new TransitionEffect();
-        this.transition.setDelta(0.01f);
-        menu = false;
-        super.assets.load("images/transicao.jpg", Texture.class);
-        screenTransition = new Sprite(new Texture("images/transicao.jpg"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
-        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
+        shouldTransitionToMenuScreen = false;
     }
 
     @Override
@@ -70,7 +62,6 @@ public class PlayingGamesScreen extends BaseScreen
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.input.setCursorCatched(true);
         hud.create();
-        i = 0;
     }
 
     @Override
@@ -82,7 +73,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state != PlayScreenState.PLAYING) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
-                menu = true;
+                shouldTransitionToMenuScreen = true;
             }
         }
     }
@@ -106,10 +97,10 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.draw();
         }
         if (this.state != PlayScreenState.PLAYING) {
-            if(menu){
+            if(shouldTransitionToMenuScreen){
                 transition.fadeOut(batch, screenTransition);
                 if(transition.isFinished()) {
-                    menu = false;
+                    shouldTransitionToMenuScreen = false;
                     super.game.setScreen(new MenuScreen(super.game, previous));
                 }
             }
