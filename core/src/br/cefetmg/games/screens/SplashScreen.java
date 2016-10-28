@@ -30,13 +30,14 @@ public class SplashScreen extends BaseScreen {
      * Uma {@link Sprite} que contém a logo animada da empresa CEFET-GAMES.
      */
     private Sprite animatedLogo;
-    private Sound splashSound;
-    private Texture[] splashTextures;
+    private final Sound splashSound;
+    private final Texture[] splashTextures;
 
     /**
      * Cria uma nova tela de <em>splash</em>.
      *
      * @param game O jogo dono desta tela.
+     * @param previous A tela anterior a esta.
      */
     public SplashScreen(Game game, BaseScreen previous) {
         super(game, previous);
@@ -66,7 +67,6 @@ public class SplashScreen extends BaseScreen {
                 super.viewport.getWorldWidth() / 2,
                 super.viewport.getWorldHeight() / 2);
         splashSound.play();
-
     }
 
     /**
@@ -113,12 +113,14 @@ public class SplashScreen extends BaseScreen {
         // verifica se o tempo em que se passou na tela é maior do que o máximo
         // para que possamos navegar para a próxima tela.
         if (TimeUtils.timeSinceMillis(timeWhenScreenShowedUp)
-                >= Config.TIME_ON_SPLASH_SCREEN) {
+                >= Config.TIME_ON_SPLASH_SCREEN 
+                && transitionState == states.doNothing) {
             splashSound.stop();
-            transition.update(dt);
-            if (transition.isFinished()) {
-                navigateToMenuScreen();
-            }
+            transitionState = states.fadeOut;
+        }
+        
+        if (transitionState == states.fadeOut && transition.isFinished()) {
+            navigateToMenuScreen();
         }
     }
 
@@ -129,7 +131,6 @@ public class SplashScreen extends BaseScreen {
     public void draw() {
         batch.begin();
         animatedLogo.draw(batch);
-        transition.fadeOut(batch, screenTransition);
         batch.end();
     }
 }

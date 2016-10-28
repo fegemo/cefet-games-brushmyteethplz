@@ -100,8 +100,14 @@ public abstract class BaseScreen extends ScreenAdapter {
             if (this.messagesFont == null) {
                 this.messagesFont = this.assets.get("fonts/sawasdee-50.fnt");
             }
+            // chama função para gerenciar o input
             handleInput();
+            
+            // chama função para atualizar a lógica da tela
             update(dt);
+            
+            // chama função para atualizar o estado da transição
+            updateTransition(dt);
 
             // define o sistema de coordenadas (projeção) a ser usada pelo
             // spriteBatch
@@ -112,9 +118,26 @@ public abstract class BaseScreen extends ScreenAdapter {
 
             // desenha o conteúdo da tela
             draw();
+            
+            // desenha a transição de tela
+            drawTransition();
         }
     }
 
+    protected void updateTransition(float dt) {
+        switch (transitionState) {
+            case fadeIn:
+                if (transition.isFinished()) {
+                    transitionState = states.doNothing;
+                    transition.setX(0);
+                }
+                // passa adiante (nao pus o break de propósito)
+            case fadeOut:
+                transition.update(dt);
+                break;
+        }
+    }
+    
     /**
      * Escreve um texto centralizado na tela, com uma escala {@code scale} e
      * na altura {@code y}.
@@ -145,6 +168,19 @@ public abstract class BaseScreen extends ScreenAdapter {
                 worldWidth * (1 - horizontalPadding * 2),
                 Align.center,
                 true);
+    }
+    
+    protected void drawTransition() {
+        batch.begin();
+        switch (transitionState) {
+            case fadeIn:
+                transition.fadeIn(batch, screenTransition);
+                break;
+            case fadeOut:
+                transition.fadeOut(batch, screenTransition);
+                break;
+        }
+        batch.end();
     }
     
     @Override

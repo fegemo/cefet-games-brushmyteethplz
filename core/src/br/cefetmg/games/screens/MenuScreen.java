@@ -12,6 +12,8 @@ import br.cefetmg.games.minigames.util.Score;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +30,7 @@ public class MenuScreen extends BaseScreen {
     //***Alterações para o modo survival by Lindley and Lucas Viana
     private final Sprite normalButton, survivalButton, rankingButton;
     private ActualMenuScreen actualScreen;
-    private Rank rank;
+    private final Rank rank;
     //***Fim do bloco de alterações
 
     /**
@@ -118,7 +120,7 @@ public class MenuScreen extends BaseScreen {
             }
         }
     }
-
+    
     /**
      * Atualiza a lógica da tela.
      *
@@ -128,20 +130,15 @@ public class MenuScreen extends BaseScreen {
     public void update(float dt) {
         float speed = dt * 0.25f;
         background.scroll(speed, -speed);
-        switch (transitionState) {
-            case fadeIn:
-            case fadeOut:
-                transition.update(dt);
-                break;
-        }
     }
 
     /**
      * Desenha o conteúdo da tela de Menu.
      */
     @Override
-    public void draw() {
+    public void draw() {        
         batch.begin();
+
         batch.draw(background, 0, 0,
                 viewport.getWorldWidth(),
                 viewport.getWorldHeight());
@@ -165,14 +162,23 @@ public class MenuScreen extends BaseScreen {
             }
         }
         /**/
+        
         batch.end();
     }
 
     /**
      * Navega para a tela de jogo.
      */
-    private void navigateToMicroGameScreen(GameOption option) {
-        game.setScreen(new PlayingGamesScreen(game, this, option));
+    private void navigateToMicroGameScreen(final GameOption option) {
+        transitionState = states.fadeOut;
+        Timer.schedule(new Task() {
+            @Override
+            public void run() {
+                transitionState = states.doNothing;
+                game.setScreen(
+                        new PlayingGamesScreen(game, MenuScreen.this, option));
+            }
+        }, 0.75f);// 750ms
     }
 
 }

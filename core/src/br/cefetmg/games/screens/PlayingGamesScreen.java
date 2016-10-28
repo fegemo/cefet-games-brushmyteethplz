@@ -142,8 +142,8 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.state == PlayScreenState.FINISHED_WON ||
                 this.state == PlayScreenState.FINISHED_GAME_OVER) {
             if (Gdx.input.justTouched()) {
-                // volta para o menu principal
-                super.game.setScreen(new MenuScreen(super.game, this));
+                // começa transição para voltar para o menu principal
+                transitionState =  states.fadeOut;
             }
         }
     }
@@ -158,15 +158,12 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.update(dt);
             hud.update(dt);
             
-            switch (transitionState) {
-                case fadeIn:
-                case fadeOut:
-                    transition.update(dt);
-                    break;
-            }
+            if (transitionState == states.fadeOut && transition.isFinished()) {		
+                super.game.setScreen(new MenuScreen(super.game, this));		
+            }	
         }
     }
-
+    
     @Override
     public void draw() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -214,8 +211,8 @@ public class PlayingGamesScreen extends BaseScreen
 
     private void drawEndGame() {
         if(option == GameOption.NORMAL){
-            super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
-                + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
+            super.drawCenterAlignedText("Toque para voltar ao Menu", 
+                    0.5f, super.viewport.getWorldHeight() * 0.35f);
         }
     }
 
