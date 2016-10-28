@@ -1,6 +1,7 @@
 package br.cefetmg.games.graphics;
 
 import br.cefetmg.games.Config;
+import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -31,15 +32,21 @@ public class Hud {
     private Table table;
 
     private Texture lifeTexture;
+    private Texture clockTexture;
 
     private Label sequenceIndexLabel;
     private HorizontalGroup livesGroup;
-    private Label timeLabel;
-
-    private Timer timer;
     
+    private Timer timer;
+
     private Sound timerSound;
 
+    private Clock clock;
+
+    public static MiniGameState currentState;
+
+    private boolean isClocking;
+    
     public Hud(BaseScreen screen) {
         stage = new Stage(screen.viewport, screen.batch);
     }
@@ -47,7 +54,10 @@ public class Hud {
     public void create() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         timer = new Timer();
-        lifeTexture = new Texture("ui/lives.png");
+        isClocking=false;
+        lifeTexture = new Texture("images/lives.png");
+        clockTexture = new Texture("images/relogio.png");
+        
         BitmapFont font = new BitmapFont(
                 Gdx.files.internal("fonts/sawasdee-50.fnt"));
 
@@ -55,18 +65,20 @@ public class Hud {
         table.bottom();
         table.setFillParent(true);
 
-        LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
+        LabelStyle labelStyle = new Label.LabelStyle(font, Color.ORANGE);
         sequenceIndexLabel = new Label(
                 String.format("%03d", 1), labelStyle);
-        timeLabel = new Label("", labelStyle);
-
+        
         livesGroup = new HorizontalGroup();
         for (int i = 0; i < Config.MAX_LIVES; i++) {
             livesGroup.addActor(new LifeHeart(lifeTexture));
         }
 
+        clock =new Clock(clockTexture);
+        
         table.padBottom(10);
-        table.add(timeLabel).uniformX();
+        
+        table.add(clock).uniformX();
         table.add(livesGroup).uniformX();
         table.add(sequenceIndexLabel).uniformX();
 
@@ -77,6 +89,7 @@ public class Hud {
 
     public void update(float dt) {
         stage.act(dt);
+            
     }
 
     public void draw() {
@@ -97,60 +110,59 @@ public class Hud {
                     + "um número de vidas menor que 0 ou maior que "
                     + Config.MAX_LIVES + ".");
         }
-
         for (int i = 0; i < Config.MAX_LIVES; i++) {
             LifeHeart heart = ((LifeHeart) livesGroup.getChildren().get(i));
             if (lives > i) {
                 heart.alive();
-            } else {
-                heart.die();
+            } else {              
+                heart.die();            
             }
         }
     }
 
     public void startEndingTimer(final long endingTime) {
         timer.scheduleTask(new Task() {
-            
             @Override
             public void run() {
                 long remainingTime = endingTime - TimeUtils.millis();
+                if (currentState != null && currentState.equals(MiniGameState.WON)) {
+                    remainingTime = 0;
+                }
                 if (remainingTime > 0) {
-                    timeLabel.setText(String.format("%02d",
-                            (int) Math.round(remainingTime / 1000f)));
+                    //verifica se relogio esta já esta rodando
+                     if(!isClocking){
+                        clock.timeFinishing();
+                        isClocking=true;
+                    }
                     timerSound.play();
                 } else {
-                    timeLabel.setText("");
+                    clock.stopClock();
+                    timerSound.stop();
+                    isClocking=false;
                 }
-                
+
             }
         }, 0f, 1f, 4);
     }
-
-    class LifeHeart extends Actor {
-
+    
+    class Clock extends Actor{
+    
         private final MultiAnimatedSprite sprite;
-        private static final int FRAME_WIDTH = 100;
-        private static final int FRAME_HEIGHT = 112;
+        private static final int FRAME_WIDTH = 50;
+        private static final int FRAME_HEIGHT = 50;
 
-        LifeHeart(Texture lifeTexture) {
+        Clock(Texture clockTexture) {
             TextureRegion[][] frames = TextureRegion
-                    .split(lifeTexture, FRAME_WIDTH, FRAME_HEIGHT);
-            Animation alive = new Animation(1f, frames[3][4]);
-            Animation dying = new Animation(0.1f,
-                    frames[3][4], frames[3][3], frames[3][2], frames[3][1],
-                    frames[3][0], frames[2][7], frames[2][6], frames[2][5],
-                    frames[2][4], frames[2][3], frames[2][2], frames[2][1],
-                    frames[2][0], frames[1][7], frames[1][6], frames[1][5],
-                    frames[1][4], frames[1][3], frames[1][2], frames[1][1],
-                    frames[1][0], frames[0][7], frames[0][6], frames[0][5],
-                    frames[0][4], frames[0][3], frames[0][2], frames[0][1],
-                    frames[0][0]
-            );
+                    .split(clockTexture, FRAME_WIDTH, FRAME_HEIGHT);
+            Animation clock = new Animation(2f, frames[0][0], frames[0][1],frames[0][2],frames[0][3],frames[0][4]);
+            Animation empty = new Animation(1f, frames[0][5]);
+            
+            clock.setPlayMode(Animation.PlayMode.LOOP_REVERSED);
             HashMap<String, Animation> animations
                     = new HashMap<String, Animation>();
-            animations.put("alive", alive);
-            animations.put("dying", dying);
-            sprite = new MultiAnimatedSprite(animations, "alive");
+            animations.put("empty",empty);
+            animations.put("clock", clock);
+            sprite = new MultiAnimatedSprite(animations, "empty");
             sprite.setCenterFrames(true);
             sprite.setUseFrameRegionSize(true);
             setPosition(0, 0);
@@ -170,10 +182,55 @@ public class Hud {
             sprite.update(dt);
         }
 
+        public void timeFinishing() {
+            sprite.startAnimation("clock");
+        }
+        
+        public void stopClock() {
+            sprite.startAnimation("empty");
+        }
+    }
+
+    class LifeHeart extends Actor {
+
+        private final MultiAnimatedSprite sprite;
+        private static final int FRAME_WIDTH = 100;
+        private static final int FRAME_HEIGHT = 112;
+        
+        LifeHeart(Texture lifeTexture) {
+            TextureRegion[][] frames = TextureRegion
+                    .split(lifeTexture, FRAME_WIDTH, FRAME_HEIGHT);
+            Animation alive = new Animation(1f, frames[0][5]);
+            Animation dying = new Animation(.1f,new TextureRegion[]{frames[0][4], frames[0][3], frames[0][2], frames[0][1],frames[0][0]});
+            HashMap<String, Animation> animations
+                    = new HashMap<String, Animation>();
+            animations.put("alive", alive);
+            animations.put("dying", dying);
+            
+            sprite = new MultiAnimatedSprite(animations, "alive");
+            sprite.setCenterFrames(true);
+            sprite.setUseFrameRegionSize(true);
+            setPosition(0, 0);
+            setWidth(sprite.getWidth());
+            setHeight(sprite.getHeight());
+        }
+        
+        @Override
+        public void draw(Batch batch, float alpha) {    
+            sprite.draw(batch, alpha);
+        }
+        @Override
+        public void act(float dt) {
+            sprite.update(dt);
+            super.act(dt);
+            sprite.setPosition(getX(), getY());
+            sprite.update(dt);
+        }
+
         public void die() {
             sprite.startAnimation("dying");
         }
-
+        
         public void alive() {
             sprite.startAnimation("alive");
         }
