@@ -55,6 +55,8 @@ public class PlayingGamesScreen extends BaseScreen
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
+        super.assets.load("images/pausedImage.png", Texture.class);
+        super.assets.load("images/unpausedImage.png", Texture.class);
 
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
@@ -129,7 +131,6 @@ public class PlayingGamesScreen extends BaseScreen
     @Override
     public void show() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.input.setCursorCatched(true);
         hud.create();
     }
 
@@ -192,16 +193,13 @@ public class PlayingGamesScreen extends BaseScreen
             return;
         }
         
-        int posX = Math.round(Gdx.graphics.getWidth() / 2);
-        int posY = Math.round(Gdx.graphics.getHeight() / 2);
-        
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
-            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
-   
-            Gdx.input.setCursorPosition(posX, posY);
-            
+
+            Gdx.input.setCursorPosition(
+                    (int)Gdx.graphics.getWidth() / 2, 
+                    (int)Gdx.graphics.getHeight() / 2);
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
@@ -227,7 +225,6 @@ public class PlayingGamesScreen extends BaseScreen
         } else {
             sound.playGameWin();
         }
-
     }
 
     private void transitionTo(PlayScreenState newState) {
@@ -249,6 +246,11 @@ public class PlayingGamesScreen extends BaseScreen
     @Override
     public void onStateChanged(MiniGameState state) {
         switch (state) {
+            case PLAYING:
+                Gdx.input.setCursorCatched(
+                        this.currentGame.shouldHideMousePointer());
+                break;
+
             case WON:
                 if (this.sequencer.hasNextGame()) {
                     sound.playSucess();
@@ -256,6 +258,8 @@ public class PlayingGamesScreen extends BaseScreen
                 } else {
                     sound.playGameWin();
                 }
+                // deixa passar para próximo caso
+                
             case FAILED:
                 if (state == MiniGameState.FAILED) {
                     loseLife();
