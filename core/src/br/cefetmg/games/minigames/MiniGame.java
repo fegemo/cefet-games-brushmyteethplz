@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  *
@@ -39,6 +41,7 @@ public abstract class MiniGame {
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
     private final Texture grayMask, pausedImage, unpausedImage;
+    private final Sprite pauseUnpauseSprite;
     private boolean challengeSolved;
     private boolean lastgame;
     private GameStateObserver stateObserver;
@@ -87,40 +90,33 @@ public abstract class MiniGame {
                 Texture.class);
         this.unpausedImage = screen.assets.get("images/unpausedImage.png",
                 Texture.class);
+        this.pauseUnpauseSprite = new Sprite(unpausedImage, 100, 100);
+        this.pauseUnpauseSprite.setPosition(10, 10);
         this.rand = new Random();
         this.timer = new Timer();
         this.timer.stop();
         this.configureDifficultyParameters(difficulty);
-        //this.isPaused = FALSE;
     }
 
     public final void handleInput() {
         switch (this.state) {
             case INSTRUCTIONS:
-                // caso aperte o isPaused, o tempo pausa.
-                if(Gdx.input.isKeyJustPressed(Input.Keys.P)/*Gdx.input.isKeyJustPressed(Input.Buttons.LEFT) &&
-                        Gdx.input.getX()>=0 && Gdx.input.getX()<=125 &&
-                        Gdx.input.getY()>=0 && Gdx.input.getY()<=125*/){
-                    if(isPaused){
-                        isPaused = false;
-                    }
-                    else {
-                        isPaused = true;
-                    }
-                }
-                // se apertar qualquer tecla durante as instruções, pula para
-                // o jogo
-                else if (Gdx.input.justTouched()) {
-                    isPaused = false;
-                    transitionTo(MiniGameState.PLAYING);
+                // caso aperte o isPaused, o tempo pausa
+                Vector2 clickPosition = new Vector2(
+                        Gdx.input.getX(), Gdx.input.getY());
+                this.screen.viewport.unproject(clickPosition);
+                
+                if(Gdx.input.justTouched() &&
+                        pauseUnpauseSprite.getBoundingRectangle()
+                                .contains(clickPosition)){
+                    isPaused = !isPaused;
+                    pauseUnpauseSprite.setTexture(
+                            isPaused ? pausedImage : unpausedImage);
                 }
                 break;
+                
             case PLAYING:
                 onHandlePlayingInput();
-                break;
-            case WON:
-                break;
-            case FAILED:
                 break;
         }
     }
@@ -128,10 +124,7 @@ public abstract class MiniGame {
     public final void update(float dt) {
         switch (this.state) {
             case INSTRUCTIONS:
-                if(isPaused){
-
-                }
-                else{
+                if (!isPaused) {
                     this.countdown.update(dt);
                     if(TimeUtils.timeSinceMillis(initialTime)
                             > INSTRUCTIONS_TIME) {
@@ -189,17 +182,7 @@ public abstract class MiniGame {
     }
 
     private void drawButtonPause() {
-        if(isPaused){
-            this.screen.batch.draw(pausedImage,
-                    0, 0,
-                    125,125);
-        }
-        else {
-            this.screen.batch.draw(unpausedImage,
-                    0, 0,
-                    125,125);
-        }
-
+        pauseUnpauseSprite.draw(this.screen.batch);
     }
 
     public final void draw() {
@@ -207,10 +190,9 @@ public abstract class MiniGame {
             case INSTRUCTIONS:
                 drawButtonPause();
                 drawInstructions();
-                if(isPaused){
+                if (isPaused) {
                     drawMask();
-                }
-                else {
+                } else {
                     drawCountdown();
                 }
                 break;
