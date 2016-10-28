@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -18,9 +17,6 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 /**
  *
@@ -37,11 +33,11 @@ public abstract class MiniGame {
     protected MiniGameState state;
     protected Random rand;
     protected Timer timer;
-    private boolean pause;
+    private boolean isPaused;
 
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
-    private final Texture grayMask, paused, unpaused;
+    private final Texture grayMask, pausedImage, unpausedImage;
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
     
@@ -85,31 +81,33 @@ public abstract class MiniGame {
         this.countdown.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
         this.grayMask = screen.assets.get("images/gray-mask.png",
                 Texture.class);
-        this.paused = new Texture("images/paused.png");
-        this.unpaused = new Texture("images/unpaused.png");
+        this.pausedImage = screen.assets.get("images/pausedImage.png",
+                Texture.class);
+        this.unpausedImage = screen.assets.get("images/unpausedImage.png",
+                Texture.class);
         this.rand = new Random();
         this.timer = new Timer();
         this.timer.stop();
         this.configureDifficultyParameters(difficulty);
-        this.pause= FALSE;
+        //this.isPaused = FALSE;
     }
 
     public final void handleInput() {
         switch (this.state) {
             case INSTRUCTIONS:
-                // caso aperte o pause, o tempo pausa.
+                // caso aperte o isPaused, o tempo pausa.
                 if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
-                    if(pause==TRUE){
-                        pause=FALSE;
+                    if(isPaused){
+                        isPaused = false;
                     }
                     else {
-                        pause = TRUE;
+                        isPaused = true;
                     }
                 }
                 // se apertar qualquer tecla durante as instruções, pula para
                 // o jogo
                 else if (Gdx.input.justTouched()) {
-                    pause = FALSE;
+                    isPaused = false;
                     transitionTo(MiniGameState.PLAYING);
                 }
                 break;
@@ -126,7 +124,10 @@ public abstract class MiniGame {
     public final void update(float dt) {
         switch (this.state) {
             case INSTRUCTIONS:
-                if(pause==FALSE){
+                if(isPaused){
+
+                }
+                else{
                     this.countdown.update(dt);
                     if(TimeUtils.timeSinceMillis(initialTime)
                             > INSTRUCTIONS_TIME) {
@@ -184,11 +185,15 @@ public abstract class MiniGame {
     }
 
     private void drawButtonPause() {
-        if(pause==TRUE){
-            this.screen.batch.draw(paused, 0, 0);
+        if(isPaused){
+            this.screen.batch.draw(pausedImage,
+                    0, 0,
+                    125,125);
         }
         else {
-            this.screen.batch.draw(unpaused, 0, 0);
+            this.screen.batch.draw(unpausedImage,
+                    0, 0,
+                    125,125);
         }
 
     }
@@ -198,11 +203,11 @@ public abstract class MiniGame {
             case INSTRUCTIONS:
                 drawButtonPause();
                 drawInstructions();
-                if(pause==FALSE){
-                    drawCountdown();
+                if(isPaused){
+                    drawMask();
                 }
                 else {
-                    drawMask();
+                    drawCountdown();
                 }
                 break;
 
