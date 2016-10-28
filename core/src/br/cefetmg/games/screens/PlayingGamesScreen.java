@@ -32,6 +32,9 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
+import br.cefetmg.games.logic.chooser.BaseGameSequencer;
+import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
+import br.cefetmg.games.minigames.util.GameOption;
 
 /**
  *
@@ -41,13 +44,14 @@ public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
     private MiniGame currentGame;
-    private final GameSequencer sequencer;
+    private final BaseGameSequencer sequencer;
     private final Hud hud;
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
+    private final GameOption option;
 
-    public PlayingGamesScreen(Game game, BaseScreen previous) {
+    public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
@@ -55,7 +59,10 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sound = new Sounds();
-        this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
+                this.option = option;
+
+        if (this.option == GameOption.NORMAL) {
+            this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
                         // flávio
                         new ShootTheCariesFactory(),
@@ -84,7 +91,38 @@ public class PlayingGamesScreen extends BaseScreen
                         // carlos e bruno
                         new CleanTheToothFactory()
                 )
-        ), 0, 1, this, this);
+            ), 0, 1, this, this);
+        } else {
+            this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // flávio
+                        new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
+                        // gabriel e juan
+                        new SaveTheTeethFactory(),
+                        new FleeFromTartarusFactory(),
+                        // higor e matheus
+                        new AngryToothsFactory(),
+                        new CarieSwordFactory(),
+                        // nicolas e henrique
+                        new PutTheBracesFactory(),
+                        new EscoveOsDentesFactory(),
+                        // lucas
+                        new FleeFactory(),
+                        new MouthLandingFactory(),
+                        // lindley e lucas
+                        new GallowsFactory(),
+                        new SmashItFactory(),
+                        // amanda e vinícius
+                        new FleeTheTartarusFactory(),
+                        new CollectItensFactory(),
+                        // daniel
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory(),
+                        // carlos e bruno
+                        new CleanTheToothFactory())
+            ), this, this);
+        } 
         this.hud = new Hud(this);
     }
 
@@ -117,6 +155,13 @@ public class PlayingGamesScreen extends BaseScreen
             }
             this.currentGame.update(dt);
             hud.update(dt);
+            
+            switch (transitionState) {
+                case fadeIn:
+                case fadeOut:
+                    transition.update(dt);
+                    break;
+            }
         }
     }
 
@@ -135,23 +180,36 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void advance() {
-        if (this.state != PlayScreenState.PLAYING) {
+        if (this.state != PlayScreenState.PLAYING
+                && option == GameOption.SURVIVAL) {
+            RankScreen ranque;
+            super.game.setScreen(ranque = new RankScreen(super.game, previous)); 
+            ranque.setPoints(sequencer.getGameNumber());
             return;
         }
-
+        
+        int posX = Math.round(Gdx.graphics.getWidth() / 2);
+        int posY = Math.round(Gdx.graphics.getHeight() / 2);
+        
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
             Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
+   
+            Gdx.input.setCursorPosition(posX, posY);
+            
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
+            Gdx.input.setCursorCatched(false);
         }
     }
 
     private void drawEndGame() {
-        super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
+        if(option == GameOption.NORMAL){
+            super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
                 + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
+        }
     }
 
     private void loseLife() {
@@ -171,6 +229,7 @@ public class PlayingGamesScreen extends BaseScreen
     private void transitionTo(PlayScreenState newState) {
         switch (newState) {
             case FINISHED_GAME_OVER:
+                Gdx.input.setCursorCatched(false);
                 break;
 
         }
@@ -189,6 +248,7 @@ public class PlayingGamesScreen extends BaseScreen
             case WON:
                 if (this.sequencer.hasNextGame()) {
                     sound.playSucess();
+                    Gdx.input.setCursorCatched(false);
                 } else {
                     sound.playGameWin();
                 }
@@ -203,6 +263,7 @@ public class PlayingGamesScreen extends BaseScreen
                     }
 
                 }, 1.5f);
+                Gdx.input.setCursorCatched(false);
                 break;
         }
     }
