@@ -107,7 +107,7 @@ public class Flee extends MiniGame{
     @Override
     protected void configureDifficultyParameters(float difficulty) {
         this.EnemySpeed = DifficultyCurve.LINEAR
-                .getCurveValueBetween(difficulty, 75, 200);
+                .getCurveValueBetween(difficulty, 75, 130);
         this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
                 .getCurveValueBetween(difficulty, 500, 1000);
     }

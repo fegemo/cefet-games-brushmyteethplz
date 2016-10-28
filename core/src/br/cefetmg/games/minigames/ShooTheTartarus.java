@@ -206,7 +206,7 @@ public class ShooTheTartarus extends MiniGame {
         this.numberOfBrokenTeeth += tooth.wasHurt() ? 1 : 0;
 
         if (this.numberOfBrokenTeeth >= this.totalTeeth) {
-            super.challengeFailed();
+            super.challengeFailed();            
         }
         toothBreakingSound.play();
     }
