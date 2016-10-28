@@ -13,25 +13,35 @@ import com.badlogic.gdx.utils.Timer.Task;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class DentalKombat extends MiniGame {
     
+    private Vector2 playerPosition = new Vector2();
+    
     private final Texture backGroundTexture;
-    private final Texture toothTexture;
-    private final Texture cariesTexture;
+    private final Texture toothSheet;
+    private final Texture cariesSheet;
     private final Texture cariesPunchTemporaria;
     private final Sound toothIsHitSound;
     private final Sound cariesIsHitSound;
     private int cariesHealth;
     private int toothHealth = 3;
+    
+    //animacoes
+    private TextureRegion[][] framesToothDefend;
+    private TextureRegion currentFrameTooth;
+    private float stateTimeTooth = 0;
+    private Animation defend;
 
     public DentalKombat (BaseScreen screen,
             GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
-        this.toothTexture = this.screen.assets.get(
-                "shoot-the-caries/caries.png", Texture.class);
-        this.cariesTexture = this.screen.assets.get(
+        this.toothSheet = this.screen.assets.get(
+                "dental-kombat/spritesheet.png", Texture.class);
+        this.cariesSheet = this.screen.assets.get(
                 "shoot-the-caries/caries.png", Texture.class);
         this.toothIsHitSound = this.screen.assets.get(
                 "shoot-the-caries/caries2.mp3", Sound.class);
@@ -42,6 +52,7 @@ public class DentalKombat extends MiniGame {
         this.cariesPunchTemporaria = super.screen.assets.get(
                 "dental-kombat/cariesPunch.png", Texture.class);
         
+        inicializarAnimacoes();
     }
     
     @Override
@@ -65,18 +76,23 @@ public class DentalKombat extends MiniGame {
         //Se clicou para tras ou apertou Esquerda, defesa
         if (click.x <= super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched() 
                 || Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            System.out.println("Defesa");
-        
-        //Se clicou na frente ou Direita, ataque
-        else if (click.x > super.screen.viewport.getScreenWidth()/2 && Gdx.input.justTouched()
-                || Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-            System.out.println("Ataque");
+        {
+            stateTimeTooth += Gdx.graphics.getDeltaTime();
+            currentFrameTooth = defend.getKeyFrame(stateTimeTooth);
         }
         
-        else {
-            //<editor-fold defaultstate="collapsed" desc="Tocar animacao de ficar parado">
+        //Se clicou na frente ou Direita, ataque
+        else { 
+            if (click.x > super.screen.viewport.getScreenWidth()/2 && Gdx.input.justTouched()
+                || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            System.out.println("Ataque");
+            }
+        
+            else {
             
-//</editor-fold>
+            stateTimeTooth = 0;
+            currentFrameTooth = framesToothDefend[0][0];
+            }
         }
         
     }
@@ -88,9 +104,11 @@ public class DentalKombat extends MiniGame {
     
     @Override
     public void onDrawGame() {
-        //tocar animacoes?
-        this.screen.batch.draw(backGroundTexture, 0, 0, 1280, 720);
-        this.screen.batch.draw(toothTexture, 300, 200);
+        playerPosition.x = 300;
+        playerPosition.y = 200;
+        //this.screen.batch.draw(backGroundTexture, 0, 0, 1280, 720);
+        //this.screen.batch.draw(framesToothDefend[0][1], playerPosition.x, playerPosition.y);
+        this.screen.batch.draw(currentFrameTooth, playerPosition.x, playerPosition.y);
         
     }
     
@@ -102,5 +120,20 @@ public class DentalKombat extends MiniGame {
     @Override
     public String getInstructions() {
         return "Derrote a cárie em combate";
+    }
+    private void inicializarAnimacoes() {
+        framesToothDefend = TextureRegion.split(toothSheet, toothSheet.getWidth()/6, toothSheet.getHeight());
+        
+        defend = new Animation(0.025f, new TextureRegion[] {
+            framesToothDefend[0][0],
+            framesToothDefend[0][1],
+            framesToothDefend[0][2],
+            framesToothDefend[0][3],
+            framesToothDefend[0][4],
+            framesToothDefend[0][5],
+        });
+        //defend.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+        
+        currentFrameTooth = framesToothDefend[0][0];
     }
 }
