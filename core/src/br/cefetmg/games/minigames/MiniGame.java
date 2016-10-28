@@ -98,7 +98,9 @@ public abstract class MiniGame {
         switch (this.state) {
             case INSTRUCTIONS:
                 // caso aperte o isPaused, o tempo pausa.
-                if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+                if(Gdx.input.isKeyJustPressed(Input.Keys.P)/*Gdx.input.isKeyJustPressed(Input.Buttons.LEFT) &&
+                        Gdx.input.getX()>=0 && Gdx.input.getX()<=125 &&
+                        Gdx.input.getY()>=0 && Gdx.input.getY()<=125*/){
                     if(isPaused){
                         isPaused = false;
                     }
