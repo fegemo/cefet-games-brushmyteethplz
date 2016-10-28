@@ -101,6 +101,6 @@ public class DentalKombat extends MiniGame {
     
     @Override
     public String getInstructions() {
-        return "Derrote a c√°rie em combate";
+        return "Derrote a c·rie em combate";
     }
 }
