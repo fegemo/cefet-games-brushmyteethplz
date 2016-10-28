@@ -9,6 +9,7 @@ import br.cefetmg.games.Rank;
 import br.cefetmg.games.minigames.util.ActualMenuScreen;
 import br.cefetmg.games.minigames.util.GameOption;
 import br.cefetmg.games.minigames.util.Score;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class MenuScreen extends BaseScreen {
 
     private static final int NUMBER_OF_TILED_BACKGROUND_TEXTURE = 7;
     private TextureRegion background;
+    private final Sound introMusic;
     
     //***Alterações para o modo survival by Lindley and Lucas Viana
     private final Sprite normalButton, survivalButton, rankingButton;
@@ -33,11 +35,15 @@ public class MenuScreen extends BaseScreen {
      * Cria uma nova tela de menu.
      *
      * @param game o jogo dono desta tela.
+     * @param previous a tela anterior a esta.
      */
     public MenuScreen(Game game, BaseScreen previous) {
         super(game, previous);
         
-        //***Alterações para o modo survival by Lindley and Lucas Viana
+        //Define a música tema
+        introMusic = Gdx.audio.newSound(Gdx.files.internal("sounds/menu.mp3"));
+
+         //***Alterações para o modo survival by Lindley and Lucas Viana
         //Carrega texturas para os botões do menu
         normalButton = new Sprite(new Texture("buttons_menu/Normal.png"));
         survivalButton = new Sprite(new Texture("buttons_menu/Survival.png"));
@@ -62,6 +68,7 @@ public class MenuScreen extends BaseScreen {
     public void show() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
 
+        introMusic.play();
         // instancia a textura e a região de textura (usada para repetir)
         background = new TextureRegion(new Texture("menu-background.png"));
         // configura a textura para repetir caso ela ocupe menos espaço que o
@@ -98,8 +105,10 @@ public class MenuScreen extends BaseScreen {
         if (Gdx.input.justTouched()) {
             if (actualScreen == ActualMenuScreen.MENU) {
                 if (normalButton.getBoundingRectangle().contains(click)) {
+                    introMusic.stop();
                     navigateToMicroGameScreen(GameOption.NORMAL);
                 } else if (survivalButton.getBoundingRectangle().contains(click)) {
+                    introMusic.stop();
                     navigateToMicroGameScreen(GameOption.SURVIVAL);
                 } else if (rankingButton.getBoundingRectangle().contains(click)) {
                     actualScreen = ActualMenuScreen.RANKING;
