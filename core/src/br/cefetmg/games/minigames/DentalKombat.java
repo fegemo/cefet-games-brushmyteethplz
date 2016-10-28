@@ -23,7 +23,6 @@ public class DentalKombat extends MiniGame {
     private final Texture backGroundTexture;
     private final Texture toothSheet;
     private final Texture cariesSheet;
-    private final Texture cariesPunchTemporaria;
     private final Sound toothIsHitSound;
     private final Sound cariesIsHitSound;
     private int cariesHealth;
@@ -49,8 +48,6 @@ public class DentalKombat extends MiniGame {
                 "shoot-the-caries/caries2.mp3", Sound.class);
         this.backGroundTexture = super.screen.assets.get(
                 "dental-kombat/background.png", Texture.class);
-        this.cariesPunchTemporaria = super.screen.assets.get(
-                "dental-kombat/cariesPunch.png", Texture.class);
         
         inicializarAnimacoes();
     }
@@ -77,6 +74,7 @@ public class DentalKombat extends MiniGame {
         if (click.x <= super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched() 
                 || Gdx.input.isKeyPressed(Input.Keys.LEFT))
         {
+            //vai para o proximo frame da animacao
             stateTimeTooth += Gdx.graphics.getDeltaTime();
             currentFrameTooth = defend.getKeyFrame(stateTimeTooth);
         }
@@ -106,8 +104,7 @@ public class DentalKombat extends MiniGame {
     public void onDrawGame() {
         playerPosition.x = 300;
         playerPosition.y = 200;
-        //this.screen.batch.draw(backGroundTexture, 0, 0, 1280, 720);
-        //this.screen.batch.draw(framesToothDefend[0][1], playerPosition.x, playerPosition.y);
+        this.screen.batch.draw(backGroundTexture, 0, 0, 1280, 720);
         this.screen.batch.draw(currentFrameTooth, playerPosition.x, playerPosition.y);
         
     }
