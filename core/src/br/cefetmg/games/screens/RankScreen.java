@@ -1,0 +1,225 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.cefetmg.games.screens;
+
+import br.cefetmg.games.Rank;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
+
+/**
+ *
+ * @author lindley
+ */
+public class RankScreen extends BaseScreen{    
+    private final Texture letrasTexture;
+    private final Array<StructSprite> letters;
+    private Animation letrasFrame;
+    private String nome;
+    private final Sprite eraseButton, okButton, traco;
+    private final Array<StructSprite> nickname;
+    private int points;
+    private final Rank rank;
+    public RankScreen(Game game, BaseScreen previous) {
+        super(game, previous);
+        this.nome = "";
+        rank = new Rank();
+        this.letrasTexture = new Texture("buttons_rank/letras.png");
+        Letters letters1 = new Letters(letrasTexture);
+        this.letters = new Array<StructSprite>();
+        colocaLetrasNoArray();
+        
+        eraseButton = new Sprite(new Texture("buttons_rank/erase.png"));
+        okButton = new Sprite(new Texture("buttons_rank/ok.png"));
+        
+        eraseButton.setPosition(330.0f, viewport.getWorldHeight() / 2.5f);
+        okButton.setPosition(800.0f, viewport.getWorldHeight() / 2.5f);
+        
+        this.traco = new Sprite(new Texture("buttons_rank/traco.png"));
+        
+        this.nickname = new Array<StructSprite>();
+        Gdx.input.setCursorCatched(false);
+    }
+
+    @Override
+    public void handleInput() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        viewport.unproject(click);
+        
+        // verifica se clicou nos botões        
+        if (Gdx.input.justTouched()) {            
+            //Se clicar em ok
+            if(okButton.getBoundingRectangle().contains(click) 
+                    && nickname.size == 3){
+                //Guarda o nickname em uma string
+                for(int i =0; i < nickname.size; i++){
+                    nome += (char) nickname.get(i).caracterASCII;
+                }
+                rank.writeRankFile(nome, points);
+                //chama a tela de menu
+                super.game.setScreen(new MenuScreen(super.game, previous));
+            }
+            
+            //Se clicar em erase
+            if(eraseButton.getBoundingRectangle().contains(click)){
+                if(nickname.size > 0){
+                    this.nickname.removeIndex(nickname.size-1);
+                }
+            }
+            
+            // itera no array de letras
+            for (int i = 0; i < letters.size; i++) {
+                StructSprite spriteletras = letters.get(i);                
+                // se clicar em alguma letra
+                if (spriteletras.getSprite().getBoundingRectangle().contains(click) 
+                        && nickname.size < 3) {
+                    Sprite s = new Sprite(spriteletras.getSprite());                            
+                    s.setPosition(470 + nickname.size*150,520.0f);
+                    s.setScale(2.0f);
+                    StructSprite struct = new StructSprite(s, spriteletras.getCaracter());
+                    this.nickname.add(struct);
+                    break;
+                }
+            }            
+        }
+    }
+
+    @Override
+    public void update(float dt) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void draw() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        batch.begin();
+            super.drawCenterAlignedText("Escreva um nickname com 3 letras"
+                  , 0.9f, super.viewport.getWorldHeight() * 0.90f);
+            
+            
+            //Desenha traços
+            for(int i = 0; i< 3; i++){
+                traco.setPosition(420 + i*150,450.0f);
+                traco.setScale(0.8f);
+                traco.draw(super.batch);
+            }
+            
+            //Desenha nickname
+            for(int i = 0; i < nickname.size; i++){
+                Sprite sprite = nickname.get(i).getSprite();
+                sprite.draw(this.batch);
+            }
+            
+            //Desenha letras
+            for (int i = 0; i < letters.size; i++) {
+                Sprite sprite = letters.get(i).getSprite();
+                sprite.draw(this.batch);
+            }
+            
+            //Desenha Botões de ok e apagar
+            okButton.draw(this.batch);
+            eraseButton.draw(this.batch);
+            
+        batch.end();
+    }
+    
+    public String getNickname(){
+        return this.nome;
+    }
+    
+    public void setPoints(int points){
+        this.points = points;
+    }
+    
+    class Letters extends AnimatedSprite {
+        Letters(final Texture letrasTexture) {
+            super(letrasFrame = new Animation(0.1f, new Array<TextureRegion>() {
+                {
+                    TextureRegion[][] frames = TextureRegion.split(
+                            letrasTexture, letrasTexture.getWidth()/4, 
+                            letrasTexture.getHeight()/7);
+                    super.addAll(new TextureRegion[]{
+                        frames[0][0],
+                        frames[0][1],
+                        frames[0][2],
+                        frames[0][3],
+                        frames[1][0],
+                        frames[1][1],
+                        frames[1][2],
+                        frames[1][3],
+                        frames[2][0],
+                        frames[2][1],
+                        frames[2][2],
+                        frames[2][3],
+                        frames[3][0],
+                        frames[3][1],
+                        frames[3][2],
+                        frames[3][3],
+                        frames[4][0],
+                        frames[4][1],
+                        frames[4][2],
+                        frames[4][3],
+                        frames[5][0],
+                        frames[5][1],
+                        frames[5][2],
+                        frames[5][3],
+                        frames[6][0],
+                        frames[6][1],
+                        frames[6][2],
+                        frames[6][3]                            
+                    });
+                }
+            }));
+            //super.getAnimation().setPlayMode(Animation.PlayMode.LOOP);
+            super.getAnimation().setFrameDuration(1.0f);                
+        }        
+    }   
+    
+    private void colocaLetrasNoArray(){
+        for(int i = 0; i<26; i++){            
+            float posX, posY;
+            if(i < 13){
+                posX = 330 + i*50;
+                posY = 200.0f;
+            }else{
+                posX = 330 + (i-13)*50;
+                posY = 100.0f;
+            }           
+            Sprite letra = new Sprite(letrasFrame.getKeyFrame(i));
+            letra.setPosition(posX, posY);
+            letra.setScale(1.5f);
+            StructSprite struct = new StructSprite(letra, i+65);
+            letters.add(struct);       
+        }
+    }
+    
+    class StructSprite{
+        private Sprite sprite;
+        private final int caracterASCII;
+        
+        StructSprite(Sprite s, int c){
+            this.sprite = s;
+            this.caracterASCII = c;
+        }
+        
+        public Sprite getSprite(){
+            return sprite;
+        }
+        public int getCaracter(){
+            return caracterASCII;
+        }
+        public void setSprite(Sprite s){
+            this.sprite = s;
+        }
+    }
+}

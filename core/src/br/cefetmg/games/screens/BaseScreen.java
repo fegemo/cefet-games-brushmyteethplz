@@ -8,7 +8,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -35,7 +37,11 @@ public abstract class BaseScreen extends ScreenAdapter {
     public Viewport viewport;
     public final AssetManager assets;
     private BitmapFont messagesFont;
-
+    protected Texture transitionTexture;
+    protected Sprite screenTransition;
+    protected TransitionEffect transition;
+    protected enum states{fadeIn,doNothing,fadeOut,stopDrawing};
+    protected states transitionState;
     /**
      * Cria uma instância de tela.
      * 
@@ -56,6 +62,11 @@ public abstract class BaseScreen extends ScreenAdapter {
         this.assets = new AssetManager();
         this.assets.load("fonts/sawasdee-24.fnt", BitmapFont.class);
         this.assets.load("fonts/sawasdee-50.fnt", BitmapFont.class);
+        screenTransition = new Sprite(new Texture("images/transicao.png"),(int)viewport.getWorldWidth(), (int)viewport.getWorldHeight());
+        screenTransition.setCenter(viewport.getWorldWidth()/2f, viewport.getWorldHeight()/2f);
+        transition = new TransitionEffect();
+        transition.setDelta(0.025f);
+        transitionState = states.fadeIn;
     }
     
     @Override
@@ -139,7 +150,9 @@ public abstract class BaseScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        messagesFont.dispose();
+        if (messagesFont != null) {
+            messagesFont.dispose();
+        }
     }
 
     /**
