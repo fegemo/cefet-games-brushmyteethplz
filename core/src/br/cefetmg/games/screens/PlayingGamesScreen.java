@@ -55,6 +55,8 @@ public class PlayingGamesScreen extends BaseScreen
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
+        super.assets.load("images/pausedImage.png", Texture.class);
+        super.assets.load("images/unpausedImage.png", Texture.class);
 
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;

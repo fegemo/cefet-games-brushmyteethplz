@@ -6,6 +6,7 @@ import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -33,10 +34,11 @@ public abstract class MiniGame {
     protected MiniGameState state;
     protected Random rand;
     protected Timer timer;
+    private boolean isPaused;
 
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
-    private final Texture grayMask;
+    private final Texture grayMask, pausedImage, unpausedImage;
     private boolean challengeSolved;
     private boolean lastgame;
     private GameStateObserver stateObserver;
@@ -81,23 +83,44 @@ public abstract class MiniGame {
         this.countdown.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
         this.grayMask = screen.assets.get("images/gray-mask.png",
                 Texture.class);
+        this.pausedImage = screen.assets.get("images/pausedImage.png",
+                Texture.class);
+        this.unpausedImage = screen.assets.get("images/unpausedImage.png",
+                Texture.class);
         this.rand = new Random();
         this.timer = new Timer();
         this.timer.stop();
         this.configureDifficultyParameters(difficulty);
+        //this.isPaused = FALSE;
     }
 
     public final void handleInput() {
         switch (this.state) {
             case INSTRUCTIONS:
+                // caso aperte o isPaused, o tempo pausa.
+                if(Gdx.input.isKeyJustPressed(Input.Keys.P)/*Gdx.input.isKeyJustPressed(Input.Buttons.LEFT) &&
+                        Gdx.input.getX()>=0 && Gdx.input.getX()<=125 &&
+                        Gdx.input.getY()>=0 && Gdx.input.getY()<=125*/){
+                    if(isPaused){
+                        isPaused = false;
+                    }
+                    else {
+                        isPaused = true;
+                    }
+                }
                 // se apertar qualquer tecla durante as instruções, pula para
                 // o jogo
-                if (Gdx.input.justTouched()) {
+                else if (Gdx.input.justTouched()) {
+                    isPaused = false;
                     transitionTo(MiniGameState.PLAYING);
                 }
                 break;
             case PLAYING:
                 onHandlePlayingInput();
+                break;
+            case WON:
+                break;
+            case FAILED:
                 break;
         }
     }
@@ -105,10 +128,15 @@ public abstract class MiniGame {
     public final void update(float dt) {
         switch (this.state) {
             case INSTRUCTIONS:
-                this.countdown.update(dt);
-                if (TimeUtils.timeSinceMillis(initialTime)
-                        > INSTRUCTIONS_TIME) {
-                    transitionTo(MiniGameState.PLAYING);
+                if(isPaused){
+
+                }
+                else{
+                    this.countdown.update(dt);
+                    if(TimeUtils.timeSinceMillis(initialTime)
+                            > INSTRUCTIONS_TIME) {
+                        transitionTo(MiniGameState.PLAYING);
+                    }
                 }
                 break;
 
@@ -160,11 +188,31 @@ public abstract class MiniGame {
                 this.screen.viewport.getWorldHeight());
     }
 
+    private void drawButtonPause() {
+        if(isPaused){
+            this.screen.batch.draw(pausedImage,
+                    0, 0,
+                    125,125);
+        }
+        else {
+            this.screen.batch.draw(unpausedImage,
+                    0, 0,
+                    125,125);
+        }
+
+    }
+
     public final void draw() {
         switch (this.state) {
             case INSTRUCTIONS:
-                drawCountdown();
+                drawButtonPause();
                 drawInstructions();
+                if(isPaused){
+                    drawMask();
+                }
+                else {
+                    drawCountdown();
+                }
                 break;
 
             case PLAYING:
