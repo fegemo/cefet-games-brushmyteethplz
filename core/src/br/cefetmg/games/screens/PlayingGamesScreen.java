@@ -19,6 +19,7 @@ import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
 import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
 import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.CollectItensFactory;
+import br.cefetmg.games.minigames.factories.DentalKombatFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -64,7 +65,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
-                        // flávio
+/*                        // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
                         // gabriel e juan
@@ -89,7 +90,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        new CleanTheToothFactory()
+                        new CleanTheToothFactory(),     */
+                        //Matheus e Luis
+                        new DentalKombatFactory()
                 )
             ), 0, 1, this, this);
         } else {
