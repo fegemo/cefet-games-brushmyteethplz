@@ -139,10 +139,11 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.handleInput();
         }
 
-        if (this.state != PlayScreenState.PLAYING) {
+        if (this.state == PlayScreenState.FINISHED_WON ||
+                this.state == PlayScreenState.FINISHED_GAME_OVER) {
             if (Gdx.input.justTouched()) {
                 // volta para o menu principal
-                super.game.setScreen(new MenuScreen(super.game, previous));
+                super.game.setScreen(new MenuScreen(super.game, this));
             }
         }
     }
@@ -150,7 +151,8 @@ public class PlayingGamesScreen extends BaseScreen
     @Override
     public void update(float dt) {
         if (super.assets.update()) {
-            if (this.currentGame == null) {
+            if (this.state == PlayScreenState.PLAYING 
+                    && this.currentGame == null) {
                 advance();
             }
             this.currentGame.update(dt);
@@ -180,11 +182,16 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void advance() {
-        if (this.state != PlayScreenState.PLAYING
-                && option == GameOption.SURVIVAL) {
-            RankScreen ranque;
-            super.game.setScreen(ranque = new RankScreen(super.game, previous)); 
-            ranque.setPoints(sequencer.getGameNumber());
+        if (this.state == PlayScreenState.FINISHED_WON ||
+                this.state == PlayScreenState.FINISHED_GAME_OVER) {
+            if (option == GameOption.SURVIVAL) {
+                RankScreen ranque;
+                super.game.setScreen(ranque = new RankScreen(super.game, this)); 
+                ranque.setPoints(sequencer.getGameNumber());
+            }
+            
+            // se deu gameover ou terminou a sequencia com sucesso,
+            // não deixa avançar para próximo minigame
             return;
         }
         
