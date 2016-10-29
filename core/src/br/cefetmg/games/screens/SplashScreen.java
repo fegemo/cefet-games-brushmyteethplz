@@ -46,12 +46,6 @@ public class SplashScreen extends BaseScreen {
         this.displayWaitingTime = 0;
 
         this.splashTextures = new Texture[QTD_OF_FRAMES];
-
-        for (int i = 0; i < QTD_OF_FRAMES; i++) {
-            String name = "images/splash/video ".concat(String.valueOf(i + 1).concat(".jpg"));
-            splashTextures[i] = new Texture(name);
-        }
-
     }
 
     /**
@@ -59,14 +53,20 @@ public class SplashScreen extends BaseScreen {
      */
     @Override
     public void appear() {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        timeWhenScreenShowedUp = TimeUtils.millis();
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+
+        for (int i = 0; i < QTD_OF_FRAMES; i++) {
+            String name = String.format("images/splash/video %d.jpg", (i+1));
+            splashTextures[i] = new Texture(name);
+        }
+
         animatedLogo = new Sprite(splashTextures[0]);
         animatedLogo.setScale(SPRITE_SCALE_FACTOR);
         animatedLogo.setCenter(
                 super.viewport.getWorldWidth() / 2,
                 super.viewport.getWorldHeight() / 2);
         splashSound.play();
+        timeWhenScreenShowedUp = TimeUtils.millis();
     }
     
     @Override
@@ -89,6 +89,9 @@ public class SplashScreen extends BaseScreen {
         // se o jogador apertar alguma tecla, clicar com o mouse ou 
         // tocar a tela, pula direto para a próxima tela.
         if (Gdx.input.justTouched()) {
+            animatedLogo.setTexture(splashTextures[QTD_OF_FRAMES - 1]);
+            splashSound.stop();
+            transitionState = states.doNothing;
             navigateToMenuScreen();
         }
     }
@@ -101,16 +104,13 @@ public class SplashScreen extends BaseScreen {
     @Override
     public void update(float dt) {
         displayWaitingTime += dt;
+        
         //verifica se tempo de espera para exibir novo frame foi atingido
         if (displayWaitingTime > FRAME_PERIOD) {
             //verifica não chegou ao final da animação
             if (currentFrame < QTD_OF_FRAMES) {
-                animatedLogo = new Sprite(splashTextures[currentFrame]);
-                animatedLogo.setScale(SPRITE_SCALE_FACTOR);
+                animatedLogo.setTexture(splashTextures[currentFrame]);
                 currentFrame += 1;
-                animatedLogo.setCenter(
-                        super.viewport.getWorldWidth() / 2,
-                        super.viewport.getWorldHeight() / 2);
                 displayWaitingTime = 0;
             }
         }
