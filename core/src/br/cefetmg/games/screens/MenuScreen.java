@@ -7,7 +7,7 @@ import br.cefetmg.games.Rank;
 import br.cefetmg.games.minigames.util.ActualMenuScreen;
 import br.cefetmg.games.minigames.util.GameOption;
 import br.cefetmg.games.minigames.util.Score;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  */
 public class MenuScreen extends BaseScreen {
 
-    private final Sound introMusic;
+    private final Music menuMusic;
     private ActualMenuScreen actualScreen;
     private final Rank rank;
     private Texture background, backgroundRanking;
@@ -48,7 +48,7 @@ public class MenuScreen extends BaseScreen {
         super(game, previous);
 
         //Define a música tema
-        introMusic = Gdx.audio.newSound(Gdx.files.internal("sounds/menu.mp3"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/menu.mp3"));
 
         //Inicializa tela
         actualScreen = ActualMenuScreen.MENU;
@@ -136,7 +136,7 @@ public class MenuScreen extends BaseScreen {
         buttonSurvival.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                introMusic.stop();
+                menuMusic.stop();
                 navigateToMicroGameScreen(GameOption.SURVIVAL);
             }
         });
@@ -144,7 +144,7 @@ public class MenuScreen extends BaseScreen {
         buttonNormal.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                introMusic.stop();
+                menuMusic.stop();
                 navigateToMicroGameScreen(GameOption.NORMAL);
             }
         });
@@ -184,7 +184,8 @@ public class MenuScreen extends BaseScreen {
         stageRanking.addActor(buttonVoltar);
         Gdx.input.setInputProcessor(stage);
 
-        introMusic.play();
+        menuMusic.setLooping(true);
+        menuMusic.play();
     }
     
     @Override
@@ -194,6 +195,9 @@ public class MenuScreen extends BaseScreen {
         }
         if (stageRanking != null) {
             stageRanking.dispose();
+        }
+        if (menuMusic != null) {
+            menuMusic.dispose();
         }
         Gdx.input.setInputProcessor(null);
     }
@@ -262,6 +266,7 @@ public class MenuScreen extends BaseScreen {
             @Override
             public void run() {
                 transitionState = states.doNothing;
+                menuMusic.stop();
                 game.setScreen(
                         new PlayingGamesScreen(game, MenuScreen.this, option));
             }
