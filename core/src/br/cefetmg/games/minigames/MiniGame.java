@@ -6,7 +6,6 @@ import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -43,7 +42,6 @@ public abstract class MiniGame {
     private final Texture grayMask, pausedImage, unpausedImage;
     private final Sprite pauseUnpauseSprite;
     private boolean challengeSolved;
-    private boolean lastgame;
     private GameStateObserver stateObserver;
 
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
