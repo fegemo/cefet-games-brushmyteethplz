@@ -58,7 +58,7 @@ public class SplashScreen extends BaseScreen {
      * Configura parâmetros iniciais da tela.
      */
     @Override
-    public void show() {
+    public void appear() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         timeWhenScreenShowedUp = TimeUtils.millis();
         animatedLogo = new Sprite(splashTextures[0]);
@@ -67,6 +67,11 @@ public class SplashScreen extends BaseScreen {
                 super.viewport.getWorldWidth() / 2,
                 super.viewport.getWorldHeight() / 2);
         splashSound.play();
+    }
+    
+    @Override
+    public void cleanUp() {
+        splashSound.dispose();
     }
 
     /**

@@ -70,10 +70,11 @@ public abstract class BaseScreen extends ScreenAdapter {
     }
     
     @Override
-    public void show() {
+    public final void show() {
         if (previous != null) {
             previous.dispose();
         }
+        this.appear();
     }
 
     /**
@@ -184,12 +185,27 @@ public abstract class BaseScreen extends ScreenAdapter {
     }
     
     @Override
-    public void dispose() {
+    public final void dispose() {
         batch.dispose();
         if (messagesFont != null) {
             messagesFont.dispose();
         }
+        this.cleanUp();
     }
+    
+    /**
+     * Executa ações de carregamento da tela. Esta função é chamada assim que
+     * a tela vai ser exibida pela primeira vez.
+     * 
+     * Esta função deve ser usada em vez do método {@code show()}.
+     */
+    public abstract void appear();
+    
+    /**
+     * Executa as ações de limpeza e descarregamento de recursos e é chamada
+     * automaticamente quando a tela não está mais sendo usada.
+     */
+    public abstract void cleanUp();
 
     /**
      * Executa ações relativas ao <em>input</em> do jogador.

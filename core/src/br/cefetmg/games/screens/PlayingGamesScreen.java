@@ -129,9 +129,14 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     @Override
-    public void show() {
+    public void appear() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         hud.create();
+    }
+
+    @Override
+    public void cleanUp() {
+        Gdx.input.setCursorCatched(false);
     }
 
     @Override
@@ -235,12 +240,6 @@ public class PlayingGamesScreen extends BaseScreen
 
         }
         this.state = newState;
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        Gdx.input.setCursorCatched(false);
     }
 
     @Override

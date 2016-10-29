@@ -59,8 +59,8 @@ public class MenuScreen extends BaseScreen {
      * Configura parâmetros da tela e instancia objetos.
      */
     @Override
-    public void show() {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+    public void appear() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
 
         background = new Texture("menu_background_m.jpg");
         backgroundRanking = new Texture("menu_background_r.jpg");
@@ -189,7 +189,7 @@ public class MenuScreen extends BaseScreen {
     }
     
     @Override
-    public void dispose() {
+    public void cleanUp() {
         if (stage != null) {
             stage.dispose();
         }
