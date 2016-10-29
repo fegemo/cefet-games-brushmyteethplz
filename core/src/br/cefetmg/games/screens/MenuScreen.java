@@ -186,6 +186,17 @@ public class MenuScreen extends BaseScreen {
 
         introMusic.play();
     }
+    
+    @Override
+    public void dispose() {
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (stageRanking != null) {
+            stageRanking.dispose();
+        }
+        Gdx.input.setInputProcessor(null);
+    }
 
     /**
      * Recebe <em>input</em> do jogador.
@@ -202,7 +213,7 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void update(float dt) {
-
+        stage.act(dt);
     }
 
     /**
@@ -221,7 +232,6 @@ public class MenuScreen extends BaseScreen {
 
                 drawCenterAlignedText("Toque/clique para jogar",
                         1f, viewport.getWorldHeight() * 0.35f);
-                stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
                 stage.draw();
                 break;
 
