@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.cefetmg.games.screens;
 
 import br.cefetmg.games.Rank;
@@ -22,64 +17,63 @@ import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
  */
 public class RankScreen extends BaseScreen {
 
-    private final Texture letrasTexture;
-    private final Array<StructSprite> letters;
+    private Texture letrasTexture;
+    private Array<StructSprite> letters;
     private Animation letrasFrame;
     private String nome;
-    private final Sprite eraseButton, okButton, traco;
-    private final Array<StructSprite> nickname;
+    private Sprite eraseButton, okButton, traco;
+    private Array<StructSprite> nickname;
     private int points;
-    private final Rank rank;
+    private Rank rank;
 
     public RankScreen(Game game, BaseScreen previous) {
         super(game, previous);
-        this.nome = "";
-        rank = new Rank();
-        this.letrasTexture = new Texture("buttons_rank/letras.png");
-        this.letters = new Array<StructSprite>();
-        colocaLetrasNoArray();
-
-        eraseButton = new Sprite(new Texture("buttons_rank/erase.png"));
-        okButton = new Sprite(new Texture("buttons_rank/ok.png"));
-
-        eraseButton.setPosition(330.0f, viewport.getWorldHeight() / 2.5f);
-        okButton.setPosition(800.0f, viewport.getWorldHeight() / 2.5f);
-
-        this.traco = new Sprite(new Texture("buttons_rank/traco.png"));
-
-        this.nickname = new Array<StructSprite>();
-        Gdx.input.setCursorCatched(false);
     }
 
     @Override
     public void appear() {
+        new Letters(new Texture("buttons_rank/letras.png"));
+        this.letters = new Array<StructSprite>();
+        this.nickname = new Array<StructSprite>();
+        this.nome = "";
+        this.rank = new Rank();
+        colocaLetrasNoArray();
+
+        this.eraseButton = new Sprite(new Texture("buttons_rank/erase.png"));
+        this.okButton = new Sprite(new Texture("buttons_rank/ok.png"));
+
+        this.eraseButton.setPosition(330.0f, viewport.getWorldHeight() / 2.5f);
+        this.okButton.setPosition(800.0f, viewport.getWorldHeight() / 2.5f);
+
+        this.traco = new Sprite(new Texture("buttons_rank/traco.png"));
+
+        Gdx.input.setCursorCatched(false);
     }
 
     @Override
-    public void cleanUp() {  
+    public void cleanUp() {
     }
 
     @Override
     public void handleInput() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         viewport.unproject(click);
 
         // verifica se clicou nos botões        
         if (Gdx.input.justTouched()) {
-            //Se clicar em ok
+            // se clicar em ok
             if (okButton.getBoundingRectangle().contains(click)
                     && nickname.size == 3) {
-                //Guarda o nickname em uma string
+                // guarda o nickname em uma string
                 for (int i = 0; i < nickname.size; i++) {
                     nome += (char) nickname.get(i).caracterASCII;
                 }
                 rank.writeRankFile(nome, points);
-                //chama a tela de menu
-                super.game.setScreen(new MenuScreen(super.game, previous));
+                // chama a tela de menu
+                super.game.setScreen(new MenuScreen(super.game, this));
             }
 
-            //Se clicar em erase
+            // se clicar em erase
             if (eraseButton.getBoundingRectangle().contains(click)) {
                 if (nickname.size > 0) {
                     this.nickname.removeIndex(nickname.size - 1);
@@ -90,12 +84,13 @@ public class RankScreen extends BaseScreen {
             for (int i = 0; i < letters.size; i++) {
                 StructSprite spriteletras = letters.get(i);
                 // se clicar em alguma letra
-                if (spriteletras.getSprite().getBoundingRectangle().contains(click)
-                        && nickname.size < 3) {
+                if (spriteletras.getSprite().getBoundingRectangle()
+                        .contains(click) && nickname.size < 3) {
                     Sprite s = new Sprite(spriteletras.getSprite());
                     s.setPosition(470 + nickname.size * 150, 520.0f);
                     s.setScale(2.0f);
-                    StructSprite struct = new StructSprite(s, spriteletras.getCaracter());
+                    StructSprite struct = new StructSprite(s,
+                            spriteletras.getCaracter());
                     this.nickname.add(struct);
                     break;
                 }
@@ -105,35 +100,34 @@ public class RankScreen extends BaseScreen {
 
     @Override
     public void update(float dt) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void draw() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         batch.begin();
-        super.drawCenterAlignedText("Escreva um nickname com 3 letras", 0.9f, super.viewport.getWorldHeight() * 0.90f);
+        super.drawCenterAlignedText("Escreva um nickname com 3 letras", 0.9f,
+                super.viewport.getWorldHeight() * 0.90f);
 
-        //Desenha traços
+        // desenha traços
         for (int i = 0; i < 3; i++) {
             traco.setPosition(420 + i * 150, 450.0f);
             traco.setScale(0.8f);
             traco.draw(super.batch);
         }
 
-        //Desenha nickname
+        // desenha nickname
         for (int i = 0; i < nickname.size; i++) {
             Sprite sprite = nickname.get(i).getSprite();
             sprite.draw(this.batch);
         }
 
-        //Desenha letras
+        // desenha letras
         for (int i = 0; i < letters.size; i++) {
             Sprite sprite = letters.get(i).getSprite();
             sprite.draw(this.batch);
         }
 
-        //Desenha Botões de ok e apagar
+        // desenha Botões de ok e apagar
         okButton.draw(this.batch);
         eraseButton.draw(this.batch);
 
@@ -188,7 +182,6 @@ public class RankScreen extends BaseScreen {
                     });
                 }
             }));
-            //super.getAnimation().setPlayMode(Animation.PlayMode.LOOP);
             super.getAnimation().setFrameDuration(1.0f);
         }
     }
