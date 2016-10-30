@@ -24,6 +24,7 @@ public class DentalKombat extends MiniGame{
     private final Sound cariesIsHitSound;
     private int toothHealth = 3;
     private int cariesHealth = 3;
+    private boolean atacou;
     
     //animacoes
     private TextureRegion[][] framesToothDefend;
@@ -93,15 +94,21 @@ public class DentalKombat extends MiniGame{
             //Se clicou na frente ou Direita, ataque
             if (click.x > super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched()
                     || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {  
+                // Variável que controla se o jogador realizou um ataque
+                atacou = true;
                 //vai para o proximo frame da animacao
                 stateTimeTooth += Gdx.graphics.getDeltaTime();
                 currentFrameTooth = toothAttack.getKeyFrame(stateTimeTooth);
-                cariesHealth = cariesHealth - 1;
             }
             // Se não está clicando em lugar nenhum volta para a animação inicial
             else {             
                 stateTimeTooth = 0;
                 currentFrameTooth = framesToothDefend[0][0];
+                // Se acabou a animação de atacar diminui a vida da carie
+                if (atacou) {
+                    atacou = false;
+                    cariesHealth = cariesHealth - 1;
+                }
             }
             
         }
@@ -166,5 +173,6 @@ public class DentalKombat extends MiniGame{
         
         currentFrameTooth = framesToothDefend[0][0];
         currentFrameCaries = framesCaries[0][0];
+        atacou = false;
     }
 }
