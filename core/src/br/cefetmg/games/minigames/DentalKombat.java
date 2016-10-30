@@ -1,16 +1,11 @@
 package br.cefetmg.games.minigames;
 
-import br.cefetmg.games.minigames.DefenseOfFluorine.MyInputProcessor;
-import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer.Task;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Input;
@@ -29,8 +24,6 @@ public class DentalKombat extends MiniGame{
     private final Sound cariesIsHitSound;
     private int toothHealth = 3;
     private int cariesHealth = 3;
-    
-    MyInputProcessor inputProcessor;
     
     //animacoes
     private TextureRegion[][] framesToothDefend;
@@ -86,8 +79,6 @@ public class DentalKombat extends MiniGame{
     public void onHandlePlayingInput() {
         //Saber onde o player apertou
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        // Define o InputProcessor para controlar quando o usuário parar de "clicar"/apertar
-        Gdx.input.setInputProcessor(inputProcessor);
         super.screen.viewport.unproject(click);
         //Se clicou para tras ou apertou Esquerda, defesa
         if (click.x <= super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched() 
@@ -98,8 +89,8 @@ public class DentalKombat extends MiniGame{
             currentFrameTooth = toothDefend.getKeyFrame(stateTimeTooth);
         }
         
-        //Se clicou na frente ou Direita, ataque
         else { 
+            //Se clicou na frente ou Direita, ataque
             if (click.x > super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched()
                     || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {  
                 //vai para o proximo frame da animacao
@@ -107,6 +98,12 @@ public class DentalKombat extends MiniGame{
                 currentFrameTooth = toothAttack.getKeyFrame(stateTimeTooth);
                 cariesHealth = cariesHealth - 1;
             }
+            // Se não está clicando em lugar nenhum volta para a animação inicial
+            else {             
+                stateTimeTooth = 0;
+                currentFrameTooth = framesToothDefend[0][0];
+            }
+            
         }
         
     }
