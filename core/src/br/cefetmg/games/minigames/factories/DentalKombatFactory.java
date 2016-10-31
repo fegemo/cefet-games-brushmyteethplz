@@ -42,8 +42,7 @@ public class DentalKombatFactory implements MiniGameFactory {
                 put("dental-kombat/caries.png", Texture.class);
                 put("dental-kombat/background.png", Texture.class);
                 put("shoot-the-caries/caries2.mp3", Sound.class);
-                put("dental-kombat/toothDefendSpritesheet.png", Texture.class);
-                put("dental-kombat/toothAttackSpritesheet.png", Texture.class);
+                put("dental-kombat/toothSpritesheet.png", Texture.class);
             }
         };
     }
