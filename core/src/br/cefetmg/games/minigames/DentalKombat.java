@@ -20,12 +20,16 @@ public class DentalKombat extends MiniGame{
     private final Texture backGroundTexture;
     private final Texture toothSpritesheet;
     private final Texture cariesSheet;
+    private final Texture barraDeVidaDente;
+    private final Texture barraDeVidaCarie;
+    private final Texture barraDeVidaMoldura;
     private final Sound toothIsHitSound;
     private final Sound cariesIsHitSound;
     private int toothHealth = 3;
     private int cariesHealth = 3;
     private boolean stateToothAttack;
     private boolean stateToothDefend;
+    private boolean stateCariesAttack;
     
     //animacoes
     private TextureRegion[][] framesCaries;
@@ -41,8 +45,10 @@ public class DentalKombat extends MiniGame{
     // constantes
     private static final int INITIAL_POSX_TOOTH = 350;
     private static final int INITIAL_POSY_TOOTH = 75;
-    private static final int INITIAL_POSX_CARIE = 750;
+    private static final int INITIAL_POSX_CARIE = 350;
     private static final int INITIAL_POSY_CARIE = 75;
+    private final float CARIES_MAX_HEALTH = cariesHealth;
+    private final float TOOTH_MAX_HEALTH = toothHealth;
 
     public DentalKombat (BaseScreen screen,
             GameStateObserver observer, float difficulty){
@@ -59,6 +65,12 @@ public class DentalKombat extends MiniGame{
                 "shoot-the-caries/caries2.mp3", Sound.class);
         this.backGroundTexture = super.screen.assets.get(
                 "dental-kombat/background.png", Texture.class);
+        this.barraDeVidaDente = super.screen.assets.get(
+                "dental-kombat/barraDeVida.png", Texture.class);
+        this.barraDeVidaCarie = super.screen.assets.get(
+                "dental-kombat/barraDeVida.png", Texture.class);
+        this.barraDeVidaMoldura = super.screen.assets.get(
+                "dental-kombat/barraDeVidaMoldura.png", Texture.class);
         
         inicializarAnimacoes();
         scheduleEnemyAttack();
@@ -84,13 +96,8 @@ public class DentalKombat extends MiniGame{
 //        stateTimeCaries += Gdx.graphics.getDeltaTime();
 //        this.currentFrameCaries = this.caries.getKeyFrame(this.stateTimeCaries);
         this.currentFrameCaries = this.framesCaries[0][1];
-        // Se o jogador não estiver defendendo perde vida
-        if (this.stateToothDefend != true){
-            this.toothHealth = this.toothHealth - 1;
-            //        
-            System.out.println("Tooth Health: " + toothHealth);
-            System.out.println("Carie Health: " + cariesHealth);            
-        }
+        this.stateCariesAttack = true;
+        
         // Se o jogador estiver atacando ao mesmo tempo que a cárie, cancela o ataque do dente.
         if (this.stateToothAttack)
             this.stateToothAttack = false;
@@ -123,45 +130,58 @@ public class DentalKombat extends MiniGame{
         //Saber onde o player apertou
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         super.screen.viewport.unproject(click);
-        //Se clicou para tras ou apertou Esquerda, defesa
-        if (click.x <= super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched() 
-                || Gdx.input.isKeyPressed(Input.Keys.LEFT))
-        {
-            this.stateToothDefend = true;
-            //vai para o proximo frame da animacao
-            this.stateTimeTooth += Gdx.graphics.getDeltaTime();
-            this.currentFrameTooth = this.toothDefend.getKeyFrame(this.stateTimeTooth);
-        }
         
-        else { 
-            //Se clicou na frente ou Direita, ataque
-            if (click.x > super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched()
-                    || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {  
-                // Variável que controla se o jogador realizou um ataque
-                this.stateToothAttack = true;
+        if (stateToothAttack == false)
+        {
+            //Se clicou para tras ou apertou Esquerda, defesa
+            if (click.x <= super.screen.viewport.getScreenWidth()/2 && Gdx.input.isTouched() 
+                    || Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            {
+                this.stateToothDefend = true;
                 //vai para o proximo frame da animacao
                 this.stateTimeTooth += Gdx.graphics.getDeltaTime();
-                this.currentFrameTooth = this.toothAttack.getKeyFrame(this.stateTimeTooth);
+                this.currentFrameTooth = this.toothDefend.getKeyFrame(this.stateTimeTooth);
             }
-            // Se não está clicando em lugar nenhum volta para a animação inicial
-            else {             
-                this.stateTimeTooth = 0;
-                this.currentFrameTooth = this.framesTooth[0][0];
-                // Se acabou a animação de atacar diminui a vida da carie e volta ao estado inicial
-                if (this.stateToothAttack) {
-                    this.stateToothAttack = false;
-                    this.cariesHealth = this.cariesHealth - 1;
-                    //        
-                    System.out.println("Tooth Health: " + toothHealth);
-                    System.out.println("Carie Health: " + cariesHealth);                    
+
+            else { 
+                //Se clicou na frente ou Direita, ataque
+                if (click.x > super.screen.viewport.getScreenWidth()/2 && Gdx.input.justTouched()
+                        || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {  
+                    // Variável que controla se o jogador realizou um ataque
+                    this.stateToothAttack = true;
+                    //vai para o proximo frame da animacao
+                    this.stateTimeTooth += Gdx.graphics.getDeltaTime();
+                    this.currentFrameTooth = this.toothAttack.getKeyFrame(this.stateTimeTooth);
                 }
-                // Se acabou a animação de defesa volta ao estado inicial
-                if (this.stateToothDefend)
-                    this.stateToothDefend = false;
+                // Se não está clicando em lugar nenhum volta para a animação inicial
+                else {             
+                    this.stateTimeTooth = 0;
+                    this.currentFrameTooth = this.framesTooth[0][0];
+                    // Se acabou a animação de atacar diminui a vida da carie e volta ao estado inicial
+                    if (this.stateToothAttack) {
+                        this.stateToothAttack = false;
+                        this.cariesHealth = this.cariesHealth - 1;
+                        //        
+                        System.out.println("Tooth Health: " + toothHealth);
+                        System.out.println("Carie Health: " + cariesHealth);                    
+                    }
+                    // Se acabou a animação de defesa volta ao estado inicial
+                    if (this.stateToothDefend)
+                        this.stateToothDefend = false;
+                }
+
             }
-            
         }
-        
+        else if (toothAttack.isAnimationFinished(stateTimeTooth) == false)
+        {
+            this.stateTimeTooth += Gdx.graphics.getDeltaTime();
+            this.currentFrameTooth = this.toothAttack.getKeyFrame(this.stateTimeTooth);
+        }
+        else
+        {
+            stateToothAttack = false;
+            cariesHealth -= 1;
+        }
     }
     
     @Override
@@ -175,6 +195,27 @@ public class DentalKombat extends MiniGame{
             super.challengeFailed();
         }
         
+        if (this.stateCariesAttack == true)
+        {
+            if (this.caries.isAnimationFinished(stateTimeCaries) == false)
+            {
+            stateTimeCaries += Gdx.graphics.getDeltaTime();
+            this.currentFrameCaries = this.caries.getKeyFrame(this.stateTimeCaries);
+            }
+            else
+            {
+                stateCariesAttack = false;
+                currentFrameCaries = framesCaries[2][3];
+                stateTimeCaries = 0;
+                // Se o jogador não estiver defendendo perde vida
+                if (this.stateToothDefend != true){
+                    this.toothHealth = this.toothHealth - 1;
+                    //        
+                    System.out.println("Tooth Health: " + toothHealth);
+                    System.out.println("Carie Health: " + cariesHealth);            
+                }
+            }
+        }
     }
     
     @Override
@@ -182,6 +223,13 @@ public class DentalKombat extends MiniGame{
         playerPosition.x = INITIAL_POSX_TOOTH;
         playerPosition.y = INITIAL_POSY_TOOTH;
         this.screen.batch.draw(backGroundTexture, 0, 0, 1280, 720);
+        
+        this.screen.batch.draw(barraDeVidaMoldura, 0, 628);
+        this.screen.batch.draw(barraDeVidaMoldura, 720, 628, 547, 92, 0, 0, 547, 92, true, false);
+        this.screen.batch.draw(barraDeVidaDente, 79, 641, ((float)toothHealth)/TOOTH_MAX_HEALTH*449, 68);
+        this.screen.batch.draw(barraDeVidaCarie, ((float)(CARIES_MAX_HEALTH - cariesHealth))/CARIES_MAX_HEALTH*449 + 740, 641, 
+                ((float)cariesHealth)/CARIES_MAX_HEALTH*449, 68);
+        
         this.screen.batch.draw(currentFrameTooth, playerPosition.x, playerPosition.y);
         this.screen.batch.draw(currentFrameCaries, INITIAL_POSX_CARIE, INITIAL_POSY_CARIE);
         
@@ -198,7 +246,7 @@ public class DentalKombat extends MiniGame{
     }
     private void inicializarAnimacoes() {
         this.framesTooth = TextureRegion.split(toothSpritesheet, toothSpritesheet.getWidth()/6, toothSpritesheet.getHeight()/2);
-        this.framesCaries = TextureRegion.split(cariesSheet, cariesSheet.getWidth()/2, cariesSheet.getHeight());      
+        this.framesCaries = TextureRegion.split(cariesSheet, cariesSheet.getWidth()/4, cariesSheet.getHeight()/5);      
         
         this.toothDefend = new Animation(0.025f, new TextureRegion[] {
             this.framesTooth[0][0],
@@ -219,13 +267,30 @@ public class DentalKombat extends MiniGame{
         this.caries = new Animation(0.025f, new TextureRegion[] {
             this.framesCaries[0][0],
             this.framesCaries[0][1],
+            this.framesCaries[0][2],
+            this.framesCaries[1][0],
+            this.framesCaries[1][1],
+            this.framesCaries[1][2],
+            this.framesCaries[2][0],
+            this.framesCaries[2][1],
+            this.framesCaries[2][2],
+            this.framesCaries[3][0],
+            this.framesCaries[3][1],
+            this.framesCaries[3][2],
+            this.framesCaries[4][0],
+            this.framesCaries[4][1],
+            this.framesCaries[4][2],
+            this.framesCaries[0][3],
+            this.framesCaries[1][3],
+            this.framesCaries[2][3]
         });
         //defend.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         
         // Inicializa as variáveis
         this.currentFrameTooth = this.framesTooth[0][0];
-        this.currentFrameCaries = this.framesCaries[0][0];
+        this.currentFrameCaries = this.framesCaries[2][3];
         this.stateToothAttack = false;
         this.stateToothDefend = false;
+        this.stateCariesAttack = false;
     }
 }
