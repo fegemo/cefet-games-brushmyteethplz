@@ -26,7 +26,8 @@ public class DentalKombat extends MiniGame{
     private final Sound toothIsHitSound;
     private final Sound cariesIsHitSound;
     private int toothHealth = 3;
-    private int cariesHealth = 3;
+    private int cariesHealth = 0;
+    private int cariesMaxHealth = 0;
     private boolean stateToothAttack;
     private boolean stateToothDefend;
     private boolean stateCariesAttack;
@@ -47,8 +48,9 @@ public class DentalKombat extends MiniGame{
     private static final int INITIAL_POSY_TOOTH = 75;
     private static final int INITIAL_POSX_CARIE = 350;
     private static final int INITIAL_POSY_CARIE = 75;
-    private final float CARIES_MAX_HEALTH = cariesHealth;
+//    private final float CARIES_MAX_HEALTH = cariesHealth;
     private final float TOOTH_MAX_HEALTH = toothHealth;
+    private final float ATTACK_TIME_MILLIS = 2;
 
     public DentalKombat (BaseScreen screen,
             GameStateObserver observer, float difficulty){
@@ -72,6 +74,7 @@ public class DentalKombat extends MiniGame{
         this.barraDeVidaMoldura = super.screen.assets.get(
                 "dental-kombat/barraDeVidaMoldura.png", Texture.class);
         
+        configureDifficultyParameters(difficulty);
         inicializarAnimacoes();
         scheduleEnemyAttack();
     }
@@ -83,18 +86,11 @@ public class DentalKombat extends MiniGame{
                 cariesAttack();
             }
         };
-        // spawnInterval * 15% para mais ou para menos
-        // TROCAR INTERVALO DO RAND
-        float nextSpawnMillis = (rand.nextFloat() + 1.5f) * 2;
-        //System.out.println("Tempo: "+ nextSpawnMillis);
-        super.timer.scheduleTask(t, nextSpawnMillis);
+        super.timer.scheduleTask(t, ATTACK_TIME_MILLIS);
     }
 
     private void cariesAttack(){
         // Realiza a animação de ataque da carie
-        //ARRUMAR ANIMACAO DE ATAQUE DA CARIE
-//        stateTimeCaries += Gdx.graphics.getDeltaTime();
-//        this.currentFrameCaries = this.caries.getKeyFrame(this.stateTimeCaries);
         this.currentFrameCaries = this.framesCaries[0][1];
         this.stateCariesAttack = true;
         
@@ -104,25 +100,24 @@ public class DentalKombat extends MiniGame{
         // Prepara o próximo ataque da carie
         scheduleEnemyAttack();
         // Volta para o frame original da carie
-        // ARRUMAR ANIMACAO DE ATAQUE DA CARIE
-//        this.stateTimeCaries = 0;
-//        this.currentFrameCaries = this.caries.getKeyFrame(this.stateTimeCaries);
         this.currentFrameCaries = this.framesCaries[0][0];
-        System.out.println("Tooth Health: " + toothHealth);
-        System.out.println("Carie Health: " + cariesHealth);
     }
     
     
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        if (difficulty != -1) {
-            this.cariesHealth = 3;
+        if (difficulty <= 0.33) {
+            this.cariesMaxHealth = 5;
+            this.cariesHealth = 5;
         }
-        //<editor-fold defaultstate="collapsed" desc="Implementar dificuldades">
-        if (difficulty >= 0.5) {
-            this.cariesHealth = 3;
+        else if ((difficulty > 0.33) && (difficulty <= 0.66) ){
+            this.cariesMaxHealth = 8;  
+            this.cariesHealth = 8;            
         }
-//</editor-fold>
+        else {
+            this.cariesMaxHealth = 12;
+            this.cariesHealth = 12;
+        }
     }
     
     @Override
@@ -160,10 +155,7 @@ public class DentalKombat extends MiniGame{
                     // Se acabou a animação de atacar diminui a vida da carie e volta ao estado inicial
                     if (this.stateToothAttack) {
                         this.stateToothAttack = false;
-                        this.cariesHealth = this.cariesHealth - 1;
-                        //        
-                        System.out.println("Tooth Health: " + toothHealth);
-                        System.out.println("Carie Health: " + cariesHealth);                    
+                        this.cariesHealth = this.cariesHealth - 1;                    
                     }
                     // Se acabou a animação de defesa volta ao estado inicial
                     if (this.stateToothDefend)
@@ -209,10 +201,7 @@ public class DentalKombat extends MiniGame{
                 stateTimeCaries = 0;
                 // Se o jogador não estiver defendendo perde vida
                 if (this.stateToothDefend != true){
-                    this.toothHealth = this.toothHealth - 1;
-                    //        
-                    System.out.println("Tooth Health: " + toothHealth);
-                    System.out.println("Carie Health: " + cariesHealth);            
+                    this.toothHealth = this.toothHealth - 1;         
                 }
             }
         }
@@ -227,11 +216,14 @@ public class DentalKombat extends MiniGame{
         this.screen.batch.draw(barraDeVidaMoldura, 0, 628);
         this.screen.batch.draw(barraDeVidaMoldura, 720, 628, 547, 92, 0, 0, 547, 92, true, false);
         this.screen.batch.draw(barraDeVidaDente, 79, 641, ((float)toothHealth)/TOOTH_MAX_HEALTH*449, 68);
-        this.screen.batch.draw(barraDeVidaCarie, ((float)(CARIES_MAX_HEALTH - cariesHealth))/CARIES_MAX_HEALTH*449 + 740, 641, 
-                ((float)cariesHealth)/CARIES_MAX_HEALTH*449, 68);
+        this.screen.batch.draw(barraDeVidaCarie, ((float)(cariesMaxHealth - cariesHealth))/cariesMaxHealth*449 + 740, 641, 
+                                                ((float)cariesHealth)/cariesMaxHealth*449, 68);        
+        
         
         this.screen.batch.draw(currentFrameTooth, playerPosition.x, playerPosition.y);
         this.screen.batch.draw(currentFrameCaries, INITIAL_POSX_CARIE, INITIAL_POSY_CARIE);
+        
+        
         
     }
     
@@ -242,7 +234,7 @@ public class DentalKombat extends MiniGame{
     
     @Override
     public String getInstructions() {
-        return "Derrote a carie em combate";
+        return "Derrote a carie em combate.";
     }
     private void inicializarAnimacoes() {
         this.framesTooth = TextureRegion.split(toothSpritesheet, toothSpritesheet.getWidth()/6, toothSpritesheet.getHeight()/2);
@@ -284,7 +276,6 @@ public class DentalKombat extends MiniGame{
             this.framesCaries[1][3],
             this.framesCaries[2][3]
         });
-        //defend.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         
         // Inicializa as variáveis
         this.currentFrameTooth = this.framesTooth[0][0];
