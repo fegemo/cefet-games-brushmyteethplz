@@ -65,7 +65,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
-/*                        // flávio
+                        // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
                         // gabriel e juan
@@ -90,7 +90,7 @@ public class PlayingGamesScreen extends BaseScreen
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        new CleanTheToothFactory(),     */
+                        new CleanTheToothFactory(),
                         //Matheus e Luis
                         new DentalKombatFactory()
                 )
