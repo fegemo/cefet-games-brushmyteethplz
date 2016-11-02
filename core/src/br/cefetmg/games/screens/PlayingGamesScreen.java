@@ -123,7 +123,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        new CleanTheToothFactory())
+                        new CleanTheToothFactory(),
+                        //Matheus e Luis
+                        new DentalKombatFactory())                   
             ), this, this);
         } 
         this.hud = new Hud(this);
