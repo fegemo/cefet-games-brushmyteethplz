@@ -24,6 +24,7 @@ public class DentalKombat extends MiniGame{
     private final Texture barraDeVidaCarie;
     private final Texture barraDeVidaMoldura;
     private final Sound toothIsHitSound;
+    private final Sound toothDefendsSound;
     private final Sound cariesIsHitSound;
     private int toothHealth = 3;
     private int cariesHealth = 0;
@@ -61,10 +62,6 @@ public class DentalKombat extends MiniGame{
                 "dental-kombat/toothSpritesheet.png", Texture.class);
         this.cariesSheet = this.screen.assets.get(
                 "dental-kombat/caries.png", Texture.class);
-        this.toothIsHitSound = this.screen.assets.get(
-                "shoot-the-caries/caries2.mp3", Sound.class);
-        this.cariesIsHitSound = this.screen.assets.get(
-                "shoot-the-caries/caries2.mp3", Sound.class);
         this.backGroundTexture = super.screen.assets.get(
                 "dental-kombat/background.png", Texture.class);
         this.barraDeVidaDente = super.screen.assets.get(
@@ -73,6 +70,12 @@ public class DentalKombat extends MiniGame{
                 "dental-kombat/barraDeVida.png", Texture.class);
         this.barraDeVidaMoldura = super.screen.assets.get(
                 "dental-kombat/barraDeVidaMoldura.png", Texture.class);
+        this.toothIsHitSound = this.screen.assets.get(
+                "dental-kombat/pain.mp3", Sound.class);
+        this.toothDefendsSound = this.screen.assets.get(
+                "dental-kombat/punch2.mp3", Sound.class);
+        this.cariesIsHitSound = this.screen.assets.get(
+                "dental-kombat/punch1.mp3", Sound.class);
         
         configureDifficultyParameters(difficulty);
         inicializarAnimacoes();
@@ -173,6 +176,7 @@ public class DentalKombat extends MiniGame{
         {
             stateToothAttack = false;
             cariesHealth -= 1;
+            cariesIsHitSound.play();
         }
     }
     
@@ -202,6 +206,11 @@ public class DentalKombat extends MiniGame{
                 // Se o jogador não estiver defendendo perde vida
                 if (this.stateToothDefend != true){
                     this.toothHealth = this.toothHealth - 1;         
+                    toothIsHitSound.play();
+                }
+                else
+                {
+                    toothDefendsSound.play();
                 }
             }
         }
@@ -234,7 +243,7 @@ public class DentalKombat extends MiniGame{
     
     @Override
     public String getInstructions() {
-        return "Derrote a carie em combate.";
+        return "Lute! (Aperte tras e frente)";
     }
     private void inicializarAnimacoes() {
         this.framesTooth = TextureRegion.split(toothSpritesheet, toothSpritesheet.getWidth()/6, toothSpritesheet.getHeight()/2);
