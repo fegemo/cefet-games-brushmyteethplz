@@ -55,6 +55,8 @@ public class PlayingGamesScreen extends BaseScreen
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
+        super.assets.load("images/pausedImage.png", Texture.class);
+        super.assets.load("images/unpausedImage.png", Texture.class);
 
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
@@ -127,10 +129,14 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     @Override
-    public void show() {
+    public void appear() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.input.setCursorCatched(true);
         hud.create();
+    }
+
+    @Override
+    public void cleanUp() {
+        Gdx.input.setCursorCatched(false);
     }
 
     @Override
@@ -139,10 +145,11 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.handleInput();
         }
 
-        if (this.state != PlayScreenState.PLAYING) {
+        if (this.state == PlayScreenState.FINISHED_WON ||
+                this.state == PlayScreenState.FINISHED_GAME_OVER) {
             if (Gdx.input.justTouched()) {
-                // volta para o menu principal
-                super.game.setScreen(new MenuScreen(super.game, previous));
+                // começa transição para voltar para o menu principal
+                transitionState =  states.fadeOut;
             }
         }
     }
@@ -150,21 +157,19 @@ public class PlayingGamesScreen extends BaseScreen
     @Override
     public void update(float dt) {
         if (super.assets.update()) {
-            if (this.currentGame == null) {
+            if (this.state == PlayScreenState.PLAYING 
+                    && this.currentGame == null) {
                 advance();
             }
             this.currentGame.update(dt);
             hud.update(dt);
             
-            switch (transitionState) {
-                case fadeIn:
-                case fadeOut:
-                    transition.update(dt);
-                    break;
-            }
+            if (transitionState == states.fadeOut && transition.isFinished()) {		
+                super.game.setScreen(new MenuScreen(super.game, this));		
+            }	
         }
     }
-
+    
     @Override
     public void draw() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -180,24 +185,26 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void advance() {
-        if (this.state != PlayScreenState.PLAYING
-                && option == GameOption.SURVIVAL) {
-            RankScreen ranque;
-            super.game.setScreen(ranque = new RankScreen(super.game, previous)); 
-            ranque.setPoints(sequencer.getGameNumber());
+        if (this.state == PlayScreenState.FINISHED_WON ||
+                this.state == PlayScreenState.FINISHED_GAME_OVER) {
+            if (option == GameOption.SURVIVAL) {
+                RankScreen ranque;
+                super.game.setScreen(ranque = new RankScreen(super.game, this)); 
+                ranque.setPoints(sequencer.getGameNumber());
+            }
+            
+            // se deu gameover ou terminou a sequencia com sucesso,
+            // não deixa avançar para próximo minigame
             return;
         }
-        
-        int posX = Math.round(Gdx.graphics.getWidth() / 2);
-        int posY = Math.round(Gdx.graphics.getHeight() / 2);
         
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
-            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
-   
-            Gdx.input.setCursorPosition(posX, posY);
-            
+
+            Gdx.input.setCursorPosition(
+                    (int)Gdx.graphics.getWidth() / 2, 
+                    (int)Gdx.graphics.getHeight() / 2);
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
@@ -207,8 +214,8 @@ public class PlayingGamesScreen extends BaseScreen
 
     private void drawEndGame() {
         if(option == GameOption.NORMAL){
-            super.drawCenterAlignedText("Pressione qualquer tecla para voltar "
-                + "ao Menu", 0.5f, super.viewport.getWorldHeight() * 0.35f);
+            super.drawCenterAlignedText("Toque para voltar ao Menu", 
+                    0.5f, super.viewport.getWorldHeight() * 0.35f);
         }
     }
 
@@ -223,7 +230,6 @@ public class PlayingGamesScreen extends BaseScreen
         } else {
             sound.playGameWin();
         }
-
     }
 
     private void transitionTo(PlayScreenState newState) {
@@ -237,14 +243,13 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        Gdx.input.setCursorCatched(false);
-    }
-
-    @Override
     public void onStateChanged(MiniGameState state) {
         switch (state) {
+            case PLAYING:
+                Gdx.input.setCursorCatched(
+                        this.currentGame.shouldHideMousePointer());
+                break;
+
             case WON:
                 if (this.sequencer.hasNextGame()) {
                     sound.playSucess();
@@ -252,6 +257,8 @@ public class PlayingGamesScreen extends BaseScreen
                 } else {
                     sound.playGameWin();
                 }
+                // deixa passar para próximo caso
+                
             case FAILED:
                 if (state == MiniGameState.FAILED) {
                     loseLife();

@@ -31,7 +31,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public abstract class BaseScreen extends ScreenAdapter {
 
     public final Game game;
-    protected final BaseScreen previous;
+    private final BaseScreen previous;
     public final SpriteBatch batch;
     public final OrthographicCamera camera;
     public Viewport viewport;
@@ -70,10 +70,11 @@ public abstract class BaseScreen extends ScreenAdapter {
     }
     
     @Override
-    public void show() {
+    public final void show() {
         if (previous != null) {
             previous.dispose();
         }
+        this.appear();
     }
 
     /**
@@ -100,8 +101,14 @@ public abstract class BaseScreen extends ScreenAdapter {
             if (this.messagesFont == null) {
                 this.messagesFont = this.assets.get("fonts/sawasdee-50.fnt");
             }
+            // chama função para gerenciar o input
             handleInput();
+            
+            // chama função para atualizar a lógica da tela
             update(dt);
+            
+            // chama função para atualizar o estado da transição
+            updateTransition(dt);
 
             // define o sistema de coordenadas (projeção) a ser usada pelo
             // spriteBatch
@@ -112,9 +119,26 @@ public abstract class BaseScreen extends ScreenAdapter {
 
             // desenha o conteúdo da tela
             draw();
+            
+            // desenha a transição de tela
+            drawTransition();
         }
     }
 
+    protected void updateTransition(float dt) {
+        switch (transitionState) {
+            case fadeIn:
+                if (transition.isFinished()) {
+                    transitionState = states.doNothing;
+                    transition.setX(0);
+                }
+                // passa adiante (nao pus o break de propósito)
+            case fadeOut:
+                transition.update(dt);
+                break;
+        }
+    }
+    
     /**
      * Escreve um texto centralizado na tela, com uma escala {@code scale} e
      * na altura {@code y}.
@@ -147,13 +171,41 @@ public abstract class BaseScreen extends ScreenAdapter {
                 true);
     }
     
+    protected void drawTransition() {
+        batch.begin();
+        switch (transitionState) {
+            case fadeIn:
+                transition.fadeIn(batch, screenTransition);
+                break;
+            case fadeOut:
+                transition.fadeOut(batch, screenTransition);
+                break;
+        }
+        batch.end();
+    }
+    
     @Override
-    public void dispose() {
+    public final void dispose() {
         batch.dispose();
         if (messagesFont != null) {
             messagesFont.dispose();
         }
+        this.cleanUp();
     }
+    
+    /**
+     * Executa ações de carregamento da tela. Esta função é chamada assim que
+     * a tela vai ser exibida pela primeira vez.
+     * 
+     * Esta função deve ser usada em vez do método {@code show()}.
+     */
+    public abstract void appear();
+    
+    /**
+     * Executa as ações de limpeza e descarregamento de recursos e é chamada
+     * automaticamente quando a tela não está mais sendo usada.
+     */
+    public abstract void cleanUp();
 
     /**
      * Executa ações relativas ao <em>input</em> do jogador.
