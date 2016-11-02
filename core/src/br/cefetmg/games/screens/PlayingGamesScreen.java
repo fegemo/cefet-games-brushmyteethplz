@@ -1,6 +1,5 @@
 package br.cefetmg.games.screens;
 
-import br.cefetmg.games.Config;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.factories.MouthLandingFactory;
@@ -35,6 +34,7 @@ import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
+import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -67,6 +67,8 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
+                        new CleanTheTeethFactory()
+                        /*
                         // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
@@ -93,6 +95,7 @@ public class PlayingGamesScreen extends BaseScreen
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
                         new CleanTheToothFactory()
+                        */
                 )
             ), 0, 1, this, this);
         } else {
