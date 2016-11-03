@@ -124,6 +124,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
