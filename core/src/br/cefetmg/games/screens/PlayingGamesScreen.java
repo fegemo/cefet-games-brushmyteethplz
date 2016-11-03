@@ -31,6 +31,7 @@ import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.factories.FleeFactory;
+import br.cefetmg.games.minigames.factories.NinjaToothFactory;
 import br.cefetmg.games.sounds.Sounds;
 
 /**
@@ -56,8 +57,7 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sound = new Sounds();
         this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-                Arrays.asList(
-                        // flávio
+                Arrays.asList(// flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
                         // gabriel e juan
@@ -81,6 +81,7 @@ public class PlayingGamesScreen extends BaseScreen
                         // daniel
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
+                        new NinjaToothFactory(),
                         // carlos e bruno
                         new CleanTheToothFactory()
                 )
