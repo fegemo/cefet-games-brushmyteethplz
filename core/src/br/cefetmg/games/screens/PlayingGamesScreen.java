@@ -68,39 +68,6 @@ public class PlayingGamesScreen extends BaseScreen
 
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-<<<<<<< HEAD
-                Arrays.asList(
-                        new CleanTheTeethFactory()
-                        /*
-                        // flávio
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        // gabriel e juan
-                        new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory(),
-                        // higor e matheus
-                        new AngryToothsFactory(),
-                        new CarieSwordFactory(),
-                        // nicolas e henrique
-                        new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory(),
-                        // lucas
-                        new FleeFactory(),
-                        new MouthLandingFactory(),
-                        // lindley e lucas
-                        new GallowsFactory(),
-                        new SmashItFactory(),
-                        // amanda e vinícius
-                        new FleeTheTartarusFactory(),
-                        new CollectItensFactory(),
-                        // daniel
-                        new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory(),
-                        // carlos e bruno
-                        new CleanTheToothFactory()
-                        */
-                )
-=======
                     Arrays.asList(
                             // flávio
                             new ShootTheCariesFactory(),
@@ -123,6 +90,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -131,7 +99,6 @@ public class PlayingGamesScreen extends BaseScreen
                             // matheus ibrahim e luis gustavo
                             new DentalKombatFactory()
                     )
->>>>>>> resolvendoConflito
             ), 0, 1, this, this);
         } else {
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
@@ -243,13 +210,8 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
             Gdx.input.setCursorPosition(
-<<<<<<< HEAD
                     (int)Gdx.graphics.getWidth() / 2, 
                     (int)Gdx.graphics.getHeight() / 2);
-=======
-                    (int) Gdx.graphics.getWidth() / 2,
-                    (int) Gdx.graphics.getHeight() / 2);
->>>>>>> resolvendoConflito
             Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
