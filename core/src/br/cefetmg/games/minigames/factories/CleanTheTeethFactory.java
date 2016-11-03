@@ -40,8 +40,8 @@ public class CleanTheTeethFactory implements MiniGameFactory {
                 put("clean-the-teeth/fundo.png", Texture.class);
                 put("clean-the-teeth/spritetiro.png", Texture.class);
                 
-                put("clean-the-teeth/tiro.mp3", Sound.class);
                 put("clean-the-teeth/dente-branco.mp3", Sound.class);
+                put("clean-the-teeth/tiro.mp3", Sound.class);
                 
             }
         };

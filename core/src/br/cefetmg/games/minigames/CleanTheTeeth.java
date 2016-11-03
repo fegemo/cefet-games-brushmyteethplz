@@ -56,7 +56,9 @@ public class CleanTheTeeth extends MiniGame{
     
     private final Sound somTiroPastaDeDente;
     private final Sound somDenteFicandoBranco;
-
+    //private final Sound somDerrota;
+    //private final Sound somVitoria;
+    //private final Sound somDenteAparecendo;
           
     public CleanTheTeeth(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
@@ -82,10 +84,15 @@ public class CleanTheTeeth extends MiniGame{
                 "clean-the-teeth/spritetiro.png", Texture.class);
         
         this.somTiroPastaDeDente = screen.assets.get(
-                "clean-the-teeth/tiro.mp3", Sound.class);
-        
+                "clean-the-teeth/tiro.mp3", Sound.class);   
         this.somDenteFicandoBranco = screen.assets.get(
                 "clean-the-teeth/dente-branco.mp3", Sound.class);
+        /*this.somDenteAparecendo = screen.assets.get(
+                "clean-the-teeth/dente-aparecendo.wav", Sound.class);
+        this.somDerrota = screen.assets.get(
+                "clean-the-teeth/derrota.wav", Sound.class);
+        this.somVitoria = screen.assets.get(
+                "clean-the-teeth/vitoria.wav", Sound.class);*/
         
         super.timer.scheduleTask(new Timer.Task() {
             @Override
@@ -143,6 +150,8 @@ public class CleanTheTeeth extends MiniGame{
         
         teeth.add(dirtyTooth);
         
+        //this.somDenteAparecendo.play();
+        
     }
     
     private void spawnShot(float posY){
@@ -196,10 +205,12 @@ public class CleanTheTeeth extends MiniGame{
         
         if (numberOfCleanTeeth >= alvo){
             super.challengeSolved();
+            //this.somVitoria.play();
         }
         
         if ((this.initialTime + this.maxDuration + 20000) <= System.currentTimeMillis()){
             super.challengeFailed();
+            //this.somDerrota.play();
         }
     }
 
@@ -231,6 +242,7 @@ public class CleanTheTeeth extends MiniGame{
             if (ramtooth.getBoundingRectangle().overlaps(teeth.get(j).getBoundingRectangle())){
                 if (teeth.get(j).acertos == 0){
                     super.challengeFailed();
+                    //this.somDerrota.play();
                 } else {
                     teeth.removeIndex(j);
                 }
