@@ -26,7 +26,6 @@ public class ToothRunnerFactory implements MiniGameFactory {
     public Map<String, Class> getAssetsToPreload() {
         return new HashMap<String, Class>() {
             {
-                put("tooth-runner/dente.png", Texture.class);
                 put("tooth-runner/pirulito.png", Texture.class);
                 put("tooth-runner/denteAnimacao.png", Texture.class);
                 put("tooth-runner/passo.mp3", Sound.class);

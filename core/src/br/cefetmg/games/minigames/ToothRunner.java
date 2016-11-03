@@ -64,7 +64,6 @@ public class ToothRunner extends MiniGame {
 
     private final Texture pirulitoTexture;
     private final Texture denteAnimation;
-    private final Texture denteTexture;
     private final Sound passo;
     private final Sound pulo;
 
@@ -80,7 +79,6 @@ public class ToothRunner extends MiniGame {
 
         delta = 0;
         this.pirulito = new ArrayList<Enemie>();
-        this.denteTexture = this.screen.assets.get("tooth-runner/dente.png", Texture.class);
         this.pirulitoTexture = this.screen.assets.get("tooth-runner/pirulito.png", Texture.class);
         this.denteAnimation = this.screen.assets.get("tooth-runner/denteAnimacao.png", Texture.class);
         this.passo = this.screen.assets.get("tooth-runner/passo.mp3", Sound.class);
