@@ -49,7 +49,6 @@ public class DentalKombat extends MiniGame{
     private static final int INITIAL_POSY_TOOTH = 75;
     private static final int INITIAL_POSX_CARIE = 350;
     private static final int INITIAL_POSY_CARIE = 75;
-//    private final float CARIES_MAX_HEALTH = cariesHealth;
     private final float TOOTH_MAX_HEALTH = toothHealth;
     private final float ATTACK_TIME_MILLIS = 2;
 
