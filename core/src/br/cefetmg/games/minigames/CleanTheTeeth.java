@@ -12,6 +12,7 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -36,8 +37,11 @@ public class CleanTheTeeth extends MiniGame{
     private final Texture toothTexture;
     private final Texture ramtoothTexture;
  
-    private Random rn = new Random(10);
-    private int numberOfTeeth = rn.nextInt() + 2;
+    /*private Random rn = new Random(10);
+    private int numberOfTeeth = rn.nextInt() + 2;*/
+    
+    private int alvo;
+    private int numberOfTeeth;
     private int numberOfCleanTeeth = 0;
     
     private int spawnInterval;
@@ -49,7 +53,11 @@ public class CleanTheTeeth extends MiniGame{
     
     public final Texture texturaTiro;
     public Array<Shot> shots;
-        
+    
+    private final Sound somTiroPastaDeDente;
+    private final Sound somDenteFicandoBranco;
+
+          
     public CleanTheTeeth(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000, 
@@ -71,7 +79,13 @@ public class CleanTheTeeth extends MiniGame{
         
         this.shots = new Array<Shot>();
         this.texturaTiro = this.screen.assets.get(
-                "clean-the-teeth/spritesheet.png", Texture.class);
+                "clean-the-teeth/spritetiro.png", Texture.class);
+        
+        this.somTiroPastaDeDente = screen.assets.get(
+                "clean-the-teeth/tiro.mp3", Sound.class);
+        
+        this.somDenteFicandoBranco = screen.assets.get(
+                "clean-the-teeth/dente-branco.mp3", Sound.class);
         
         super.timer.scheduleTask(new Timer.Task() {
             @Override
@@ -82,10 +96,7 @@ public class CleanTheTeeth extends MiniGame{
         }, 0, this.spawnInterval / 1000f);
         
         this.spawnRamtooth();
-        
-        for (int i = 0; i < this.numberOfTeeth; i++){
-            this.spawnTooth();
-        }     
+             
     }
     
     private void spawnRamtooth(){
@@ -115,7 +126,7 @@ public class CleanTheTeeth extends MiniGame{
         Vector2 toothPosition = new Vector2();
 
         toothPosition.x = Config.WORLD_WIDTH;
-        toothPosition.y = MathUtils.random(Gdx.graphics.getHeight());
+        toothPosition.y = MathUtils.random(Gdx.graphics.getHeight() - 200);
         
         Vector2 toothGoal = new Vector2(0, toothPosition.y);
         Vector2 toothSpeed = toothGoal.sub(toothPosition)
@@ -166,6 +177,9 @@ public class CleanTheTeeth extends MiniGame{
                 .getCurveValueBetween(difficulty, 70, 120);
         this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
                 .getCurveValueBetween(difficulty, 500, 1500);
+        this.alvo = (int) Math.ceil((float) maxDuration
+                / spawnInterval) - 3;
+        //this.numberOfTeeth = this.alvo * 2;
     }
 
     @Override
@@ -177,9 +191,14 @@ public class CleanTheTeeth extends MiniGame{
         
         if (Gdx.input.justTouched()){
             spawnShot(click.y);
+            this.somTiroPastaDeDente.play();
         }
         
-        if ((this.initialTime + this.maxDuration + 3000) <= System.currentTimeMillis()){
+        if (numberOfCleanTeeth >= alvo){
+            super.challengeSolved();
+        }
+        
+        if ((this.initialTime + this.maxDuration + 20000) <= System.currentTimeMillis()){
             super.challengeFailed();
         }
     }
@@ -198,8 +217,22 @@ public class CleanTheTeeth extends MiniGame{
         for (int i = 0; i < shots.size; i++) {
             for (int j = 0; j < teeth.size; j++){
                 if (shots.get(i).getBoundingRectangle().overlaps(teeth.get(j).getBoundingRectangle())){
-                    teeth.get(j).changeState();
-                    shots.removeIndex(i);
+                    if (teeth.get(j).acertos < 1){
+                        teeth.get(j).changeState();
+                        this.somDenteFicandoBranco.play();
+                        shots.removeIndex(i);
+                        break;
+                    } 
+                }
+            }
+        }
+        
+        for (int j = 0; j < teeth.size; j++){
+            if (ramtooth.getBoundingRectangle().overlaps(teeth.get(j).getBoundingRectangle())){
+                if (teeth.get(j).acertos == 0){
+                    super.challengeFailed();
+                } else {
+                    teeth.removeIndex(j);
                 }
             }
         }
@@ -207,10 +240,6 @@ public class CleanTheTeeth extends MiniGame{
         for (int i = 0; i < this.shots.size; i++){
             Shot s = this.shots.get(i);
             s.update(dt);
-        }
-        
-        if (numberOfCleanTeeth == 2){
-            super.challengeSolved();
         }
     }
 
@@ -233,7 +262,8 @@ public class CleanTheTeeth extends MiniGame{
 
     @Override
     public String getInstructions() {
-        return "Limpe os dentes com flúor!";
+        return "Limpe " + this.alvo + " dentes antes que o tempo acabe "
+                + "e não deixe dente sujo encostar no Ramtooth!";
     }
 
     @Override
@@ -262,13 +292,12 @@ public class CleanTheTeeth extends MiniGame{
             acertos++;
             if (this.acertos < 2){
                 super.setRegion(denteLimpo);
-            } else {
                 numberOfCleanTeeth++;
-            }
+            } 
         }
         
         public void update(float dt) {
-            super.setPosition(super.getX() + this.speed.x * dt,
+            super.setPosition(super.getX() + this.speed.x * dt * 5,
                     super.getY());
         }
         
@@ -324,8 +353,8 @@ public class CleanTheTeeth extends MiniGame{
 
         private Vector2 speed;
 
-        static final int FRAME_WIDTH = 53;
-        static final int FRAME_HEIGHT = 35;
+        static final int FRAME_WIDTH = 54;
+        static final int FRAME_HEIGHT = 33;
 
         public Shot(final Texture spriteSheet) {
             super(new HashMap<String, Animation>() {
@@ -334,10 +363,10 @@ public class CleanTheTeeth extends MiniGame{
                             .split(spriteSheet,
                                     FRAME_WIDTH, FRAME_HEIGHT);
                     Animation flying = new Animation(0.2f,
-                            frames[0][1],
+                            frames[0][0],
                             frames[1][0],
-                            frames[0][0]);
-                    flying.setPlayMode(Animation.PlayMode.NORMAL);
+                            frames[2][0]);
+                    flying.setPlayMode(Animation.PlayMode.LOOP);
                     put("flying", flying);
                 }
             }, "flying");
@@ -346,7 +375,7 @@ public class CleanTheTeeth extends MiniGame{
         @Override
         public void update(float dt) {
             super.update(dt);
-            float novoX = super.getX() + 1;
+            float novoX = super.getX() + 8;
             super.setPosition(novoX, super.getY());
         }
         
@@ -355,7 +384,7 @@ public class CleanTheTeeth extends MiniGame{
         }
 
         public void setSpeed(Vector2 speed) {
-            this.speed = new Vector2(speed.x*50, speed.y*50);
+            this.speed = new Vector2(speed.x, speed.y);
         }
         
     }
