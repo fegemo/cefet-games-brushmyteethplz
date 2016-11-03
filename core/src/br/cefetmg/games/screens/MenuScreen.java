@@ -21,12 +21,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import javax.swing.plaf.basic.BasicMenuUI.ChangeHandler;
 
 /**
  * Uma tela de Menu Principal do jogo.
@@ -78,8 +81,6 @@ public class MenuScreen extends BaseScreen {
         stage = new Stage();
         stageRanking = new Stage();
         stageCredits = new Stage();
-        
-        
         
         // creates a table that fills the screen. 
         // everything else will go inside this table. 
@@ -275,9 +276,11 @@ public class MenuScreen extends BaseScreen {
                         viewport.getWorldWidth(),
                         viewport.getWorldHeight());
                 
-                drawCenterAlignedText("Falta inserir créditos com Scroll",
-                            1.0f, viewport.getWorldHeight() - 50f);
+                /*FAVOR INSERIR ALGUMA COISA PARA CRÉDITOS!*/
+                
+                
                 buttonVoltar.draw(batch, 1);
+                
                 break;
         }
         
@@ -300,7 +303,4 @@ public class MenuScreen extends BaseScreen {
         }, 0.75f);// 750ms
     }
 
-    private FileHandle FileHandle(String menu_background_rjpg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
