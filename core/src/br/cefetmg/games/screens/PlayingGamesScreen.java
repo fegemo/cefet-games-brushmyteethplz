@@ -50,64 +50,64 @@ public class PlayingGamesScreen extends BaseScreen
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                 Arrays.asList(
                         // flávio
-                        //new ShootTheCariesFactory(),
-                        //new ShooTheTartarusFactory(),
+                        new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
                         // gabriel e juan
-                        //new SaveTheTeethFactory(),
-                        //new FleeFromTartarusFactory(),
+                        new SaveTheTeethFactory(),
+                        new FleeFromTartarusFactory(),
                         // higor e matheus
-                        //new AngryToothsFactory(),
-                        new ToothRunnerFactory()
-                        //new CollectItensFactory.CarieSwordFactory(),
+                        new AngryToothsFactory(),
+                        new ToothRunnerFactory(),
+                        new CollectItensFactory.CarieSwordFactory(),
                         // nicolas e henrique
-                        //new PutTheBracesFactory(),
-                        //new EscoveOsDentesFactory(),
+                        new PutTheBracesFactory(),
+                        new EscoveOsDentesFactory(),
                         // lucas
-                        //new FleeFactory(),
-                        //new MouthLandingFactory(),
+                        new FleeFactory(),
+                        new MouthLandingFactory(),
                         // lindley e lucas
-                        //new GallowsFactory(),
-                        //new SmashItFactory(),
+                        new GallowsFactory(),
+                        new SmashItFactory(),
                         // amanda e vinícius
-                        //new FleeTheTartarusFactory(),
-                        //new CollectItensFactory(),
+                        new FleeTheTartarusFactory(),
+                        new CollectItensFactory(),
                         // daniel
-                        //new CarieEvasionFactory(),
-                        //new DefenseOfFluorineFactory(),
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        //new CleanTheToothFactory()
+                        new CleanTheToothFactory()
                 )
             ), 0, 1, this, this);
         } else {
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
                     Arrays.asList(
-                            // flávio
-                        //new ShootTheCariesFactory(),
-                        //new ShooTheTartarusFactory(),
+                        // flávio
+                        new ShootTheCariesFactory(),
+                        new ShooTheTartarusFactory(),
                         // gabriel e juan
-                        //new SaveTheTeethFactory(),
-                        //new FleeFromTartarusFactory(),
+                        new SaveTheTeethFactory(),
+                        new FleeFromTartarusFactory(),
                         // higor e matheus
-                        //new AngryToothsFactory(),
-                        //new CollectItensFactory.CarieSwordFactory(),
-                            new ToothRunnerFactory()
+                        new AngryToothsFactory(),
+                        new CollectItensFactory.CarieSwordFactory(),
+                        new ToothRunnerFactory(),
                         // nicolas e henrique
-                        //new PutTheBracesFactory(),
-                        //new EscoveOsDentesFactory(),
+                        new PutTheBracesFactory(),
+                        new EscoveOsDentesFactory(),
                         // lucas
-                        //new FleeFactory(),
-                        //new MouthLandingFactory(),
+                        new FleeFactory(),
+                        new MouthLandingFactory(),
                         // lindley e lucas
-                        //new GallowsFactory(),
-                        //new SmashItFactory(),
+                        new GallowsFactory(),
+                        new SmashItFactory(),
                         // amanda e vinícius
-                        //new FleeTheTartarusFactory(),
-                        //new CollectItensFactory(),
+                        new FleeTheTartarusFactory(),
+                        new CollectItensFactory(),
                         // daniel
-                        //new CarieEvasionFactory(),
-                        //new DefenseOfFluorineFactory(),
+                        new CarieEvasionFactory(),
+                        new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        //new CleanTheToothFactory()
+                        new CleanTheToothFactory()
                             )
             ), this, this);
         } 
