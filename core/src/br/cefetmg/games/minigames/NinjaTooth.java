@@ -43,7 +43,6 @@ public class NinjaTooth extends MiniGame {
     private final Sound toothBreakingSound;
     private final Array<Tartarus> enemies;
     private int numberOfBrokenTeeth;
-    private boolean clicked = false;
 
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
@@ -274,18 +273,6 @@ public class NinjaTooth extends MiniGame {
             Vector2 bulletSpeed = directionBullet.scl(bulletFloatSpeed);
             bullet.setSpeed(bulletSpeed);
             bullets.add(bullet);
-            
-            //super.setPosition(bulletSpeed.x + screen.viewport.getWorldWidth()/2, bulletSpeed.y + screen.viewport.getWorldHeight()/2);
-           
-            //Vector2 teste = screen.viewport.unproject(click);
-            
-            //System.err.println(teste.x + " " + teste.y);
-            //Vector2 direcao = superTooth.getHeadPosition().sub(screen.viewport.unproject(click));
-            //direcao.nor();
-            
-            //superTooth.rotate(90);
-            
-            //System.out.println("Rotation:" + superTooth.getRotation() + "Cos:" + MathUtils.cos(superTooth.getRotation()) + "Sin:" + MathUtils.sin(superTooth.getRotation()) );
         }
 
         public Vector2 getSpeed() {
