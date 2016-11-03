@@ -8,16 +8,24 @@ import br.cefetmg.games.minigames.util.ActualMenuScreen;
 import br.cefetmg.games.minigames.util.GameOption;
 import br.cefetmg.games.minigames.util.Score;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
@@ -34,10 +42,12 @@ public class MenuScreen extends BaseScreen {
     private TextureRegion buttonIniciarTexture, buttonCreditosTexture,
             buttonSairTexture, buttonSurvivalTexture, buttonNormalTexture,
             buttonRankingTexture, buttonVoltarTexture;
-    private Stage stage, stageRanking;
+    private Stage stage, stageRanking, stageCredits;
     private Button buttonIniciar, buttonSair, buttonCreditos, buttonSurvival,
             buttonNormal, buttonRanking, buttonVoltar;
-
+    private TextArea text;
+    private ScrollPane pane;
+    
     /**
      * Cria uma nova tela de menu.
      *
@@ -67,7 +77,10 @@ public class MenuScreen extends BaseScreen {
 
         stage = new Stage();
         stageRanking = new Stage();
-
+        stageCredits = new Stage();
+        
+        
+        
         // creates a table that fills the screen. 
         // everything else will go inside this table. 
         final Table table = new Table();
@@ -160,7 +173,8 @@ public class MenuScreen extends BaseScreen {
         buttonCreditos.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                //TODO implementar a mudança para a tela de créditos aqui
+                actualScreen = ActualMenuScreen.CREDITS;
+                Gdx.input.setInputProcessor(stageCredits);
             }
         });
 
@@ -182,8 +196,9 @@ public class MenuScreen extends BaseScreen {
         stage.addActor(table);
         stage.addActor(tableGameMode);
         stageRanking.addActor(buttonVoltar);
+        stageCredits.addActor(buttonVoltar);
         Gdx.input.setInputProcessor(stage);
-
+        
         menuMusic.setLooping(true);
         menuMusic.play();
     }
@@ -195,6 +210,9 @@ public class MenuScreen extends BaseScreen {
         }
         if (stageRanking != null) {
             stageRanking.dispose();
+        }
+        if (stageCredits != null) {
+            stageCredits.dispose();
         }
         if (menuMusic != null) {
             menuMusic.dispose();
@@ -252,8 +270,17 @@ public class MenuScreen extends BaseScreen {
                 }
                 buttonVoltar.draw(batch, 1);
                 break;
+            case CREDITS:
+                batch.draw(backgroundRanking, 0, 0,
+                        viewport.getWorldWidth(),
+                        viewport.getWorldHeight());
+                
+                drawCenterAlignedText("Falta inserir créditos com Scroll",
+                            1.0f, viewport.getWorldHeight() - 50f);
+                buttonVoltar.draw(batch, 1);
+                break;
         }
-
+        
         batch.end();
     }
 
@@ -271,5 +298,9 @@ public class MenuScreen extends BaseScreen {
                         new PlayingGamesScreen(game, MenuScreen.this, option));
             }
         }, 0.75f);// 750ms
+    }
+
+    private FileHandle FileHandle(String menu_background_rjpg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

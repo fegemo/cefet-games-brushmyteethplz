@@ -11,5 +11,6 @@ package br.cefetmg.games.minigames.util;
  */
 public enum ActualMenuScreen {
     MENU,
-    RANKING
+    RANKING,
+    CREDITS
 }
