@@ -4,7 +4,6 @@ import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -61,7 +60,7 @@ public class ToothRunner extends MiniGame {
 
     private final Dente dente;
     private ArrayList<Enemie> pirulito;
-
+    private int maxEnemies;
     private final Texture pirulitoTexture;
     private final Texture denteAnimation;
     private final Sound passo;
@@ -99,7 +98,7 @@ public class ToothRunner extends MiniGame {
 
     void createEnemies() {
         int distancia = 0;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < maxEnemies; i++) {
             Enemie aux;
             aux = new Enemie(pirulitoTexture, new Vector2(-1, 0));
             aux.sprite.setSize(100, 100 + random.nextInt(30));
@@ -112,60 +111,21 @@ public class ToothRunner extends MiniGame {
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
+        maxEnemies = 3;
         this.velocidade = 8 + (int)(difficulty*6);
     }
 
     @Override
     public void onHandlePlayingInput() {
-        Gdx.input.setInputProcessor(
-                new InputProcessor() {
-                    @Override
-                    public boolean keyDown(int keycode) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean keyUp(int keycode) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean keyTyped(char character) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                        if (dente.chao) {
-                            dente.chao = false;
-                            pulo.play();
-                            dente.tempoAnimacao = 0;
-                        }else {
-                            dente.sobe = -15;
-                        }
-
-                        return false;
-                    }
-
-                    @Override
-                    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean touchDragged(int screenX, int screenY, int pointer) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean mouseMoved(int screenX, int screenY) { return false; }
-
-                    @Override
-                    public boolean scrolled(int amount) {
-                        return false;
-                    }
-                }
-        );
+        if(Gdx.input.justTouched()) {
+            if (dente.chao) {
+                dente.chao = false;
+                pulo.play();
+                dente.tempoAnimacao = 0;
+            } else {
+                dente.sobe = -15;
+            }
+        }
     }
 
     @Override
@@ -212,14 +172,15 @@ public class ToothRunner extends MiniGame {
         if ((int) dente.tempoAnimacao > aux) {
             passo.play();
         }
+
+        delta += this.velocidade;
     }
 
     @Override
     public void onDrawGame() {
         //controla se perdeu, para que isso nao seja chamado em um intervalo curto do jogo
 
-        this.screen.batch.draw(bg, 0, 0, delta , 0, (int)this.screen.viewport.getWorldWidth(), (int)this.screen.viewport.getWorldHeight()+250);
-        delta += 4;
+        this.screen.batch.draw(bg, 0, 0, delta , 0, (int)this.screen.viewport.getWorldWidth(), (int)this.screen.viewport.getWorldHeight());
 
         for (int i = 0; i < pirulito.size(); i++) {
             Enemie enemie = pirulito.get(i);
@@ -228,10 +189,8 @@ public class ToothRunner extends MiniGame {
 
 
         if (dente.atual != null) {
-            this.screen.batch.draw(dente.atual, dente.sprite.getX()-10, dente.sprite.getY(),
-                    0, 0, dente.sprite.getWidth()+10, dente.sprite.getHeight()+20, 1.0f, 1.0f, 0);
+            this.screen.batch.draw(dente.atual, dente.sprite.getX()-10, dente.sprite.getY(), 0, 0, dente.sprite.getWidth()+10, dente.sprite.getHeight()+20, 1.0f, 1.0f, 0);
         }
-
     }
 
     @Override
@@ -243,5 +202,4 @@ public class ToothRunner extends MiniGame {
     public boolean shouldHideMousePointer() {
         return false;
     }
-
 }
