@@ -19,6 +19,7 @@ import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
 import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
 import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.CollectItensFactory;
+import br.cefetmg.games.minigames.factories.DentalKombatFactory;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -91,7 +92,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        new CleanTheToothFactory()
+                        new CleanTheToothFactory(),
+                        //Matheus e Luis
+                        new DentalKombatFactory()
                 )
             ), 0, 1, this, this);
         } else {
@@ -122,7 +125,9 @@ public class PlayingGamesScreen extends BaseScreen
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
                         // carlos e bruno
-                        new CleanTheToothFactory())
+                        new CleanTheToothFactory(),
+                        //Matheus e Luis
+                        new DentalKombatFactory())                   
             ), this, this);
         } 
         this.hud = new Hud(this);
