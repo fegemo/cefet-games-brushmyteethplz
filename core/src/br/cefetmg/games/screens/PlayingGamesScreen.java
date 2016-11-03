@@ -12,6 +12,7 @@ import br.cefetmg.games.minigames.factories.SmashItFactory;
 import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
 import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
 import br.cefetmg.games.minigames.factories.CleanTheToothFactory;
+import br.cefetmg.games.minigames.factories.SideWalkingFactory;
 import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
 import br.cefetmg.games.minigames.factories.MiniGameFactory;
@@ -85,6 +86,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
@@ -118,6 +120,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
