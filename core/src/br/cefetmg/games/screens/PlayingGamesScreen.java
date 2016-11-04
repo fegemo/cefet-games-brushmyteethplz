@@ -1,5 +1,6 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.Config;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.factories.*;
@@ -17,6 +18,7 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
+import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -71,6 +73,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -105,6 +108,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -190,10 +194,10 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
-
             Gdx.input.setCursorPosition(
-                    (int) Gdx.graphics.getWidth() / 2,
-                    (int) Gdx.graphics.getHeight() / 2);
+                    (int)Gdx.graphics.getWidth() / 2, 
+                    (int)Gdx.graphics.getHeight() / 2);
+            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
