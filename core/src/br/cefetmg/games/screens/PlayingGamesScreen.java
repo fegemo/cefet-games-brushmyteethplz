@@ -21,6 +21,7 @@ import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
 import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
 import br.cefetmg.games.minigames.factories.CollectItensFactory;
 import br.cefetmg.games.minigames.factories.DentalKombatFactory;
+import br.cefetmg.games.minigames.factories.*;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -32,10 +33,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
-import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
+import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -77,6 +78,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // higor e matheus
                             new AngryToothsFactory(),
                             new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
                             // nicolas e henrique
                             new PutTheBracesFactory(),
                             new EscoveOsDentesFactory(),
@@ -90,6 +92,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -111,6 +114,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // higor e matheus
                             new AngryToothsFactory(),
                             new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
                             // nicolas e henrique
                             new PutTheBracesFactory(),
                             new EscoveOsDentesFactory(),
@@ -124,6 +128,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -209,10 +214,10 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
-
             Gdx.input.setCursorPosition(
                     (int) Gdx.graphics.getWidth() / 2,
                     (int) Gdx.graphics.getHeight() / 2);
+            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
