@@ -32,15 +32,17 @@ public class SideWalking extends MiniGame {
     private final Texture cloud;    
     private int spawnInterval;
     private float velocidade;
-    private final float velocidadePulo = 4f;
-    private final float velocidadeNuvem = 2f;
-    private boolean pulando = false;
-    private final float alturachao = 150f;
+    private float pulo;
+    private final float gravidade = 0.4f;
+    private final float velocidadeNuvem = 2f;    
+    private final float alturachao = 100f;
     private final Array<Sprite> enemies;
     private final Array<Sprite> clouds;
     private final Sound teethJumpingSound;
     private final Sound backSound;
     private final Teeth dente;
+    private final Texture background;
+    private int incremento;
     
     public SideWalking(BaseScreen screen, GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 15000, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
@@ -56,6 +58,8 @@ public class SideWalking extends MiniGame {
         backSound.loop(0.5f);        
         this.enemies = new Array<Sprite>();
         this.clouds = new Array<Sprite>();
+        background = new Texture(Gdx.files.internal("side_walking/candy.png"));
+        background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
@@ -74,9 +78,9 @@ public class SideWalking extends MiniGame {
     @Override
     public void onHandlePlayingInput() {
         if (Gdx.input.justTouched()) {
-            if (dente.getY() == alturachao) {//se o dente estiver tocando o chão 
-                pulando = true;
-                dente.setY(dente.getY() + velocidadePulo);
+            if (dente.getY() == alturachao) {//se o dente estiver tocando o chão                 
+                pulo = 18f;
+                dente.setY(dente.getY() + pulo);
                 teethJumpingSound.play(1f);
             }
         }
@@ -85,14 +89,11 @@ public class SideWalking extends MiniGame {
     @Override
     public void onUpdate(float dt) {
         if (dente.getY() > alturachao) {
-            if (pulando) {
-                dente.setY(dente.getY() + velocidadePulo);
-                if (dente.getY() >= alturachao + 2 * dente.getHeight()) {
-                    pulando = false;
-                }
-            } else {
-                dente.setY(dente.getY() - velocidadePulo);
-            }
+            pulo -= gravidade;
+            dente.setY(dente.getY() + pulo);           
+        }
+        if(dente.getY() < alturachao){
+            dente.setY(alturachao);
         }
         for(int i = 0; i<enemies.size; i++){
             Sprite mst = enemies.get(i);
@@ -114,10 +115,13 @@ public class SideWalking extends MiniGame {
                 clouds.removeIndex(i);                
             }
         }
+        incremento += velocidade; 
     }
 
     @Override
     public void onDrawGame() {        
+        this.screen.batch.draw(background, 0, 0, incremento , 0, (int)this.screen.viewport.getWorldWidth(), (int)this.screen.viewport.getWorldHeight());
+
         for (Sprite mst : this.enemies) {
             mst.draw(this.screen.batch);
         }
@@ -138,10 +142,11 @@ public class SideWalking extends MiniGame {
     }
     
     private void spawnEnemie(){
-        Sprite enemy = new Sprite(monster);
-        enemy.setPosition(1300, alturachao);
+        Sprite enemy = new Sprite(monster);        
         Random r = new Random();
-        enemy.setScale((r.nextInt(6)+2)/10.0f);
+        float scale = (r.nextInt(6)+2)/10.0f;        
+        enemy.setScale(scale);
+        enemy.setPosition(1300, 15 + alturachao - ((enemy.getHeight()*(1-scale))/2));
         enemies.add(enemy);
     }
     

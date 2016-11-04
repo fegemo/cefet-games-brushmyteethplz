@@ -2,25 +2,6 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
-import br.cefetmg.games.minigames.factories.MouthLandingFactory;
-import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
-import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
-import br.cefetmg.games.minigames.factories.AngryToothsFactory;
-import br.cefetmg.games.minigames.factories.CarieSwordFactory;
-import br.cefetmg.games.minigames.factories.GallowsFactory;
-import br.cefetmg.games.minigames.factories.SmashItFactory;
-import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
-import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
-import br.cefetmg.games.minigames.factories.CleanTheToothFactory;
-import br.cefetmg.games.minigames.factories.SideWalkingFactory;
-import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
-import br.cefetmg.games.minigames.factories.MiniGameFactory;
-import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
-import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
-import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.CollectItensFactory;
-import br.cefetmg.games.minigames.factories.DentalKombatFactory;
 import br.cefetmg.games.minigames.factories.*;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
@@ -36,7 +17,6 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
-import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -135,7 +115,8 @@ public class PlayingGamesScreen extends BaseScreen
                             // carlos e bruno
                             new CleanTheToothFactory(),
                             // matheus ibrahim e luis gustavo
-                            new DentalKombatFactory())
+                            new DentalKombatFactory()
+                    )
             ), this, this);
         }
         this.hud = new Hud(this);

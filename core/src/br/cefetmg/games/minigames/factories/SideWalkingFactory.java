@@ -34,7 +34,8 @@ public class SideWalkingFactory implements MiniGameFactory{
                 put("side_walking/nuvem.png", Texture.class);     
                 put("side_walking/walking_tooth.png", Texture.class); 
                 put("side_walking/backSound.mp3", Sound.class);
-                put("side_walking/jump.mp3", Sound.class);                
+                put("side_walking/jump.mp3", Sound.class);  
+                put("side_walking/candy.png", Texture.class);
             }
         };      
     }
