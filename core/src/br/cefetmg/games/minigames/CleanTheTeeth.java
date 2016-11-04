@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.Config;
@@ -23,7 +18,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  *
@@ -37,28 +31,21 @@ public class CleanTheTeeth extends MiniGame{
     private final Texture toothTexture;
     private final Texture ramtoothTexture;
  
-    /*private Random rn = new Random(10);
-    private int numberOfTeeth = rn.nextInt() + 2;*/
-    
     private int alvo;
-    private int numberOfTeeth;
     private int numberOfCleanTeeth = 0;
     
     private int spawnInterval;
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
     
-    public final Texture texturaFundo;
-    public final Sprite fundo;
+    private final Texture texturaFundo;
+    private final Sprite fundo;
     
-    public final Texture texturaTiro;
-    public Array<Shot> shots;
+    private final Texture texturaTiro;
+    private final Array<Shot> shots;
     
     private final Sound somTiroPastaDeDente;
     private final Sound somDenteFicandoBranco;
-    //private final Sound somDerrota;
-    //private final Sound somVitoria;
-    //private final Sound somDenteAparecendo;
           
     public CleanTheTeeth(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
@@ -87,12 +74,6 @@ public class CleanTheTeeth extends MiniGame{
                 "clean-the-teeth/tiro.mp3", Sound.class);   
         this.somDenteFicandoBranco = screen.assets.get(
                 "clean-the-teeth/dente-branco.mp3", Sound.class);
-        /*this.somDenteAparecendo = screen.assets.get(
-                "clean-the-teeth/dente-aparecendo.wav", Sound.class);
-        this.somDerrota = screen.assets.get(
-                "clean-the-teeth/derrota.wav", Sound.class);
-        this.somVitoria = screen.assets.get(
-                "clean-the-teeth/vitoria.wav", Sound.class);*/
         
         super.timer.scheduleTask(new Timer.Task() {
             @Override
@@ -149,9 +130,6 @@ public class CleanTheTeeth extends MiniGame{
                 dirtyTooth.getScaleY()*novaEscala);
         
         teeth.add(dirtyTooth);
-        
-        //this.somDenteAparecendo.play();
-        
     }
     
     private void spawnShot(float posY){
@@ -188,7 +166,6 @@ public class CleanTheTeeth extends MiniGame{
                 .getCurveValueBetween(difficulty, 500, 1500);
         this.alvo = (int) Math.ceil((float) maxDuration
                 / spawnInterval) - 3;
-        //this.numberOfTeeth = this.alvo * 2;
     }
 
     @Override
@@ -205,12 +182,10 @@ public class CleanTheTeeth extends MiniGame{
         
         if (numberOfCleanTeeth >= alvo){
             super.challengeSolved();
-            //this.somVitoria.play();
         }
         
         if ((this.initialTime + this.maxDuration + 20000) <= System.currentTimeMillis()){
             super.challengeFailed();
-            //this.somDerrota.play();
         }
     }
 
@@ -242,7 +217,6 @@ public class CleanTheTeeth extends MiniGame{
             if (ramtooth.getBoundingRectangle().overlaps(teeth.get(j).getBoundingRectangle())){
                 if (teeth.get(j).acertos == 0){
                     super.challengeFailed();
-                    //this.somDerrota.play();
                 } else {
                     teeth.removeIndex(j);
                 }
@@ -275,7 +249,7 @@ public class CleanTheTeeth extends MiniGame{
     @Override
     public String getInstructions() {
         return "Limpe " + this.alvo + " dentes antes que o tempo acabe "
-                + "e não deixe dente sujo encostar no Ramtooth!";
+                + "e evite dente sujo no Ramtooth!";
     }
 
     @Override
