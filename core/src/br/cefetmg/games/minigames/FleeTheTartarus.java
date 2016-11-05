@@ -5,6 +5,7 @@
  */
 package br.cefetmg.games.minigames;
 
+import br.cefetmg.games.Config;
 import br.cefetmg.games.graphics.MultiAnimatedSprite;
 import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.minigames.util.GameStateObserver;
@@ -232,22 +233,22 @@ public class FleeTheTartarus extends MiniGame {
             if (appearFromLeft){
                 tartarusPosition.x = 0;
                 tartarusPosition.y = MathUtils.random(
-                        Gdx.graphics.getHeight());
+                        Config.WORLD_HEIGHT);
             } else {
                 tartarusPosition.x = Gdx.graphics.getWidth();
                 tartarusPosition.y = MathUtils.random(
-                        Gdx.graphics.getHeight());
+                        Config.WORLD_HEIGHT);
             }
         } else {
             boolean appearFromBottom = MathUtils.randomBoolean();
             if (appearFromBottom){
                 tartarusPosition.y = 0;
                 tartarusPosition.x = MathUtils.random(
-                        Gdx.graphics.getWidth());
+                        Config.WORLD_WIDTH);
             } else {
                 tartarusPosition.y = Gdx.graphics.getHeight();
                 tartarusPosition.x = MathUtils.random(
-                        Gdx.graphics.getWidth());
+                        Config.WORLD_WIDTH);
             }
         }
        
@@ -255,7 +256,7 @@ public class FleeTheTartarus extends MiniGame {
         Vector2 obj = new Vector2(tooth.getToothPosition());
         
         Vector2 tartarusSpeed = obj.sub(tartarusPosition).nor()
-                .scl(5*this.maximumEnemySpeed);
+                .scl(2*this.maximumEnemySpeed);
 
         Tartarus enemy = new Tartarus(tartarusTexture);
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);

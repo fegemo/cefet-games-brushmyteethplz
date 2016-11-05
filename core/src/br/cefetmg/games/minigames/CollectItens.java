@@ -13,13 +13,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /**
  *
@@ -37,7 +35,6 @@ public class CollectItens extends MiniGame{
     private final Texture toothbrushTexture;
     private final Texture candyTexture;
     private final Texture lollipopTexture;
-    private final Texture mouthTexture;
     private final Texture goodMouthTexture;
     private final Texture badMouthTexture;
     
@@ -61,9 +58,11 @@ public class CollectItens extends MiniGame{
     private int contador = 0;
     private final Sound enemiesAppearing;
     private final Sound friendsAppearing;
-    private final Sound collectItem;
     private final Sound venceu;
     private final Sound perdeu;
+    
+    private final Sound collectGoodItem;
+    private final Sound collectBadItem;
 
     public CollectItens(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
@@ -82,9 +81,7 @@ public class CollectItens extends MiniGame{
                 "collect-itens/lollipop.png", Texture.class);
         this.candyTexture = this.screen.assets.get(
                 "collect-itens/candy.png", Texture.class);
-        
-        this.mouthTexture = this.screen.assets.get(
-                "collect-itens/bocacomer.png", Texture.class);
+
         this.goodMouthTexture = this.screen.assets.get(
                 "collect-itens/bocaboa.png", Texture.class);
         this.badMouthTexture = this.screen.assets.get(
@@ -95,15 +92,18 @@ public class CollectItens extends MiniGame{
         this.friendsAppearing = screen.assets.get(
                 "collect-itens/aperta.mp3", Sound.class);
         
-        this.collectItem = screen.assets.get(
-                "collect-itens/aperta2.mp3", Sound.class);
+        this.collectGoodItem = screen.assets.get(
+                "collect-itens/pegaitembom.mp3", Sound.class);
+        
+        this.collectBadItem = screen.assets.get(
+                "collect-itens/pegaitemruim.mp3", Sound.class);
                 
         this.venceu = screen.assets.get(
                 "collect-itens/aplausos.mp3", Sound.class);
         this.perdeu = screen.assets.get(
                 "collect-itens/game-over.mp3", Sound.class);
         
-        this.boca = new Sprite(mouthTexture);
+        this.boca = new Sprite(goodMouthTexture);
         
         this.fundo = new Sprite(texturaFundo);
         
@@ -280,27 +280,30 @@ public class CollectItens extends MiniGame{
     @Override
     public void onHandlePlayingInput() {
         
-        this.boca.setRegion(this.mouthTexture);
-        
         // atualiza a posição do alvo de acordo com o mouse
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         super.screen.viewport.unproject(click);
         this.boca.setPosition(click.x - this.boca.getWidth() / 2,
                 click.y - this.boca.getHeight() / 2);
-
+        
         if (Gdx.input.justTouched()) {
-            this.collectItem.play();
             for (int i = 0; i < characters.size; i++) {
                 Sprite sprite = characters.get(i);
                 if (sprite.getBoundingRectangle().overlaps(boca.getBoundingRectangle())) {
                     
                     if ((sprite.getTexture() == toothbrushTexture) || 
                             sprite.getTexture() == toothpasteTexture){
-                        this.boca.setTexture(this.goodMouthTexture);
+                        
+                        this.collectGoodItem.play();
+                                                
                         this.friendsCollected++; 
                         
                     } else {
+                        
+                        this.collectBadItem.play();
+                        
                         this.boca.setTexture(this.badMouthTexture);
+                        
                         this.perdeu.play();
                         this.challengeFailed();
                         
