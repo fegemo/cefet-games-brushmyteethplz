@@ -2,24 +2,7 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
-import br.cefetmg.games.minigames.factories.MouthLandingFactory;
-import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
-import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
-import br.cefetmg.games.minigames.factories.AngryToothsFactory;
-import br.cefetmg.games.minigames.factories.CarieSwordFactory;
-import br.cefetmg.games.minigames.factories.GallowsFactory;
-import br.cefetmg.games.minigames.factories.SmashItFactory;
-import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
-import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
-import br.cefetmg.games.minigames.factories.CleanTheToothFactory;
-import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
-import br.cefetmg.games.minigames.factories.MiniGameFactory;
-import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
-import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
-import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.CollectItensFactory;
-import br.cefetmg.games.minigames.factories.DentalKombatFactory;
+import br.cefetmg.games.minigames.factories.*;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -31,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
-import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
@@ -45,6 +27,8 @@ import br.cefetmg.games.minigames.util.GameType;
 public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
+    public static final boolean DEV_MODE = true;
+    
     private MiniGame currentGame;
     private final BaseGameSequencer sequencer;
     private final Hud hud;
@@ -52,7 +36,7 @@ public class PlayingGamesScreen extends BaseScreen
     private int lives;
     private final Sounds sound;
     private final GameOption option;
-    private final GameType gt;
+    private  GameType gt;
 
     public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option, GameType gt) {
         super(game, previous);
@@ -67,10 +51,23 @@ public class PlayingGamesScreen extends BaseScreen
         this.option = option;
         this.gt = gt;
 
-        if (this.option == GameOption.NORMAL) {
-            
-            if (this.gt == GameType.DESTRUCTION){
-                System.out.println("Type = DESTRUCTION OK");
+        if (this.option == GameOption.NORMAL) {        
+             if (this.gt == GameType.LEARNING_ABOUT_CANDY){
+                if (DEV_MODE){
+                    System.out.println("Type = LEARNING_ABOUT_CANDY OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // amanda e vinícius
+                            new CollectItensFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory()
+                    )
+                ), 0, 1, this, this);
+            } else if (this.gt == GameType.DESTRUCTION){
+                if (DEV_MODE){
+                    System.out.println("Type = DESTRUCTION OK");
+                }
                 this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
                     Arrays.asList(
                             // flávio
@@ -81,7 +78,10 @@ public class PlayingGamesScreen extends BaseScreen
                             new SmashItFactory()
                     )
                 ), 0, 1, this, this);
-            } else {//(this.gt == GameType.RUNNING_PROTECTING){
+            } else if (this.gt == GameType.RUNNING_PROTECTING){
+                if (DEV_MODE){
+                    System.out.println("Type = RUNNING_PROTECTING OK");
+                }
                 this.sequencer = new GameSequencer(2, new HashSet<MiniGameFactory>(
                     Arrays.asList(
                             // gabriel e juan
@@ -90,10 +90,41 @@ public class PlayingGamesScreen extends BaseScreen
                             new CollectItensFactory()     
                     )
                 ), 0, 1, this, this);
+            } else if (this.gt == GameType.LEARNING_ABOUT_HYGIENE){
+                if (DEV_MODE){
+                     System.out.println("Type = LEARNING_ABOUT_HYGIENE OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // daniel
+                            new DefenseOfFluorineFactory(),
+                            // lucas
+                            new MouthLandingFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory()
+                    )
+                ), 0, 1, this, this);
+            } else {//(this.gt == GameType.CARING_FOR_TEETH){
+                if (DEV_MODE){
+                    System.out.println("Type = CARING_FOR_TEETH OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            // nicolas e henrique
+                            new EscoveOsDentesFactory(),
+                            // carlos e bruno
+                            new CleanTheToothFactory()
+                    )
+                ), 0, 1, this, this);
             }
 
             
         } else {    
+            if (DEV_MODE){
+                System.out.println("Mode SURVIVAL");
+            }
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
                     Arrays.asList(
                         // flávio
