@@ -93,6 +93,7 @@ public class CollectItens extends MiniGame{
         this.smile.setOriginCenter();
         this.friendsCollected = 0;
         this.spawnedCharacters = 0;
+        this.friends = 0;
         
         this.quantAtualToothbrush = 0;
         this.quantAtualToothpaste = 0;
@@ -242,13 +243,14 @@ public class CollectItens extends MiniGame{
                 / spawnInterval) - 3;
         this.enemies = (int) Math.ceil((float) maxDuration
                 / spawnInterval) - 3;
-               
-        if ((totalCharacters % 2) == 0){
-            this.totalToothbrush = totalCharacters / 2;
-        } else {
-            this.totalToothbrush = (totalCharacters + 1) / 2;
+        
+        if ((totalCharacters % 2) != 0){
+            totalCharacters++;
         }
+               
+        this.totalToothbrush = totalCharacters / 2;
         this.totalToothpaste = totalCharacters - this.totalToothbrush;
+        
         if ((totalCandies % 2) == 0){
             this.totalCandies = enemies / 2;
         } else {
@@ -266,33 +268,33 @@ public class CollectItens extends MiniGame{
         this.smile.setPosition(click.x - this.smile.getWidth() / 2,
                 click.y - this.smile.getHeight() / 2);
 
-        // verifica se matou um inimigo
         if (Gdx.input.justTouched()) {
             this.collectItem.play();
-            // itera no array de inimigos
             for (int i = 0; i < characters.size; i++) {
                 Sprite sprite = characters.get(i);
-                // se há interseção entre o retângulo da sprite e do alvo,
-                // o tiro acertou
-                if (sprite.getBoundingRectangle().overlaps(smile.getBoundingRectangle())) {
-                    if ((sprite.getTexture() == toothbrushTexture) || sprite.getTexture() == toothpasteTexture){
-                        // contabiliza um inimigo morto
+                if (sprite.getBoundingRectangle().overlaps(
+                        smile.getBoundingRectangle())) {
+                    
+                    if ((sprite.getTexture() == toothbrushTexture) || 
+                            sprite.getTexture() == toothpasteTexture){
+                        
                         this.friendsCollected++;
+                        
                     } else {
+                        
                         this.perdeu.play();
                         this.challengeFailed();
+                        
                     }
-                    // remove o inimigo do array
+                    
                     characters.removeValue(sprite, true);
-                    // se tiver matado todos os inimigos, o desafio
-                    // está resolvido
+                    
                     if (this.friendsCollected >= friends) {
+                        
                         this.venceu.play();
                         super.challengeSolved();
+                        
                     }
-
-                    // pára de iterar, porque senão o tiro pode pegar em mais
-                    // de um inimigo
                     break;
                 }
             }

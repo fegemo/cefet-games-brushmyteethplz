@@ -57,6 +57,7 @@ public class FleeTheTartarus extends MiniGame {
                 "flee-the-tartarus/dente.png", Texture.class);
         this.tooth = new Tooth(toothTexture);
         this.tooth.setOriginCenter();
+        this.tooth.setScale(0.8f);
         
         this.tartarusAppearingSound = new Array<Sound>(3);
         this.tartarusAppearingSound.addAll(screen.assets.get(
@@ -79,9 +80,7 @@ public class FleeTheTartarus extends MiniGame {
             }
 
         }, 0, this.spawnInterval / 1000f);
-        
-        this.spawnEnemy();
-        
+                
     }
 
     @Override
@@ -102,8 +101,7 @@ public class FleeTheTartarus extends MiniGame {
         this.tooth.setCenter(click.x, click.y);
 
         for (Tartarus t : this.enemies) {
-            float distance = tooth.getToothDistanceTo(t.getX(), t.getY());
-            if (distance <= 100) {
+            if (t.getBoundingRectangle().overlaps(tooth.getBoundingRectangle())) {
                 perdeu.play();
                 super.challengeFailed();
             }
@@ -163,9 +161,6 @@ public class FleeTheTartarus extends MiniGame {
                 this.getY() + this.getHeight() * 0.8f);
         }
 
-        float getToothDistanceTo(float enemyX, float enemyY) {
-            return getToothPosition().dst(enemyX, enemyY);
-        }
     }
     
     class Tartarus extends MultiAnimatedSprite {
@@ -219,12 +214,10 @@ public class FleeTheTartarus extends MiniGame {
             if (appearFromLeft){
                 tartarusPosition.x = 0;
                 tartarusPosition.y = MathUtils.random(
-                        -Tartarus.FRAME_HEIGHT,
                         super.screen.viewport.getScreenHeight());
             } else {
-                tartarusPosition.x = Tartarus.FRAME_WIDTH;
+                tartarusPosition.x = Gdx.graphics.getWidth();
                 tartarusPosition.y = MathUtils.random(
-                        -Tartarus.FRAME_HEIGHT,
                         super.screen.viewport.getScreenHeight());
             }
         } else {
@@ -232,12 +225,10 @@ public class FleeTheTartarus extends MiniGame {
             if (appearFromBottom){
                 tartarusPosition.y = 0;
                 tartarusPosition.x = MathUtils.random(
-                        -Tartarus.FRAME_WIDTH,
                         super.screen.viewport.getScreenWidth());
             } else {
-                tartarusPosition.y = Tartarus.FRAME_HEIGHT;
+                tartarusPosition.y = Gdx.graphics.getHeight();
                 tartarusPosition.x = MathUtils.random(
-                        -Tartarus.FRAME_WIDTH,
                         super.screen.viewport.getScreenWidth());
             }
         }
@@ -251,6 +242,7 @@ public class FleeTheTartarus extends MiniGame {
         Tartarus enemy = new Tartarus(tartarusTexture);
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
+        enemy.setScale(0.8f);
         enemies.add(enemy);
         
         tartarusAppearingSound.random().play(); //toca sempre a mesma musica

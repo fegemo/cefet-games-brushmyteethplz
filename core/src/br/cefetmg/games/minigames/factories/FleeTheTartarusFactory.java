@@ -7,7 +7,6 @@ package br.cefetmg.games.minigames.factories;
 
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.FleeTheTartarus;
-import br.cefetmg.games.minigames.ShooTheTartarus;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.audio.Sound;
