@@ -18,7 +18,11 @@ import java.util.Map;
  *
  * @author lucas
  */
+<<<<<<< HEAD
 public class SideWalkingFactory implements MiniGameFactory {
+=======
+public class SideWalkingFactory implements MiniGameFactory{
+>>>>>>> 6e3805fb93c7c456be2e340295e727c54e7c1655
      @Override
     public MiniGame createMiniGame(BaseScreen screen, GameStateObserver observer, float difficulty) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
