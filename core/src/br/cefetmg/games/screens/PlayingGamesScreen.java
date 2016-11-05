@@ -17,7 +17,7 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
-import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
+import br.cefetmg.games.minigames.factories.RamtoothFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -50,6 +50,10 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                     Arrays.asList(
+                            new FleeTheTartarusFactory(),
+                            new CollectItensFactory(),
+                            new RamtoothFactory()
+                            /*
                             // flávio
                             new ShootTheCariesFactory(),
                             new ShooTheTartarusFactory(),
@@ -72,7 +76,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
-                            new CleanTheTeethFactory(),
+                            new RamtoothFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -81,12 +85,12 @@ public class PlayingGamesScreen extends BaseScreen
                             new CleanTheToothFactory(),
                             // matheus ibrahim e luis gustavo
                             new DentalKombatFactory()
+                            */
                     )
             ), 0, 1, this, this);
         } else {
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                            // flávio
+                    Arrays.asList(// flávio
                             new ShootTheCariesFactory(),
                             new ShooTheTartarusFactory(),
                             // gabriel e juan
@@ -108,7 +112,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
-                            new CleanTheTeethFactory(),
+                            new RamtoothFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),

@@ -40,7 +40,11 @@ public class CollectItensFactory implements MiniGameFactory{
                 put("collect-itens/toothbrush.png", Texture.class);
                 put("collect-itens/lollipop.png", Texture.class);
                 put("collect-itens/candy.png", Texture.class);
-                put("collect-itens/smile.png", Texture.class);
+                put("collect-itens/bocacomer.png", Texture.class);
+                put("collect-itens/bocaboa.png", Texture.class);
+                put("collect-itens/bocaruim.png", Texture.class);
+                put("collect-itens/fundo.png", Texture.class);
+                
                 put("collect-itens/aperta.mp3", Sound.class);
                 put("collect-itens/aplausos.mp3", Sound.class);
                 put("collect-itens/aperta2.mp3", Sound.class);

@@ -30,12 +30,15 @@ public class FleeTheTartarusFactory implements MiniGameFactory {
     public Map<String, Class> getAssetsToPreload() {
         return new HashMap<String, Class>() {
             {
-                put("flee-the-tartarus/tartarus-spritesheet.png",
+                put("flee-the-tartarus/spritecarie.png",
                         Texture.class);
                 put("flee-the-tartarus/dente.png", Texture.class);
+                put("flee-the-tartarus/dente-morto.png", Texture.class);
+                put("flee-the-tartarus/fundo.png", Texture.class);
+                
                 put("flee-the-tartarus/aperta2.mp3", Sound.class);
                 put("flee-the-tartarus/venceu.mp3", Sound.class);
-                put("flee-the-tartarus/game-over.mp3", Sound.class);
+                put("flee-the-tartarus/game-over.mp3", Sound.class); 
             }
         };
     }
