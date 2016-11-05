@@ -19,7 +19,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -29,6 +32,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.plaf.basic.BasicMenuUI.ChangeHandler;
 
 /**
@@ -48,8 +55,6 @@ public class MenuScreen extends BaseScreen {
     private Stage stage, stageRanking, stageCredits;
     private Button buttonIniciar, buttonSair, buttonCreditos, buttonSurvival,
             buttonNormal, buttonRanking, buttonVoltar;
-    private TextArea text;
-    private ScrollPane pane;
     
     /**
      * Cria uma nova tela de menu.
@@ -199,6 +204,41 @@ public class MenuScreen extends BaseScreen {
         stageRanking.addActor(buttonVoltar);
         stageCredits.addActor(buttonVoltar);
         Gdx.input.setInputProcessor(stage);
+        final Skin skin = new Skin(new FileHandle("ui/uiskin.json"));
+        
+        String Creditos = "";
+        try {
+            BufferedReader getInput = new BufferedReader(
+                    new FileReader("creditos.txt"));
+            String line;
+            while ((line = getInput.readLine()) != null) {
+                Creditos = Creditos.concat(line);
+                Creditos = Creditos.concat("\n");
+            }
+            getInput.close();
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n",
+                    e.getMessage());
+        }
+        
+        BitmapFont font = new BitmapFont(new FileHandle("fonts/sawasdee-24.fnt"));
+        final Label text = new Label(Creditos, skin);
+        text.setAlignment(Align.center);
+        text.setStyle(new LabelStyle(font, Color.BLACK));
+        text.setFontScale(1F);
+        text.setWrap(true);
+        
+        final Table scrollTable = new Table();
+        scrollTable.add(text);
+        scrollTable.row();
+
+        final ScrollPane scroller = new ScrollPane(scrollTable);
+        // Pesquisar como fazer scroller rolar automaticamente!
+        
+        final Table table2 = new Table();
+        table2.setFillParent(true);
+        table2.add(scroller).fill().expand();
+        stageCredits.addActor(table2);
         
         menuMusic.setLooping(true);
         menuMusic.play();
@@ -276,8 +316,8 @@ public class MenuScreen extends BaseScreen {
                         viewport.getWorldWidth(),
                         viewport.getWorldHeight());
                 
-                /*FAVOR INSERIR ALGUMA COISA PARA CRÉDITOS!*/
-                
+                this.stageCredits.getActors().get(1).act(Gdx.graphics.getDeltaTime());
+                this.stageCredits.getActors().get(1).draw(batch, 1);
                 
                 buttonVoltar.draw(batch, 1);
                 
