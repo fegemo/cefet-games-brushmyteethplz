@@ -17,7 +17,6 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
-import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -50,6 +49,9 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                     Arrays.asList(
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
 //                            // flávio
 //                            new ShootTheCariesFactory(),
 //                            new ShooTheTartarusFactory(),
@@ -81,6 +83,47 @@ public class PlayingGamesScreen extends BaseScreen
 //                            new CleanTheToothFactory(),
 //                            // matheus ibrahim e luis gustavo
 //                            new DentalKombatFactory()
+=======
+>>>>>>> 6e3805fb93c7c456be2e340295e727c54e7c1655
+                            // flávio
+                            new ShootTheCariesFactory(),
+                            new ShooTheTartarusFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory(),
+                            new FleeFromTartarusFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory(),
+                            new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            new EscoveOsDentesFactory(),
+                            // lucas
+                            new FleeFactory(),
+                            new MouthLandingFactory(),
+                            // lindley e lucas
+                            new GallowsFactory(),
+                            new SmashItFactory(),
+                            new SideWalkingFactory(),
+                            // amanda e vinícius
+                            new FleeTheTartarusFactory(),
+                            new CollectItensFactory(),
+                            new CleanTheTeethFactory(),
+                            // daniel
+                            new CarieEvasionFactory(),
+                            new DefenseOfFluorineFactory(),
+<<<<<<< HEAD
+                            new NinjaToothFactory(),
+=======
+>>>>>>> 6e3805fb93c7c456be2e340295e727c54e7c1655
+                            // carlos e bruno
+                            new CleanTheToothFactory(),
+                            // matheus ibrahim e luis gustavo
+                            new DentalKombatFactory()
+<<<<<<< HEAD
+=======
+>>>>>>> 47193035dbe7a94a9dfd053dc0921e146b85aa72
+>>>>>>> 6e3805fb93c7c456be2e340295e727c54e7c1655
                     )
             ), 0, 1, this, this);
         } else {
@@ -105,6 +148,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
@@ -116,7 +160,8 @@ public class PlayingGamesScreen extends BaseScreen
                             // carlos e bruno
                             new CleanTheToothFactory(),
                             // matheus ibrahim e luis gustavo
-                            new DentalKombatFactory())
+                            new DentalKombatFactory()
+                    )
             ), this, this);
         }
         this.hud = new Hud(this);
