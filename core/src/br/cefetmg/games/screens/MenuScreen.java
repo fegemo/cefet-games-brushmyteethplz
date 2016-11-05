@@ -268,7 +268,8 @@ public class MenuScreen extends BaseScreen {
                 transitionState = states.doNothing;
                 menuMusic.stop();
                 game.setScreen(
-                        new PlayingGamesScreen(game, MenuScreen.this, option));
+                        //new PlayingGamesScreen(game, MenuScreen.this, option, GameType.DESTRUCTION));
+                        new Overworld(game, MenuScreen.this));
             }
         }, 0.75f);// 750ms
     }
