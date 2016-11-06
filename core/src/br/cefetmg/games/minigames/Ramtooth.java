@@ -195,10 +195,9 @@ public class Ramtooth extends MiniGame{
 
     @Override
     public void onUpdate(float dt) {
-        // atualiza a escova (quadro da animação)
+        
         ramtooth.update(dt);
 
-        // atualiza os inimigos (quadro de animação + colisão com dentes)
         for (int i = 0; i < this.teeth.size; i++) {
             Tooth t = this.teeth.get(i);
             t.update(dt);
