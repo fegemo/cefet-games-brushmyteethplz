@@ -50,10 +50,7 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
                     Arrays.asList(
-                            new FleeTheTartarusFactory(),
-                            new CollectItensFactory(),
-                            new RamtoothFactory()
-                            /*
+                            
                             // flávio
                             new ShootTheCariesFactory(),
                             new ShooTheTartarusFactory(),
@@ -85,7 +82,7 @@ public class PlayingGamesScreen extends BaseScreen
                             new CleanTheToothFactory(),
                             // matheus ibrahim e luis gustavo
                             new DentalKombatFactory()
-                            */
+                            
                     )
             ), 0, 1, this, this);
         } else {
