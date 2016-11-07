@@ -23,10 +23,10 @@ import java.util.HashMap;
  *
  * @author afp11
  */
-public class CleanTheTeeth extends MiniGame{
+public class Ramtooth extends MiniGame{
     
     private final Array<Tooth> teeth;
-    private Ramtooth ramtooth;
+    private DenteRamtooth ramtooth;
     
     private final Texture toothTexture;
     private final Texture ramtoothTexture;
@@ -47,33 +47,37 @@ public class CleanTheTeeth extends MiniGame{
     private final Sound somTiroPastaDeDente;
     private final Sound somDenteFicandoBranco;
           
-    public CleanTheTeeth(BaseScreen screen,
+    public Ramtooth(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000, 
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         
         this.texturaFundo = this.screen.assets.get(
-                "clean-the-teeth/fundo.png", Texture.class);
+                "ramtooth/fundo2.png", Texture.class);
         this.fundo = new Sprite(this.texturaFundo);
         this.fundo.setOriginCenter();
-        this.fundo.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        
+        float escalaFundo = 1.4f;
+        float escalaX = Gdx.graphics.getWidth() * escalaFundo;
+        float escalaY = Gdx.graphics.getHeight() * escalaFundo;
+        this.fundo.setSize(escalaX, escalaY);
 
         this.teeth = new Array<Tooth>();
         this.toothTexture = this.screen.assets.get(
-                "clean-the-teeth/spritedente.png", Texture.class);  
+                "ramtooth/spritedente.png", Texture.class);  
         
         this.ramtoothTexture = this.screen.assets.get(
-                "clean-the-teeth/spriterambo.png", Texture.class);
-        this.ramtooth = new Ramtooth(this.ramtoothTexture);
+                "ramtooth/spriterambo.png", Texture.class);
+        this.ramtooth = new DenteRamtooth(this.ramtoothTexture);
         
         this.shots = new Array<Shot>();
         this.texturaTiro = this.screen.assets.get(
-                "clean-the-teeth/spritetiro.png", Texture.class);
+                "ramtooth/spritetiro.png", Texture.class);
         
         this.somTiroPastaDeDente = screen.assets.get(
-                "clean-the-teeth/tiro.mp3", Sound.class);   
+                "ramtooth/tiro.mp3", Sound.class);   
         this.somDenteFicandoBranco = screen.assets.get(
-                "clean-the-teeth/dente-branco.mp3", Sound.class);
+                "ramtooth/dente-branco.mp3", Sound.class);
         
         super.timer.scheduleTask(new Timer.Task() {
             @Override
@@ -94,7 +98,7 @@ public class CleanTheTeeth extends MiniGame{
         ramboPosition.x = 0;
         ramboPosition.y = (Gdx.graphics.getHeight() / 2);
         
-        Ramtooth rambo = new Ramtooth(ramtoothTexture);
+        DenteRamtooth rambo = new DenteRamtooth(ramtoothTexture);
         rambo.setPosition(ramboPosition.x, ramboPosition.y);
         rambo.setSpeed(new Vector2());
         
@@ -191,10 +195,9 @@ public class CleanTheTeeth extends MiniGame{
 
     @Override
     public void onUpdate(float dt) {
-        // atualiza a escova (quadro da animação)
+        
         ramtooth.update(dt);
 
-        // atualiza os inimigos (quadro de animação + colisão com dentes)
         for (int i = 0; i < this.teeth.size; i++) {
             Tooth t = this.teeth.get(i);
             t.update(dt);
@@ -296,14 +299,14 @@ public class CleanTheTeeth extends MiniGame{
         }
     }
     
-    class Ramtooth extends MultiAnimatedSprite {
+    class DenteRamtooth extends MultiAnimatedSprite {
 
         private Vector2 speed;
 
         static final int FRAME_WIDTH = 433;
         static final int FRAME_HEIGHT = 377;
 
-        public Ramtooth(final Texture spriteSheet) {
+        public DenteRamtooth(final Texture spriteSheet) {
             super(new HashMap<String, Animation>() {
                 {
                     TextureRegion[][] frames = TextureRegion

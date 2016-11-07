@@ -7,7 +7,6 @@ package br.cefetmg.games.minigames.factories;
 
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.FleeTheTartarus;
-import br.cefetmg.games.minigames.ShooTheTartarus;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.audio.Sound;
@@ -31,12 +30,15 @@ public class FleeTheTartarusFactory implements MiniGameFactory {
     public Map<String, Class> getAssetsToPreload() {
         return new HashMap<String, Class>() {
             {
-                put("flee-the-tartarus/tartarus-spritesheet.png",
+                put("flee-the-tartarus/spritecarie.png",
                         Texture.class);
                 put("flee-the-tartarus/dente.png", Texture.class);
+                put("flee-the-tartarus/dente-morto.png", Texture.class);
+                put("flee-the-tartarus/fundo.png", Texture.class);
+                
                 put("flee-the-tartarus/aperta2.mp3", Sound.class);
                 put("flee-the-tartarus/venceu.mp3", Sound.class);
-                put("flee-the-tartarus/game-over.mp3", Sound.class);
+                put("flee-the-tartarus/game-over.mp3", Sound.class); 
             }
         };
     }

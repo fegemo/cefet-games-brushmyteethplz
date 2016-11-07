@@ -17,7 +17,7 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
-import br.cefetmg.games.minigames.factories.CleanTheTeethFactory;
+import br.cefetmg.games.minigames.factories.RamtoothFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -72,7 +72,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
-                            new CleanTheTeethFactory(),
+                            new RamtoothFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -108,7 +108,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
-                            new CleanTheTeethFactory(),
+                            new RamtoothFactory(),
                             // daniel
                             new CarieEvasionFactory(),
                             new DefenseOfFluorineFactory(),
@@ -116,7 +116,8 @@ public class PlayingGamesScreen extends BaseScreen
                             // carlos e bruno
                             new CleanTheToothFactory(),
                             // matheus ibrahim e luis gustavo
-                            new DentalKombatFactory())
+                            new DentalKombatFactory()
+                    )
             ), this, this);
         }
         this.hud = new Hud(this);

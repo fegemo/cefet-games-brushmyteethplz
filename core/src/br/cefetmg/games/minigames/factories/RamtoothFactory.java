@@ -5,7 +5,7 @@
  */
 package br.cefetmg.games.minigames.factories;
 
-import br.cefetmg.games.minigames.CleanTheTeeth;
+import br.cefetmg.games.minigames.Ramtooth;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.screens.BaseScreen;
@@ -18,12 +18,12 @@ import java.util.Map;
  *
  * @author afp11
  */
-public class CleanTheTeethFactory implements MiniGameFactory {
+public class RamtoothFactory implements MiniGameFactory {
     
     @Override
     public MiniGame createMiniGame(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        return new CleanTheTeeth(screen, observer, difficulty);
+        return new Ramtooth(screen, observer, difficulty);
     }
 
     /**
@@ -35,13 +35,13 @@ public class CleanTheTeethFactory implements MiniGameFactory {
     public Map<String, Class> getAssetsToPreload() {
         return new HashMap<String, Class>() {
             {
-                put("clean-the-teeth/spritedente.png", Texture.class);   
-                put("clean-the-teeth/spriterambo.png", Texture.class); 
-                put("clean-the-teeth/fundo.png", Texture.class);
-                put("clean-the-teeth/spritetiro.png", Texture.class);
+                put("ramtooth/spritedente.png", Texture.class);   
+                put("ramtooth/spriterambo.png", Texture.class); 
+                put("ramtooth/fundo2.png", Texture.class);
+                put("ramtooth/spritetiro.png", Texture.class);
                 
-                put("clean-the-teeth/dente-branco.mp3", Sound.class);
-                put("clean-the-teeth/tiro.mp3", Sound.class);
+                put("ramtooth/dente-branco.mp3", Sound.class);
+                put("ramtooth/tiro.mp3", Sound.class);
                 
             }
         };
