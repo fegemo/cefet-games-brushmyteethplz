@@ -40,43 +40,18 @@ public class CollectItensFactory implements MiniGameFactory{
                 put("collect-itens/toothbrush.png", Texture.class);
                 put("collect-itens/lollipop.png", Texture.class);
                 put("collect-itens/candy.png", Texture.class);
-                put("collect-itens/smile.png", Texture.class);
+                put("collect-itens/bocaboa.png", Texture.class);
+                put("collect-itens/bocaruim.png", Texture.class);
+                put("collect-itens/fundo.png", Texture.class);
+                
                 put("collect-itens/aperta.mp3", Sound.class);
                 put("collect-itens/aplausos.mp3", Sound.class);
-                put("collect-itens/aperta2.mp3", Sound.class);
                 put("collect-itens/game-over.mp3", Sound.class);
+                put("collect-itens/pegaitembom.mp3", Sound.class);
+                put("collect-itens/pegaitemruim.mp3", Sound.class);
+                
                 
             }
         };
-    }
-
-    /**
-     * Created by matheus on 02/11/16.
-     */
-
-    public static class CarieSwordFactory implements MiniGameFactory {
-        @Override
-        public MiniGame createMiniGame(BaseScreen screen,
-                                       GameStateObserver observer, float difficulty) {
-            return new CarieSword(screen, observer, difficulty);
-        }
-
-        @Override
-        public Map<String, Class> getAssetsToPreload() {
-            return new HashMap<String, Class>() {
-                {
-                    put("carie-sword/caries.png", Texture.class);
-                    put("carie-sword/cariesAnimacao.png", Texture.class);
-                    put("carie-sword/tooth.png", Texture.class);
-                    put("carie-sword/som1.mp3", Sound.class);
-                    put("carie-sword/som2.mp3", Sound.class);
-                    put("carie-sword/som3.mp3", Sound.class);
-                    put("carie-sword/bomb1.mp3", Sound.class);
-                    put("carie-sword/bomb2.mp3", Sound.class);
-                    put("carie-sword/caries1.mp3", Sound.class);
-                    put("carie-sword/caries2.mp3", Sound.class);
-                }
-            };
-        }
     }
 }

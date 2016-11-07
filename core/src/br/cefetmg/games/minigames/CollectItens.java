@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
 
+
 /**
  *
  * @author afp11
@@ -26,12 +27,16 @@ public class CollectItens extends MiniGame{
     
     private final Array<Sprite> characters;    
 
-    private final Sprite smile;
+    private final Sprite fundo;
+    private final Texture texturaFundo;
+    
+    private final Sprite boca;
     private final Texture toothpasteTexture;
     private final Texture toothbrushTexture;
     private final Texture candyTexture;
     private final Texture lollipopTexture;
-    private final Texture smileTexture;
+    private final Texture goodMouthTexture;
+    private final Texture badMouthTexture;
     
     private int friendsCollected;
     private int spawnedCharacters;
@@ -53,15 +58,20 @@ public class CollectItens extends MiniGame{
     private int contador = 0;
     private final Sound enemiesAppearing;
     private final Sound friendsAppearing;
-    private final Sound collectItem;
     private final Sound venceu;
     private final Sound perdeu;
+    
+    private final Sound collectGoodItem;
+    private final Sound collectBadItem;
 
     public CollectItens(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10000,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.characters = new Array<Sprite>();
+        
+        this.texturaFundo = this.screen.assets.get(
+                "collect-itens/fundo.png", Texture.class);
         
         this.toothpasteTexture = this.screen.assets.get(
                 "collect-itens/toothpaste.png", Texture.class);
@@ -71,28 +81,36 @@ public class CollectItens extends MiniGame{
                 "collect-itens/lollipop.png", Texture.class);
         this.candyTexture = this.screen.assets.get(
                 "collect-itens/candy.png", Texture.class);
-        
-        this.smileTexture = this.screen.assets.get(
-                "collect-itens/smile.png", Texture.class);
-        
+
+        this.goodMouthTexture = this.screen.assets.get(
+                "collect-itens/bocaboa.png", Texture.class);
+        this.badMouthTexture = this.screen.assets.get(
+                "collect-itens/bocaruim.png", Texture.class);        
         
         this.enemiesAppearing = screen.assets.get(
                 "collect-itens/aperta.mp3", Sound.class);
         this.friendsAppearing = screen.assets.get(
                 "collect-itens/aperta.mp3", Sound.class);
         
-        this.collectItem = screen.assets.get(
-                "collect-itens/aperta2.mp3", Sound.class);
+        this.collectGoodItem = screen.assets.get(
+                "collect-itens/pegaitembom.mp3", Sound.class);
+        
+        this.collectBadItem = screen.assets.get(
+                "collect-itens/pegaitemruim.mp3", Sound.class);
                 
         this.venceu = screen.assets.get(
                 "collect-itens/aplausos.mp3", Sound.class);
         this.perdeu = screen.assets.get(
                 "collect-itens/game-over.mp3", Sound.class);
         
-        this.smile = new Sprite(smileTexture);
-        this.smile.setOriginCenter();
+        this.boca = new Sprite(goodMouthTexture);
+        
+        this.fundo = new Sprite(texturaFundo);
+        
+        this.boca.setOriginCenter();
         this.friendsCollected = 0;
         this.spawnedCharacters = 0;
+        this.friends = 0;
         
         this.quantAtualToothbrush = 0;
         this.quantAtualToothpaste = 0;
@@ -242,13 +260,14 @@ public class CollectItens extends MiniGame{
                 / spawnInterval) - 3;
         this.enemies = (int) Math.ceil((float) maxDuration
                 / spawnInterval) - 3;
-               
-        if ((totalCharacters % 2) == 0){
-            this.totalToothbrush = totalCharacters / 2;
-        } else {
-            this.totalToothbrush = (totalCharacters + 1) / 2;
+        
+        if ((totalCharacters % 2) != 0){
+            totalCharacters++;
         }
+               
+        this.totalToothbrush = totalCharacters / 2;
         this.totalToothpaste = totalCharacters - this.totalToothbrush;
+        
         if ((totalCandies % 2) == 0){
             this.totalCandies = enemies / 2;
         } else {
@@ -260,39 +279,44 @@ public class CollectItens extends MiniGame{
 
     @Override
     public void onHandlePlayingInput() {
+        
         // atualiza a posição do alvo de acordo com o mouse
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         super.screen.viewport.unproject(click);
-        this.smile.setPosition(click.x - this.smile.getWidth() / 2,
-                click.y - this.smile.getHeight() / 2);
-
-        // verifica se matou um inimigo
+        this.boca.setPosition(click.x - this.boca.getWidth() / 2,
+                click.y - this.boca.getHeight() / 2);
+        
         if (Gdx.input.justTouched()) {
-            this.collectItem.play();
-            // itera no array de inimigos
             for (int i = 0; i < characters.size; i++) {
                 Sprite sprite = characters.get(i);
-                // se há interseção entre o retângulo da sprite e do alvo,
-                // o tiro acertou
-                if (sprite.getBoundingRectangle().overlaps(smile.getBoundingRectangle())) {
-                    if ((sprite.getTexture() == toothbrushTexture) || sprite.getTexture() == toothpasteTexture){
-                        // contabiliza um inimigo morto
-                        this.friendsCollected++;
+                if (sprite.getBoundingRectangle().overlaps(boca.getBoundingRectangle())) {
+                    
+                    if ((sprite.getTexture() == toothbrushTexture) || 
+                            sprite.getTexture() == toothpasteTexture){
+                        
+                        this.collectGoodItem.play();
+                                                
+                        this.friendsCollected++; 
+                        
                     } else {
+                        
+                        this.collectBadItem.play();
+                        
+                        this.boca.setTexture(this.badMouthTexture);
+                        
                         this.perdeu.play();
                         this.challengeFailed();
+                        
                     }
-                    // remove o inimigo do array
+                    
                     characters.removeValue(sprite, true);
-                    // se tiver matado todos os inimigos, o desafio
-                    // está resolvido
+                    
                     if (this.friendsCollected >= friends) {
+                        
                         this.venceu.play();
                         super.challengeSolved();
+                        
                     }
-
-                    // pára de iterar, porque senão o tiro pode pegar em mais
-                    // de um inimigo
                     break;
                 }
             }
@@ -302,7 +326,6 @@ public class CollectItens extends MiniGame{
 
     @Override
     public void onUpdate(float dt) {
-
         
         // vai diminuindo o tamanho das cáries existentes
         for (int i = 0; i < characters.size; i++) {
@@ -322,12 +345,14 @@ public class CollectItens extends MiniGame{
 
     @Override
     public void onDrawGame() {
+        
+        this.fundo.draw(this.screen.batch);
        
         for (int i = 0; i < characters.size; i++) {
             Sprite sprite = characters.get(i);
             sprite.draw(this.screen.batch);
         }
-        smile.draw(this.screen.batch);
+        boca.draw(this.screen.batch);
     }
 
     @Override
