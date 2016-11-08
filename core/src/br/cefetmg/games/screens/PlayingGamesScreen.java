@@ -70,6 +70,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
@@ -83,8 +84,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // matheus ibrahim e luis gustavo
                             new DentalKombatFactory()
                     )
-            ), 0, 1, this, this
-            );
+            ), 0, 1, this, this);
         } else {
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
                     Arrays.asList(
@@ -108,6 +108,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
