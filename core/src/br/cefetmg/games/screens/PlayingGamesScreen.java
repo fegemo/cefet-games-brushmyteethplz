@@ -70,6 +70,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
@@ -108,6 +109,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // lindley e lucas
                             new GallowsFactory(),
                             new SmashItFactory(),
+                            new SideWalkingFactory(),
                             // amanda e vinícius
                             new FleeTheTartarusFactory(),
                             new CollectItensFactory(),
