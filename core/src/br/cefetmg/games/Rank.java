@@ -13,6 +13,7 @@ import com.firebase.client.ValueEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import java.util.Iterator;
+import java.util.Comparator;
 
 /**
  *
@@ -35,10 +36,27 @@ public class Rank {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> iter = dataSnapshot.getChildren();
                 Iterator<DataSnapshot> iterator = iter.iterator();
+                ArrayList<Score> all_scores = new ArrayList<Score>();
                 while(iterator.hasNext()){
                     DataSnapshot data = iterator.next();
                     Score score = new Score(data.getKey(), data.getValue(Integer.class));
-                    ranking.add(score);
+                    all_scores.add(score);
+                }
+                all_scores.sort(new Comparator<Score>(){
+                    @Override
+                    public int compare(Score s1, Score s2){
+                        if(s1.getGames() < s2.getGames())
+                            return 1;
+                        else if(s1.getGames() == s2.getGames())
+                            return 0;
+                        else
+                            return -1;
+                    }
+                });
+                
+                ranking.clear();
+                for(int i = 0; i<10; i++){
+                    ranking.add(all_scores.get(i));
                 }
             }
 
