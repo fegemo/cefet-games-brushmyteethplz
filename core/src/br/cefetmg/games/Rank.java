@@ -8,6 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import com.firebase.client.Firebase;
+import com.firebase.client.ValueEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import java.util.Iterator;
 
 /**
  *
@@ -16,11 +21,34 @@ import java.util.Collections;
 public class Rank {
 
     private ArrayList<Score> ranking;
+    private Firebase firebase;
 
     public Rank() {
-        readRankFile();
+        firebase = new Firebase("https://escove-meus-dentes.firebaseio.com/");
+        readRankDB();
     }
 
+    public final void readRankDB(){
+        ranking = new ArrayList<Score>();
+        firebase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> iter = dataSnapshot.getChildren();
+                Iterator<DataSnapshot> iterator = iter.iterator();
+                while(iterator.hasNext()){
+                    DataSnapshot data = iterator.next();
+                    Score score = new Score(data.getKey(), data.getValue(Integer.class));
+                    ranking.add(score);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getCode());
+            }
+        });
+    }
+    
     public final void readRankFile() {
         ranking = new ArrayList<Score>();
         try {
@@ -30,6 +58,8 @@ public class Rank {
             while ((line = getInput.readLine()) != null) {
                 String[] parts = line.split(" ");
                 ranking.add(new Score(parts[0], Integer.parseInt(parts[1])));
+//                String s = firebase.child("AAA").toString();
+//                ranking.add(new Score(s, Integer.parseInt(parts[1])));
             }
             getInput.close();
         } catch (IOException e) {
