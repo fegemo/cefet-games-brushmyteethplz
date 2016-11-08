@@ -84,8 +84,7 @@ public class PlayingGamesScreen extends BaseScreen
                             // matheus ibrahim e luis gustavo
                             new DentalKombatFactory()
                     )
-            ), 0, 1, this, this
-            );
+            ), 0, 1, this, this);
         } else {
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
                     Arrays.asList(
