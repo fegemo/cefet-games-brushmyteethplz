@@ -81,9 +81,9 @@ public class PlayingGamesScreen extends BaseScreen
                         // daniel
                         new CarieEvasionFactory(),
                         new DefenseOfFluorineFactory(),
-                        new NinjaToothFactory(),
+                        new NinjaToothFactory()
                         // carlos e bruno
-                        new CleanTheToothFactory()
+                        //new CleanTheToothFactory()
                 )
         ), 0, 1, this, this);
         this.hud = new Hud(this);
