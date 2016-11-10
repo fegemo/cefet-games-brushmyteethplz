@@ -2,23 +2,7 @@ package br.cefetmg.games.screens;
 
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
-import br.cefetmg.games.minigames.factories.MouthLandingFactory;
-import br.cefetmg.games.minigames.factories.FleeFromTartarusFactory;
-import br.cefetmg.games.minigames.factories.EscoveOsDentesFactory;
-import br.cefetmg.games.minigames.factories.AngryToothsFactory;
-import br.cefetmg.games.minigames.factories.CarieSwordFactory;
-import br.cefetmg.games.minigames.factories.GallowsFactory;
-import br.cefetmg.games.minigames.factories.SmashItFactory;
-import br.cefetmg.games.minigames.factories.CarieEvasionFactory;
-import br.cefetmg.games.minigames.factories.DefenseOfFluorineFactory;
-import br.cefetmg.games.minigames.factories.CleanTheToothFactory;
-import br.cefetmg.games.minigames.factories.ShooTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.ShootTheCariesFactory;
-import br.cefetmg.games.minigames.factories.MiniGameFactory;
-import br.cefetmg.games.minigames.factories.SaveTheTeethFactory;
-import br.cefetmg.games.minigames.factories.PutTheBracesFactory;
-import br.cefetmg.games.minigames.factories.FleeTheTartarusFactory;
-import br.cefetmg.games.minigames.factories.CollectItensFactory;
+import br.cefetmg.games.minigames.factories.*;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -30,10 +14,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.MiniGame;
-import br.cefetmg.games.minigames.factories.FleeFactory;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
+import br.cefetmg.games.minigames.factories.RamtoothFactory;
 import br.cefetmg.games.minigames.util.GameOption;
 
 /**
@@ -61,70 +45,85 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sound = new Sounds();
-                this.option = option;
+        this.option = option;
 
         if (this.option == GameOption.NORMAL) {
             this.sequencer = new GameSequencer(5, new HashSet<MiniGameFactory>(
-                Arrays.asList(
-                        // flávio
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        // gabriel e juan
-                        new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory(),
-                        // higor e matheus
-                        new AngryToothsFactory(),
-                        new CarieSwordFactory(),
-                        // nicolas e henrique
-                        new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory(),
-                        // lucas
-                        new FleeFactory(),
-                        new MouthLandingFactory(),
-                        // lindley e lucas
-                        new GallowsFactory(),
-                        new SmashItFactory(),
-                        // amanda e vinícius
-                        new FleeTheTartarusFactory(),
-                        new CollectItensFactory(),
-                        // daniel
-                        new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory(),
-                        // carlos e bruno
-                        new CleanTheToothFactory()
-                )
+                    Arrays.asList(
+                            // flávio
+                            new ShootTheCariesFactory(),
+                            new ShooTheTartarusFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory(),
+                            new FleeFromTartarusFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory(),
+                            new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            new EscoveOsDentesFactory(),
+                            new SnakeCariesFactory(),
+                            // lucas
+                            new FleeFactory(),
+                            new MouthLandingFactory(),
+                            // lindley e lucas
+                            new GallowsFactory(),
+                            new SmashItFactory(),
+                            new SideWalkingFactory(),
+                            // amanda e vinícius
+                            new FleeTheTartarusFactory(),
+                            new CollectItensFactory(),
+                            new RamtoothFactory(),
+                            // daniel
+                            new CarieEvasionFactory(),
+                            new DefenseOfFluorineFactory(),
+                            new NinjaToothFactory(),
+                            // carlos e bruno
+                            new CleanTheToothFactory(),
+                            // matheus ibrahim e luis gustavo
+                            new DentalKombatFactory()
+                    )
             ), 0, 1, this, this);
         } else {
             this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
                     Arrays.asList(
                             // flávio
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        // gabriel e juan
-                        new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory(),
-                        // higor e matheus
-                        new AngryToothsFactory(),
-                        new CarieSwordFactory(),
-                        // nicolas e henrique
-                        new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory(),
-                        // lucas
-                        new FleeFactory(),
-                        new MouthLandingFactory(),
-                        // lindley e lucas
-                        new GallowsFactory(),
-                        new SmashItFactory(),
-                        // amanda e vinícius
-                        new FleeTheTartarusFactory(),
-                        new CollectItensFactory(),
-                        // daniel
-                        new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory(),
-                        // carlos e bruno
-                        new CleanTheToothFactory())
+                            new ShootTheCariesFactory(),
+                            new ShooTheTartarusFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory(),
+                            new FleeFromTartarusFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory(),
+                            new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            new EscoveOsDentesFactory(),
+                            new SnakeCariesFactory(),
+                            // lucas
+                            new FleeFactory(),
+                            new MouthLandingFactory(),
+                            // lindley e lucas
+                            new GallowsFactory(),
+                            new SmashItFactory(),
+                            new SideWalkingFactory(),
+                            // amanda e vinícius
+                            new FleeTheTartarusFactory(),
+                            new CollectItensFactory(),
+                            new RamtoothFactory(),
+                            // daniel
+                            new CarieEvasionFactory(),
+                            new DefenseOfFluorineFactory(),
+                            new NinjaToothFactory(),
+                            // carlos e bruno
+                            new CleanTheToothFactory(),
+                            // matheus ibrahim e luis gustavo
+                            new DentalKombatFactory()
+                    )
             ), this, this);
-        } 
+        }
         this.hud = new Hud(this);
     }
 
@@ -145,11 +144,11 @@ public class PlayingGamesScreen extends BaseScreen
             this.currentGame.handleInput();
         }
 
-        if (this.state == PlayScreenState.FINISHED_WON ||
-                this.state == PlayScreenState.FINISHED_GAME_OVER) {
+        if (this.state == PlayScreenState.FINISHED_WON
+                || this.state == PlayScreenState.FINISHED_GAME_OVER) {
             if (Gdx.input.justTouched()) {
                 // começa transição para voltar para o menu principal
-                transitionState =  states.fadeOut;
+                transitionState = states.fadeOut;
             }
         }
     }
@@ -157,19 +156,19 @@ public class PlayingGamesScreen extends BaseScreen
     @Override
     public void update(float dt) {
         if (super.assets.update()) {
-            if (this.state == PlayScreenState.PLAYING 
+            if (this.state == PlayScreenState.PLAYING
                     && this.currentGame == null) {
                 advance();
             }
             this.currentGame.update(dt);
             hud.update(dt);
-            
-            if (transitionState == states.fadeOut && transition.isFinished()) {		
-                super.game.setScreen(new MenuScreen(super.game, this));		
-            }	
+
+            if (transitionState == states.fadeOut && transition.isFinished()) {
+                super.game.setScreen(new MenuScreen(super.game, this));
+            }
         }
     }
-    
+
     @Override
     public void draw() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -185,26 +184,26 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void advance() {
-        if (this.state == PlayScreenState.FINISHED_WON ||
-                this.state == PlayScreenState.FINISHED_GAME_OVER) {
+        if (this.state == PlayScreenState.FINISHED_WON
+                || this.state == PlayScreenState.FINISHED_GAME_OVER) {
             if (option == GameOption.SURVIVAL) {
                 RankScreen ranque;
-                super.game.setScreen(ranque = new RankScreen(super.game, this)); 
+                super.game.setScreen(ranque = new RankScreen(super.game, this));
                 ranque.setPoints(sequencer.getGameNumber());
             }
-            
+
             // se deu gameover ou terminou a sequencia com sucesso,
             // não deixa avançar para próximo minigame
             return;
         }
-        
+
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
-
             Gdx.input.setCursorPosition(
-                    (int)Gdx.graphics.getWidth() / 2, 
-                    (int)Gdx.graphics.getHeight() / 2);
+                    (int) Gdx.graphics.getWidth() / 2,
+                    (int) Gdx.graphics.getHeight() / 2);
+            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
@@ -213,8 +212,8 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void drawEndGame() {
-        if(option == GameOption.NORMAL){
-            super.drawCenterAlignedText("Toque para voltar ao Menu", 
+        if (option == GameOption.NORMAL) {
+            super.drawCenterAlignedText("Toque para voltar ao Menu",
                     0.5f, super.viewport.getWorldHeight() * 0.35f);
         }
     }
@@ -257,8 +256,8 @@ public class PlayingGamesScreen extends BaseScreen
                 } else {
                     sound.playGameWin();
                 }
-                // deixa passar para próximo caso
-                
+            // deixa passar para próximo caso
+
             case FAILED:
                 if (state == MiniGameState.FAILED) {
                     loseLife();

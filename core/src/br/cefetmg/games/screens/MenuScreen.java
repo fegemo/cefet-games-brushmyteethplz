@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import br.cefetmg.games.Rank;
-import br.cefetmg.games.minigames.util.ActualMenuScreen;
+import br.cefetmg.games.minigames.util.MenuState;
 import br.cefetmg.games.minigames.util.GameOption;
 import br.cefetmg.games.minigames.util.Score;
 import com.badlogic.gdx.audio.Music;
@@ -28,7 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class MenuScreen extends BaseScreen {
 
     private final Music menuMusic;
-    private ActualMenuScreen actualScreen;
+    private MenuState menuState;
     private final Rank rank;
     private Texture background, backgroundRanking;
     private TextureRegion buttonIniciarTexture, buttonCreditosTexture,
@@ -50,8 +50,6 @@ public class MenuScreen extends BaseScreen {
         //Define a música tema
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/menu.mp3"));
 
-        //Inicializa tela
-        actualScreen = ActualMenuScreen.MENU;
         rank = new Rank();
     }
 
@@ -152,8 +150,7 @@ public class MenuScreen extends BaseScreen {
         buttonRanking.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                actualScreen = ActualMenuScreen.RANKING;
-                Gdx.input.setInputProcessor(stageRanking);
+                changeMenuState(MenuState.RANKING);
             }
         });
 
@@ -174,18 +171,18 @@ public class MenuScreen extends BaseScreen {
         buttonVoltar.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                actualScreen = ActualMenuScreen.MENU;
-                Gdx.input.setInputProcessor(stage);
+                changeMenuState(MenuState.MENU);
             }
         });
 
         stage.addActor(table);
         stage.addActor(tableGameMode);
         stageRanking.addActor(buttonVoltar);
-        Gdx.input.setInputProcessor(stage);
 
         menuMusic.setLooping(true);
         menuMusic.play();
+
+        changeMenuState(MenuState.MENU);
     }
     
     @Override
@@ -228,7 +225,7 @@ public class MenuScreen extends BaseScreen {
         batch.begin();
 
         // desenha o menu propriamente dito ou o ranking
-        switch (actualScreen) {
+        switch (menuState) {
             case MENU:
                 batch.draw(background, 0, 0,
                         viewport.getWorldWidth(),
@@ -255,6 +252,19 @@ public class MenuScreen extends BaseScreen {
         }
 
         batch.end();
+    }
+    
+    public void changeMenuState(final MenuState newMenuState) {
+        switch (newMenuState) {
+            case MENU:
+                Gdx.input.setInputProcessor(stage);
+                break;
+                
+            case RANKING:
+                Gdx.input.setInputProcessor(stageRanking);
+                break;
+        }
+        this.menuState = newMenuState;
     }
 
     /**

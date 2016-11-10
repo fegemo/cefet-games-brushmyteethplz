@@ -5,6 +5,7 @@
  */
 package br.cefetmg.games.minigames.factories;
 
+import br.cefetmg.games.minigames.CarieSword;
 import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.minigames.CollectItens;
 import br.cefetmg.games.minigames.util.GameStateObserver;
@@ -39,14 +40,18 @@ public class CollectItensFactory implements MiniGameFactory{
                 put("collect-itens/toothbrush.png", Texture.class);
                 put("collect-itens/lollipop.png", Texture.class);
                 put("collect-itens/candy.png", Texture.class);
-                put("collect-itens/smile.png", Texture.class);
+                put("collect-itens/bocaboa.png", Texture.class);
+                put("collect-itens/bocaruim.png", Texture.class);
+                put("collect-itens/fundo.png", Texture.class);
+                
                 put("collect-itens/aperta.mp3", Sound.class);
                 put("collect-itens/aplausos.mp3", Sound.class);
-                put("collect-itens/aperta2.mp3", Sound.class);
                 put("collect-itens/game-over.mp3", Sound.class);
+                put("collect-itens/pegaitembom.mp3", Sound.class);
+                put("collect-itens/pegaitemruim.mp3", Sound.class);
+                
                 
             }
         };
     }
-    
 }

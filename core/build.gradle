@@ -1,3 +1,27 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.boxfuse.client:flyway-release:4.0.3"
+  }
+}
+
+buildscript {
+  repositories {
+    maven{
+        url "http://central.maven.org/maven2/"
+    }
+  }
+  dependencies {
+    classpath group: 'com.firebase', name: 'firebase-client-jvm', version: '2.5.2'
+  }
+}
+
+apply plugin: "org.flywaydb.flyway"
+
 apply plugin: "java"
 
 sourceCompatibility = 1.6

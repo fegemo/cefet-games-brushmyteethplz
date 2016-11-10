@@ -9,7 +9,7 @@ package br.cefetmg.games.minigames.util;
  *
  * @author Lucas
  */
-public enum ActualMenuScreen {
+public enum MenuState {
     MENU,
     RANKING
 }
