@@ -1,6 +1,7 @@
 package br.cefetmg.games.screens;
 
 import br.cefetmg.games.Rank;
+import br.cefetmg.games.minigames.util.MenuState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -70,7 +71,9 @@ public class RankScreen extends BaseScreen {
                 }
                 rank.writeScoreDB(nome, points);
                 // chama a tela de menu
-                super.game.setScreen(new MenuScreen(super.game, this));
+                MenuScreen menu = new MenuScreen(super.game, this);
+                super.game.setScreen(menu);
+                menu.changeMenuState(MenuState.RANKING);
             }
 
             // se clicar em erase
