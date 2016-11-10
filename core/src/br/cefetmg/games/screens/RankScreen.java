@@ -68,7 +68,7 @@ public class RankScreen extends BaseScreen {
                 for (int i = 0; i < nickname.size; i++) {
                     nome += (char) nickname.get(i).caracterASCII;
                 }
-                rank.writeRankFile(nome, points);
+                rank.writeScoreDB(nome, points);
                 // chama a tela de menu
                 super.game.setScreen(new MenuScreen(super.game, this));
             }
