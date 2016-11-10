@@ -19,7 +19,7 @@ public class Rank {
     private final Firebase firebase;
 
     public Rank() {
-        firebase = new Firebase("https://escove-meus-dentes.firebaseio.com/");
+        firebase = new Firebase(Config.RANKING_DATABASE_ENDPOINT);
         readRankDB();
     }
 
