@@ -139,7 +139,16 @@ public class NinjaTooth extends MiniGame {
     @Override
     public void onUpdate(float dt) {
         // atualiza os inimigos (quadro de animação + colisão com dentes)
-        
+        if (superTooth.getHeadPosition().x > super.screen.viewport.getWorldWidth()
+                || superTooth.getHeadPosition().x < 0
+                || superTooth.getHeadPosition().y > super.screen.viewport.getWorldHeight()
+                || superTooth.getHeadPosition().y < 0) {
+
+            superTooth.wasHurt();
+            super.challengeFailed();
+            toothBreakingSound.play();
+        }
+
         for (int i = 0; i < this.enemies.size; i++) {
             Tartarus tart = this.enemies.get(i);
             tart.update(dt);
@@ -148,7 +157,6 @@ public class NinjaTooth extends MiniGame {
             if (tart.getBoundingRectangle().overlaps(superTooth.getBoundingRectangle())) {
                 toothWasHurt(superTooth, tart);
             }
-            
             // bullet collision
             for (Bullet b : superTooth.bullets) {
 
