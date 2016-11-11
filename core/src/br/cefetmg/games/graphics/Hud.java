@@ -47,6 +47,9 @@ public class Hud {
 
     private boolean isClocking;
     
+    //Variável de referência para quantidade de dentes inteiros by Bruno e Carlos
+    private int dentes;
+    
     public Hud(BaseScreen screen) {
         stage = new Stage(screen.viewport, screen.batch);
     }
@@ -57,6 +60,9 @@ public class Hud {
         isClocking=false;
         lifeTexture = new Texture("images/lives.png");
         clockTexture = new Texture("images/relogio.png");
+        
+        //dentes é atribuída com a quantidade de dentes ou vidas inicial by Bruno e Carlos
+        dentes = Config.MAX_LIVES;
         
         BitmapFont font = new BitmapFont(
                 Gdx.files.internal("fonts/sawasdee-50.fnt"));
@@ -85,6 +91,14 @@ public class Hud {
         stage.addActor(table);
         
         timerSound = Gdx.audio.newSound(Gdx.files.internal("ui/tick-tock.mp3"));
+        
+        /*Como não há animação para os dentes inteiros eles são apenas desenhados
+            uma vez na tela by Bruno e Carlos
+        */
+        for (int i = 0; i < Config.MAX_LIVES; i++) {
+            LifeHeart heart = ((LifeHeart) livesGroup.getChildren().get(i));
+            heart.alive();
+        }
     }
 
     public void update(float dt) {
@@ -110,15 +124,16 @@ public class Hud {
                     + "um número de vidas menor que 0 ou maior que "
                     + Config.MAX_LIVES + ".");
         }
-        for (int i = 0; i < Config.MAX_LIVES; i++) {
-            LifeHeart heart = ((LifeHeart) livesGroup.getChildren().get(i));
-            if (lives > i) {
-                heart.alive();
-            } else {              
-                heart.die();            
-            }
+        //Contabiliza os dentes de acordo com as vidas(lives) e executa a animação de um dente quebrando
+        //para apenas um dente inteiro disponível em sequência by Bruno e Carlos
+        if(lives < dentes && dentes != 0){
+            LifeHeart heart = ((LifeHeart) livesGroup.getChildren().get(dentes-1));
+            heart.die();
+            dentes--;
         }
+                
     }
+    
 
     public void startEndingTimer(final long endingTime) {
         timer.scheduleTask(new Task() {
@@ -201,7 +216,8 @@ public class Hud {
             TextureRegion[][] frames = TextureRegion
                     .split(lifeTexture, FRAME_WIDTH, FRAME_HEIGHT);
             Animation alive = new Animation(1f, frames[0][5]);
-            Animation dying = new Animation(.1f,new TextureRegion[]{frames[0][4], frames[0][3], frames[0][2], frames[0][1],frames[0][0]});
+            //O intervalo de tempo da animação foi incrementado by Bruno e Carlos
+            Animation dying = new Animation(.3f,new TextureRegion[]{frames[0][4], frames[0][3], frames[0][2], frames[0][1],frames[0][0]});
             HashMap<String, Animation> animations
                     = new HashMap<String, Animation>();
             animations.put("alive", alive);
