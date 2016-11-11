@@ -133,7 +133,17 @@ public class PlayingGamesScreen extends BaseScreen
             hud.update(dt);
 
             if (transitionState == states.fadeOut && transition.isFinished()) {
-                super.game.setScreen(new MenuScreen(super.game, this));
+                switch (option) {
+                    case NORMAL:
+                        super.game.setScreen(new MenuScreen(super.game, this));
+                        break;
+                        
+                    case SURVIVAL:
+                        RankScreen ranque = new RankScreen(super.game, this);
+                        ranque.setPoints(sequencer.getGameNumber());
+                        super.game.setScreen(ranque);
+                        break;
+                }
             }
         }
     }
@@ -155,12 +165,6 @@ public class PlayingGamesScreen extends BaseScreen
     private void advance() {
         if (this.state == PlayScreenState.FINISHED_WON
                 || this.state == PlayScreenState.FINISHED_GAME_OVER) {
-            if (option == GameOption.SURVIVAL) {
-                RankScreen ranque;
-                super.game.setScreen(ranque = new RankScreen(super.game, this));
-                ranque.setPoints(sequencer.getGameNumber());
-            }
-
             // se deu gameover ou terminou a sequencia com sucesso,
             // não deixa avançar para próximo minigame
             return;

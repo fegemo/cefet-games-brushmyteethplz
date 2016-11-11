@@ -57,6 +57,11 @@ public class RankScreen extends BaseScreen {
 
     @Override
     public void handleInput() {
+        if (transitionState == states.fadeIn
+                || transitionState == states.fadeOut) {
+            return;
+        }
+
         Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         viewport.unproject(click);
 
@@ -70,10 +75,11 @@ public class RankScreen extends BaseScreen {
                     nome += (char) nickname.get(i).caracterASCII;
                 }
                 rank.writeScoreDB(nome, points);
+                
                 // chama a tela de menu
                 MenuScreen menu = new MenuScreen(super.game, this);
-                super.game.setScreen(menu);
                 menu.changeMenuState(MenuState.RANKING);
+                super.game.setScreen(menu);
             }
 
             // se clicar em erase
