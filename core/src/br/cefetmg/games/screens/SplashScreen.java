@@ -44,7 +44,7 @@ public class SplashScreen extends BaseScreen {
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash.mp3"));
         this.currentFrame = 0;
         this.displayWaitingTime = 0;
-
+        transitionState = states.doNothing;
         this.splashTextures = new Texture[QTD_OF_FRAMES];
     }
 
@@ -65,8 +65,8 @@ public class SplashScreen extends BaseScreen {
         animatedLogo.setCenter(
                 super.viewport.getWorldWidth() / 2,
                 super.viewport.getWorldHeight() / 2);
-        splashSound.play();
         timeWhenScreenShowedUp = TimeUtils.millis();
+        splashSound.play();
     }
     
     @Override
@@ -115,14 +115,13 @@ public class SplashScreen extends BaseScreen {
             }
         }
 
-        // verifica se o tempo em que se passou na tela é maior do que o máximo
-        // para que possamos navegar para a próxima tela.
-        if (TimeUtils.timeSinceMillis(timeWhenScreenShowedUp)
-                >= Config.TIME_ON_SPLASH_SCREEN 
-                && transitionState == states.doNothing) {
+        // verifica se o quadro atual é último para ir para a próxima tela.
+        if ((currentFrame >= QTD_OF_FRAMES) &&
+            (transitionState == states.doNothing)) {
             splashSound.stop();
             transitionState = states.fadeOut;
         }
+        
         
         if (transitionState == states.fadeOut && transition.isFinished()) {
             navigateToMenuScreen();
