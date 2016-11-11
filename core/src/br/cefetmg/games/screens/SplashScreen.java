@@ -44,7 +44,7 @@ public class SplashScreen extends BaseScreen {
         splashSound = Gdx.audio.newSound(Gdx.files.internal("sounds/splash.mp3"));
         this.currentFrame = 0;
         this.displayWaitingTime = 0;
-
+        transitionState = states.doNothing;
         this.splashTextures = new Texture[QTD_OF_FRAMES];
     }
 
