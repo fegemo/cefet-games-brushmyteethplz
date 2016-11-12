@@ -33,6 +33,8 @@ public class RankScreen extends BaseScreen {
 
     @Override
     public void appear() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+
         new Letters(new Texture("buttons_rank/letras.png"));
         this.letters = new Array<StructSprite>();
         this.nickname = new Array<StructSprite>();

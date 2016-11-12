@@ -150,7 +150,6 @@ public class PlayingGamesScreen extends BaseScreen
 
     @Override
     public void draw() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.batch.begin();
         if (this.currentGame != null) {
             this.currentGame.draw();
