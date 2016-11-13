@@ -4,7 +4,7 @@ import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import br.cefetmg.games.ranking.Rank;
+import br.cefetmg.games.ranking.Ranking;
 import br.cefetmg.games.ranking.RankingObserver;
 import br.cefetmg.games.minigames.util.MenuState;
 import br.cefetmg.games.minigames.util.GameOption;
@@ -43,7 +43,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
 
     private final Music menuMusic;
     private MenuState menuState;
-    private final Rank rank;
+    private Ranking ranking;
     private Texture background3Teeth, background2Teeth;
     private TextureRegion buttonIniciarTexture, buttonCreditosTexture,
             buttonSairTexture, buttonSurvivalTexture, buttonNormalTexture,
@@ -67,8 +67,6 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
 
         //Define a música tema
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/menu.mp3"));
-
-        rank = new Rank();
     }
 
     /**
@@ -77,8 +75,6 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
     @Override
     public void appear() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
-
-        rank.setObserver(this);
 
         background3Teeth = new Texture("menu_background_m.jpg");
         background2Teeth = new Texture("menu_background_r.jpg");
@@ -99,6 +95,9 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         menuMusic.play();
 
         changeMenuState(MenuState.MENU);
+
+        ranking = new Ranking();
+        ranking.setObserver(this);
     }
     
     private void initMainMenu() {

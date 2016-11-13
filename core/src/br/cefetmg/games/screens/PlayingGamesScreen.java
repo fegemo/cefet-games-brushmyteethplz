@@ -139,7 +139,7 @@ public class PlayingGamesScreen extends BaseScreen
                         break;
                         
                     case SURVIVAL:
-                        RankScreen ranque = new RankScreen(super.game, this);
+                        RankingEntryScreen ranque = new RankingEntryScreen(super.game, this);
                         ranque.setPoints(sequencer.getGameNumber());
                         super.game.setScreen(ranque);
                         break;

@@ -15,13 +15,13 @@ import java.util.List;
  *
  * @author Lindley, Carlos, Bruno
  */
-public class Rank {
+public class Ranking {
 
     private final ArrayList<Score> ranking;
     private final Firebase firebase;
     private RankingObserver observer;
     
-    public Rank() {
+    public Ranking() {
         ranking = new ArrayList<Score>();
         firebase = new Firebase(Config.RANKING_DATABASE_ENDPOINT);
         readRankDB();

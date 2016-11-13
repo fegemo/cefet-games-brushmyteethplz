@@ -8,19 +8,17 @@ import com.badlogic.gdx.Input.Keys;
 public class BrushMyTeethPlzGame
         extends Game {
 
-
     @Override
     public void create() {
         this.setScreen(new SplashScreen(this, null));
     }
-    
-    
+
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             Gdx.app.exit();
         }
     }
-    
+
     @Override
     public void render() {
         handleInput();

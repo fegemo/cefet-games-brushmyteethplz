@@ -1,13 +1,15 @@
 package br.cefetmg.games.screens;
 
-import br.cefetmg.games.ranking.Rank;
+import br.cefetmg.games.ranking.Ranking;
 import br.cefetmg.games.minigames.util.MenuState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
@@ -16,7 +18,7 @@ import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
  *
  * @author lindley
  */
-public class RankScreen extends BaseScreen {
+public class RankingEntryScreen extends BaseScreen {
 
     private Texture letrasTexture;
     private Array<StructSprite> letters;
@@ -25,10 +27,12 @@ public class RankScreen extends BaseScreen {
     private Sprite eraseButton, okButton, traco;
     private Array<StructSprite> nickname;
     private int points;
-    private Rank rank;
+    private Ranking rank;
+    private final ShapeRenderer shapes;
 
-    public RankScreen(Game game, BaseScreen previous) {
+    public RankingEntryScreen(Game game, BaseScreen previous) {
         super(game, previous);
+        shapes = new ShapeRenderer();
     }
 
     @Override
@@ -39,7 +43,7 @@ public class RankScreen extends BaseScreen {
         this.letters = new Array<StructSprite>();
         this.nickname = new Array<StructSprite>();
         this.nome = "";
-        this.rank = new Rank();
+        this.rank = new Ranking();
         colocaLetrasNoArray();
 
         this.eraseButton = new Sprite(new Texture("buttons_rank/erase.png"));
@@ -77,11 +81,11 @@ public class RankScreen extends BaseScreen {
                     nome += (char) nickname.get(i).caracterASCII;
                 }
                 rank.writeScoreDB(nome, points);
-                
+
                 // chama a tela de menu
                 MenuScreen menu = new MenuScreen(super.game, this);
-                menu.changeMenuState(MenuState.RANKING);
                 super.game.setScreen(menu);
+                menu.changeMenuState(MenuState.RANKING);
             }
 
             // se clicar em erase
@@ -115,6 +119,12 @@ public class RankScreen extends BaseScreen {
 
     @Override
     public void draw() {
+        shapes.setProjectionMatrix(batch.getProjectionMatrix());
+        shapes.setColor(Color.WHITE);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        shapes.rect(0, 0, viewport.getWorldWidth(), viewport.getWorldWidth());
+        shapes.end();
+
         batch.begin();
         super.drawCenterAlignedText("Escreva um nickname com 3 letras", 0.9f,
                 super.viewport.getWorldHeight() * 0.90f);
