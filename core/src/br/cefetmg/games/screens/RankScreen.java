@@ -1,6 +1,6 @@
 package br.cefetmg.games.screens;
 
-import br.cefetmg.games.Rank;
+import br.cefetmg.games.ranking.Rank;
 import br.cefetmg.games.minigames.util.MenuState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
