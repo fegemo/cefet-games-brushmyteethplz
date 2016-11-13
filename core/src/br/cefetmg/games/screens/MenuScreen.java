@@ -8,17 +8,28 @@ import br.cefetmg.games.minigames.util.MenuState;
 import br.cefetmg.games.minigames.util.GameOption;
 import br.cefetmg.games.minigames.util.Score;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Uma tela de Menu Principal do jogo.
@@ -34,7 +45,7 @@ public class MenuScreen extends BaseScreen {
     private TextureRegion buttonIniciarTexture, buttonCreditosTexture,
             buttonSairTexture, buttonSurvivalTexture, buttonNormalTexture,
             buttonRankingTexture, buttonVoltarTexture;
-    private Stage stage, stageRanking;
+    private Stage stage, stageRanking, stageCredits;
     private Button buttonIniciar, buttonSair, buttonCreditos, buttonSurvival,
             buttonNormal, buttonRanking, buttonVoltar;
 
@@ -65,6 +76,7 @@ public class MenuScreen extends BaseScreen {
 
         stage = new Stage();
         stageRanking = new Stage();
+        stageCredits = new Stage();
 
         // creates a table that fills the screen. 
         // everything else will go inside this table. 
@@ -157,7 +169,7 @@ public class MenuScreen extends BaseScreen {
         buttonCreditos.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                //TODO implementar a mudança para a tela de créditos aqui
+                changeMenuState(MenuState.CREDITS);
             }
         });
 
@@ -178,13 +190,50 @@ public class MenuScreen extends BaseScreen {
         stage.addActor(table);
         stage.addActor(tableGameMode);
         stageRanking.addActor(buttonVoltar);
+        stageCredits.addActor(buttonVoltar);
+
+        final Skin skin = new Skin(new FileHandle("ui/uiskin.json"));
+
+        String Creditos = "";
+        try {
+            BufferedReader getInput = new BufferedReader(
+                    new FileReader("creditos.txt"));
+            String line;
+            while ((line = getInput.readLine()) != null) {
+                Creditos = Creditos.concat(line);
+                Creditos = Creditos.concat("\n");
+            }
+            getInput.close();
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n",
+                    e.getMessage());
+        }
+
+        BitmapFont font = new BitmapFont(new FileHandle("fonts/sawasdee-24.fnt"));
+        final Label text = new Label(Creditos, skin);
+        text.setAlignment(Align.center);
+        text.setStyle(new LabelStyle(font, Color.BLACK));
+        text.setFontScale(1F);
+        text.setWrap(true);
+
+        final Table scrollTable = new Table();
+        scrollTable.add(text);
+        scrollTable.row();
+
+        final ScrollPane scroller = new ScrollPane(scrollTable);
+        // Pesquisar como fazer scroller rolar automaticamente!
+
+        final Table table2 = new Table();
+        table2.setFillParent(true);
+        table2.add(scroller).fill().expand();
+        stageCredits.addActor(table2);
 
         menuMusic.setLooping(true);
         menuMusic.play();
 
         changeMenuState(MenuState.MENU);
     }
-    
+
     @Override
     public void cleanUp() {
         if (stage != null) {
@@ -193,6 +242,9 @@ public class MenuScreen extends BaseScreen {
         if (stageRanking != null) {
             stageRanking.dispose();
         }
+        if (stageCredits != null) { 
+            stageCredits.dispose(); 
+        } 
         if (menuMusic != null) {
             menuMusic.dispose();
         }
@@ -249,19 +301,34 @@ public class MenuScreen extends BaseScreen {
                 }
                 buttonVoltar.draw(batch, 1);
                 break;
+
+            case CREDITS:
+                batch.draw(backgroundRanking, 0, 0,
+                        viewport.getWorldWidth(),
+                        viewport.getWorldHeight());
+
+                this.stageCredits.getActors().get(1).act(Gdx.graphics.getDeltaTime());
+                this.stageCredits.getActors().get(1).draw(batch, 1);
+
+                buttonVoltar.draw(batch, 1);
+                break;
         }
 
         batch.end();
     }
-    
+
     public void changeMenuState(final MenuState newMenuState) {
         switch (newMenuState) {
             case MENU:
                 Gdx.input.setInputProcessor(stage);
                 break;
-                
+
             case RANKING:
                 Gdx.input.setInputProcessor(stageRanking);
+                break;
+
+            case CREDITS:
+                Gdx.input.setInputProcessor(stageCredits);
                 break;
         }
         this.menuState = newMenuState;
