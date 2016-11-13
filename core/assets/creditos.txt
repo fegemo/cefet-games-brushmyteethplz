@@ -1,18 +1,22 @@
-Cr�ditos
 
-Microgames
+Feito com amor pela turma de
+Engenharia da Computação do CEFET-MG
+em 2016/02
+
+
+MicroGames
 
 Amanda Fernandes Pereira
 Bruno Goulart Meneghin
 Carlos Henrique Alvarenga Soares
-Daniel de Aguilar Gon�alves
-Fl�vio Roberto dos Santos Coutinho
-Gabriel Pires de Miranda Magalh�es
+Daniel de Aguilar Gonçalves
+Flávio Roberto dos Santos Coutinho
+Gabriel Pires de Miranda Magalhães
 Henrique Hideki Sampaio
 Higor Coimbra Amorim
 Juan Lopes Ferreira
 Lindley Werner Soares Vieira
-Lucas Batista Magalh�es Carvalhais
+Lucas Batista Magalhães Carvalhais
 Lucas de Aguilar Junqueira Campos
 Lucas Silvestre Viana
 Luis Gustavo Diniz de Carvalho
@@ -24,47 +28,47 @@ Vinicius Mendes Pinto
 Design
 
 Amanda Fernandes Pereira
-Fl�vio Roberto dos Santos Coutinho
+Flávio Roberto dos Santos Coutinho
 Henrique Gesler Medeiros Ferreira
 Henrique Hideki Sampaio
 Lindley Werner Soares Vieira
 Lucas Sivestre Viana
 Nicolas Arruda Maduro
-Tha�s Diniz Braz
+Thaís Diniz Braz
 Vinicius Mendes Pinto
 
 Telas
 
 Bruno Goulart Meneghin
 Carlos Henrique Alvarenga Soares
-Fl�vio Roberto dos Santos Coutinho
-Lucas Batista Magalh�es Carvalhais
+Flávio Roberto dos Santos Coutinho
+Lucas Batista Magalhães Carvalhais
 Lucas de Aguilar Junqueira Campos
 
-Programa��o
+Programação
 
-Fl�vio Roberto dos Santos Coutinho
+Flávio Roberto dos Santos Coutinho
 Henrique Gesler Medeiros Ferreira
 Higor Coimbra Amorim
 Thais Diniz Braz
 
-�udio
+Áudio
 
-Fl�vio Roberto dos Santos Coutinho
-Gabriel Pires de Miranda Magalh�es
+Flávio Roberto dos Santos Coutinho
+Gabriel Pires de Miranda Magalhães
 Juan Lopes Ferreira
-Lucas Batista Magalh�es Carvalhais
+Lucas Batista Magalhães Carvalhais
 Lucas de Aguilar Junqueira Campos
 
-Corre��o de Bugs
+Correção de Bugs
 
 Amanda Fernandes Pereira
 Bruno Goulart Meneghin
 Carlos Henrique Alvarenga Soares
-Daniel de Aguilar Gon�alves
+Daniel de Aguilar Gonçalves
 Vinicius Mendes Pinto
 
 
 Professor Orientador
 
-Fl�vio Roberto dos Santos Coutinho
+Flávio Roberto dos Santos Coutinho

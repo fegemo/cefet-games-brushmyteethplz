@@ -1,9 +1,11 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import br.cefetmg.games.Rank;
+import br.cefetmg.games.ranking.Rank;
+import br.cefetmg.games.ranking.RankingObserver;
 import br.cefetmg.games.minigames.util.MenuState;
 import br.cefetmg.games.minigames.util.GameOption;
 import br.cefetmg.games.minigames.util.Score;
@@ -12,13 +14,13 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
-import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -30,24 +32,29 @@ import com.badlogic.gdx.utils.Align;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Uma tela de Menu Principal do jogo.
  *
  * @author Flávio Coutinho - fegemo <coutinho@decom.cefetmg.br>
  */
-public class MenuScreen extends BaseScreen {
+public class MenuScreen extends BaseScreen implements RankingObserver {
 
     private final Music menuMusic;
     private MenuState menuState;
     private final Rank rank;
-    private Texture background, backgroundRanking;
+    private Texture background3Teeth, background2Teeth;
     private TextureRegion buttonIniciarTexture, buttonCreditosTexture,
             buttonSairTexture, buttonSurvivalTexture, buttonNormalTexture,
             buttonRankingTexture, buttonVoltarTexture;
     private Stage stage, stageRanking, stageCredits;
     private Button buttonIniciar, buttonSair, buttonCreditos, buttonSurvival,
             buttonNormal, buttonRanking, buttonVoltar;
+    private Skin skin;
+    private Label rankingLabel;
+    private BitmapFont monoFont, titleFont;
+    private ChangeListener backToMenuListener;
 
     /**
      * Cria uma nova tela de menu.
@@ -71,15 +78,30 @@ public class MenuScreen extends BaseScreen {
     public void appear() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
 
-        background = new Texture("menu_background_m.jpg");
-        backgroundRanking = new Texture("menu_background_r.jpg");
+        rank.setObserver(this);
 
-        stage = new Stage();
-        stageRanking = new Stage();
-        stageCredits = new Stage();
+        background3Teeth = new Texture("menu_background_m.jpg");
+        background2Teeth = new Texture("menu_background_r.jpg");
 
-        // creates a table that fills the screen. 
-        // everything else will go inside this table. 
+        stage = new Stage(viewport);
+        stageRanking = new Stage(viewport);
+        stageCredits = new Stage(viewport);
+
+        skin = new Skin(new FileHandle("ui/uiskin.json"));
+        monoFont = new BitmapFont(new FileHandle("fonts/ubuntu-mono.fnt"));
+        titleFont = new BitmapFont(new FileHandle("fonts/sawasdee-50.fnt"));
+
+        initMainMenu();
+        initRanking();
+        initCredits();
+        
+        menuMusic.setLooping(true);
+        menuMusic.play();
+
+        changeMenuState(MenuState.MENU);
+    }
+    
+    private void initMainMenu() {
         final Table table = new Table();
         table.align(1);
         table.padBottom(160);
@@ -101,14 +123,12 @@ public class MenuScreen extends BaseScreen {
                 new Texture("buttons_menu/Normal.png"));
         buttonNormal = new ImageButton(
                 new TextureRegionDrawable(buttonNormalTexture));
-        buttonNormal.pad(80);
-        tableGameMode.add(buttonNormal);
+        tableGameMode.add(buttonNormal).spaceRight(160);
 
         buttonSurvivalTexture = new TextureRegion(
                 new Texture("buttons_menu/Survival.png"));
         buttonSurvival = new ImageButton(
                 new TextureRegionDrawable(buttonSurvivalTexture));
-        buttonSurvival.pad(80);
         tableGameMode.add(buttonSurvival);
 
         buttonRankingTexture = new TextureRegion(
@@ -134,12 +154,14 @@ public class MenuScreen extends BaseScreen {
         buttonVoltar = new ImageButton(
                 new TextureRegionDrawable(buttonVoltarTexture));
         buttonVoltar.align(2);
-
+        buttonVoltar.setVisible(false);
+        
         buttonIniciar.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 table.setVisible(false);
                 tableGameMode.setVisible(true);
+                buttonVoltar.setVisible(true);
             }
         });
 
@@ -180,58 +202,96 @@ public class MenuScreen extends BaseScreen {
             }
         });
 
-        buttonVoltar.addListener(new ChangeListener() {
+        backToMenuListener = new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 changeMenuState(MenuState.MENU);
+                table.setVisible(true);
+                tableGameMode.setVisible(false);
+                buttonVoltar.setVisible(false);
             }
-        });
+        };
+        
+        buttonVoltar.addListener(backToMenuListener);
 
+        Image backgroundImage3Teeth = new Image(background3Teeth);
+        backgroundImage3Teeth.setFillParent(true);
+
+        stage.addActor(backgroundImage3Teeth);
         stage.addActor(table);
         stage.addActor(tableGameMode);
-        stageRanking.addActor(buttonVoltar);
-        stageCredits.addActor(buttonVoltar);
+        stage.addActor(buttonVoltar);
+    }
+    
+    private void initRanking() {
+        rankingLabel = new Label(Config.RANKING_WAITING_FOR, skin);
+        rankingLabel.setAlignment(Align.center);
+        rankingLabel.setStyle(new LabelStyle(monoFont, Color.BLACK));
+        rankingLabel.setFontScale(1);
+        rankingLabel.setWrap(true);
 
-        final Skin skin = new Skin(new FileHandle("ui/uiskin.json"));
+        final ImageButton backFromRankingButton = new ImageButton(
+                new TextureRegionDrawable(buttonVoltarTexture));
+        backFromRankingButton.align(2).addListener(backToMenuListener);
 
-        String Creditos = "";
-        try {
-            BufferedReader getInput = new BufferedReader(
-                    new FileReader("creditos.txt"));
-            String line;
-            while ((line = getInput.readLine()) != null) {
-                Creditos = Creditos.concat(line);
-                Creditos = Creditos.concat("\n");
-            }
-            getInput.close();
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n",
-                    e.getMessage());
-        }
+        final Label titleLabel = new Label("Ranking", skin);
+        titleLabel.setStyle(new LabelStyle(titleFont, Color.BLACK));
 
-        BitmapFont font = new BitmapFont(new FileHandle("fonts/sawasdee-24.fnt"));
-        final Label text = new Label(Creditos, skin);
-        text.setAlignment(Align.center);
-        text.setStyle(new LabelStyle(font, Color.BLACK));
-        text.setFontScale(1F);
-        text.setWrap(true);
+        final Table tableRanking = new Table();
+        tableRanking.setFillParent(true);
+        tableRanking
+                .padLeft(buttonVoltar.getWidth())
+                .padRight(buttonVoltar.getWidth())
+                .add(titleLabel)
+                .row();
+        tableRanking
+                .add(rankingLabel)
+                .fill()
+                .expand();
 
-        final Table scrollTable = new Table();
-        scrollTable.add(text);
-        scrollTable.row();
+        Image backgroundImage2Teeth = new Image(background2Teeth);
+        backgroundImage2Teeth.setFillParent(true);
 
-        final ScrollPane scroller = new ScrollPane(scrollTable);
-        // Pesquisar como fazer scroller rolar automaticamente!
+        stageRanking.addActor(backgroundImage2Teeth);
+        stageRanking.addActor(tableRanking);
+        stageRanking.addActor(backFromRankingButton);
+    }
+    
+    private void initCredits() {
+        String creditsText = getCreditsText();
 
-        final Table table2 = new Table();
-        table2.setFillParent(true);
-        table2.add(scroller).fill().expand();
-        stageCredits.addActor(table2);
+        final ImageButton backFromCreditsButton = new ImageButton(
+                new TextureRegionDrawable(buttonVoltarTexture));
+        backFromCreditsButton.align(2).addListener(backToMenuListener);
 
-        menuMusic.setLooping(true);
-        menuMusic.play();
+        final Label creditsLabel = new Label(creditsText, skin);
+        creditsLabel.setAlignment(Align.center);
+        creditsLabel.setStyle(new LabelStyle(monoFont, Color.BLACK));
+        creditsLabel.setFontScale(1F);
+        creditsLabel.setWrap(true);
+        
+        final Label titleLabel = new Label("Créditos", skin);
+        titleLabel.setStyle(new LabelStyle(titleFont, Color.BLACK));
 
-        changeMenuState(MenuState.MENU);
+        final ScrollPane scroller = new ScrollPane(creditsLabel);
+
+        final Table tableCredits = new Table();
+        tableCredits.setFillParent(true);
+        tableCredits
+                .padLeft(buttonVoltar.getWidth())
+                .padRight(buttonVoltar.getWidth())
+                .add(titleLabel)
+                .row();
+        tableCredits.add(scroller)
+                .fill()
+                .expand();
+
+        Image backgroundImage2Teeth = new Image(background2Teeth);
+        backgroundImage2Teeth.setFillParent(true);
+
+        stageCredits.addActor(backgroundImage2Teeth);
+        stageCredits.addActor(tableCredits);
+        stageCredits.addActor(backFromCreditsButton);
     }
 
     @Override
@@ -242,9 +302,9 @@ public class MenuScreen extends BaseScreen {
         if (stageRanking != null) {
             stageRanking.dispose();
         }
-        if (stageCredits != null) { 
-            stageCredits.dispose(); 
-        } 
+        if (stageCredits != null) {
+            stageCredits.dispose();
+        }
         if (menuMusic != null) {
             menuMusic.dispose();
         }
@@ -267,6 +327,7 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void update(float dt) {
         stage.act(dt);
+        stageCredits.act(dt);
     }
 
     /**
@@ -279,38 +340,15 @@ public class MenuScreen extends BaseScreen {
         // desenha o menu propriamente dito ou o ranking
         switch (menuState) {
             case MENU:
-                batch.draw(background, 0, 0,
-                        viewport.getWorldWidth(),
-                        viewport.getWorldHeight());
-
-                drawCenterAlignedText("Toque/clique para jogar",
-                        1f, viewport.getWorldHeight() * 0.35f);
                 stage.draw();
                 break;
 
             case RANKING:
-                batch.draw(backgroundRanking, 0, 0,
-                        viewport.getWorldWidth(),
-                        viewport.getWorldHeight());
-
-                ArrayList<Score> ranking = rank.getRanking();
-                for (int i = 0; i < ranking.size(); ++i) {
-                    drawCenterAlignedText(ranking.get(i).getName()
-                            + " .......... " + ranking.get(i).getGames(),
-                            1.0f, viewport.getWorldHeight() - 50f * (i + 1));
-                }
-                buttonVoltar.draw(batch, 1);
+                stageRanking.draw();
                 break;
 
             case CREDITS:
-                batch.draw(backgroundRanking, 0, 0,
-                        viewport.getWorldWidth(),
-                        viewport.getWorldHeight());
-
-                this.stageCredits.getActors().get(1).act(Gdx.graphics.getDeltaTime());
-                this.stageCredits.getActors().get(1).draw(batch, 1);
-
-                buttonVoltar.draw(batch, 1);
+                stageCredits.draw();
                 break;
         }
 
@@ -348,5 +386,46 @@ public class MenuScreen extends BaseScreen {
                         new PlayingGamesScreen(game, MenuScreen.this, option));
             }
         }, 0.75f);// 750ms
+    }
+    
+    private String getCreditsText() {
+        StringBuilder creditsText = new StringBuilder();
+        BufferedReader fileReader = null;
+        try {
+            fileReader = new BufferedReader(
+                    new FileReader(Config.CREDITS_FILE_NAME));
+            String line;
+            while ((line = fileReader.readLine()) != null) {
+                creditsText = creditsText.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n",
+                    e.getMessage());
+            creditsText = new StringBuilder(Config.CREDITS_DEFAULT_MESSAGE);
+        } finally {
+            try {
+                if (fileReader != null && fileReader.ready()) {
+                    fileReader.close();
+                }
+            } catch (IOException ex) {
+                creditsText = new StringBuilder(Config.CREDITS_DEFAULT_MESSAGE);
+            }
+        }
+        return creditsText.toString();
+    }
+
+    @Override
+    public void onRankingChanged(List<Score> ranking) {
+        StringBuilder rankingText = new StringBuilder();
+        
+        for (Score score : ranking) {
+            rankingText
+                    .append(score.getName())
+                    .append(" .......... ")
+                    .append(score.getGames())
+                    .append("\n");
+        }
+        
+        rankingLabel.setText(rankingText);
     }
 }
