@@ -1,5 +1,6 @@
-package br.cefetmg.games;
+package br.cefetmg.games.ranking;
 
+import br.cefetmg.games.Config;
 import br.cefetmg.games.minigames.util.Score;
 import java.util.ArrayList;
 import com.firebase.client.Firebase;
@@ -8,19 +9,26 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import java.util.Iterator;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  *
  * @author Lindley, Carlos, Bruno
  */
-public class Rank {
+public class Ranking {
 
-    private ArrayList<Score> ranking;
+    private final ArrayList<Score> ranking;
     private final Firebase firebase;
-
-    public Rank() {
+    private RankingObserver observer;
+    
+    public Ranking() {
+        ranking = new ArrayList<Score>();
         firebase = new Firebase(Config.RANKING_DATABASE_ENDPOINT);
         readRankDB();
+    }
+    
+    public void setObserver(RankingObserver observer) {
+        this.observer = observer;
     }
 
     /**
@@ -28,20 +36,19 @@ public class Rank {
      * atualizado em tempo real sempre que há alguma mudança.
      */
     public final void readRankDB() {
-        ranking = new ArrayList<Score>();
+        ranking.clear();
         firebase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> iter = dataSnapshot.getChildren();
                 Iterator<DataSnapshot> iterator = iter.iterator();
-                ArrayList<Score> all_scores = new ArrayList<Score>();
                 while (iterator.hasNext()) {
                     DataSnapshot data = iterator.next();
                     Score score = new Score(data.getKey(),
                             data.getValue(Integer.class));
-                    all_scores.add(score);
+                    ranking.add(score);
                 }
-                all_scores.sort(new Comparator<Score>() {
+                ranking.sort(new Comparator<Score>() {
                     @Override
                     public int compare(Score s1, Score s2) {
                         if (s1.getGames() < s2.getGames()) {
@@ -54,7 +61,9 @@ public class Rank {
                     }
                 });
 
-                ranking = all_scores;
+                if (observer != null) {
+                    observer.onRankingChanged(ranking);
+                }
             }
 
             @Override
@@ -69,17 +78,13 @@ public class Rank {
      *
      * @return an arrayList of rank
      */
-    public ArrayList<Score> getRanking() {
+    public List<Score> getRanking() {
 
         // Ranking pode ter mais de 10 scores devido a escritas simultaneas. 
         // Caso isso ocorra,
         // retorna só os 10 primeiros valores.
         if (ranking.size() > 10) {
-            ArrayList<Score> top10 = new ArrayList<Score>();
-            for (int i = 0; i < 10; i++) {
-                top10.add(ranking.get(i));
-            }
-            return top10;
+            return this.ranking.subList(0, 9);
         } else {
             return this.ranking;
         }

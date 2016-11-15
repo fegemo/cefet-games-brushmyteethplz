@@ -86,9 +86,7 @@ public abstract class MiniGame {
         ));
         this.countdown.setUseFrameRegionSize(true);
         this.countdown.setCenterFrames(true);
-        this.countdown.setCenter(
-                screen.viewport.getWorldWidth() / 2f,
-                screen.viewport.getWorldHeight() / 2f);
+        this.countdown.setCenter(screen.viewport.getWorldWidth() / 2f,screen.viewport.getWorldHeight() / 2f);
         this.countdown.getAnimation().setPlayMode(Animation.PlayMode.NORMAL);
         this.grayMask = screen.assets.get("images/gray-mask.png",
                 Texture.class);
@@ -102,7 +100,7 @@ public abstract class MiniGame {
         
         this.voltarTexture = new Texture("buttons_menu/button_voltar.png");
         this.voltarSprite = new Sprite(voltarTexture,166,77);
-        this.voltarSprite.setPosition(screen.viewport.getWorldWidth() / 2f, screen.viewport.getWorldHeight() / 2f);
+        this.voltarSprite.setPosition(screen.viewport.getWorldWidth() / 2f - 100, screen.viewport.getWorldHeight() / 2f - 100);
            
         this.rand = new Random();
         this.timer = new Timer();
@@ -121,7 +119,6 @@ public abstract class MiniGame {
             if(isPaused) {
                 timer.stop();
                 remainingTime = remainingDuration - TimeUtils.millis();
-                //System.out.println("remainingTime:" + remainingTime);
             
             }
             else {
@@ -159,7 +156,6 @@ public abstract class MiniGame {
                     break;
 
                 case PLAYING:
-                    //System.out.println("remainingDuration - TimeUtils.millis():" + (remainingDuration - TimeUtils.millis()));
                     if (remainingDuration - TimeUtils.millis() < 0) {
                         transitionTo(challengeSolved
                                 ? MiniGameState.WON
@@ -205,7 +201,8 @@ public abstract class MiniGame {
                 0, 0,
                 this.screen.viewport.getWorldWidth(),
                 this.screen.viewport.getWorldHeight());
-        drawButtonVoltar();
+        if(isPaused)
+            drawButtonVoltar();
         
     }
 
@@ -249,6 +246,7 @@ public abstract class MiniGame {
                 playingInitialTime = TimeUtils.millis();
                 remainingDuration += playingInitialTime;
                 //System.out.println("remainingDuration:" + remainingDuration + " playingInitialTime:" + playingInitialTime);
+                this.onStart();
                 this.timer.scheduleTask(new Task() {
                     @Override
                     public void run() {
@@ -261,8 +259,10 @@ public abstract class MiniGame {
                 
                 timer.start();
                 break;
+                
             case WON:
             case FAILED:
+                this.onEnd();
                 timer.stop();
                 break;
         }
@@ -280,11 +280,19 @@ public abstract class MiniGame {
         this.challengeSolved = true;
         transitionTo(MiniGameState.WON);
     }
-
+   
     protected abstract void configureDifficultyParameters(float difficulty);
 
-    public abstract void onHandlePlayingInput();
+    protected void onStart() {
+        // intentionally left for MiniGames to implement
+    }
 
+    protected void onEnd() {
+        // intentionally left for MiniGames to implement
+    }
+
+    public abstract void onHandlePlayingInput();
+    
     public abstract void onUpdate(float dt);
 
     public abstract void onDrawGame();
