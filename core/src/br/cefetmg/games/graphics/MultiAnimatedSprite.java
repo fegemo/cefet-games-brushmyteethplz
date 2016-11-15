@@ -25,7 +25,10 @@ public class MultiAnimatedSprite extends AnimatedSprite {
                     + animationName + "', mas esta MultiAnimatedSprite"
                     + "não possui uma animação com esse nome");
         }
-
+        
+        //Configurando o time que define o frame de ínicio da animação para zero by Bruno e Carlos 
+        super.setTime(0);
+        
         super.setAnimation(animations.get(animationName));
     }
 
