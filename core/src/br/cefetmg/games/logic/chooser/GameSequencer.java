@@ -18,7 +18,7 @@ import java.util.Random;
  * 
  * @author fegemo <coutinho@decom.cefetmg.br>
  */
-public class GameSequencer {
+public class GameSequencer extends BaseGameSequencer{
 
     private final int numberOfGames;
     private final Set<MiniGameFactory> availableGames;
@@ -46,6 +46,7 @@ public class GameSequencer {
     public GameSequencer(int numberOfGames, Set<MiniGameFactory> availableGames,
             float initialDifficulty, float finalDifficulty, 
             BaseScreen screen, GameStateObserver observer) {
+        super(availableGames, screen, observer);
         if (numberOfGames <= 0) {
             throw new IllegalArgumentException("Tentou-se criar um "
                     + "GameSequencer com 0 jogos. Deve haver ao menos 1.");
@@ -61,7 +62,8 @@ public class GameSequencer {
         determineGameSequence();
         preloadAssets();
     }
-
+    
+    @Override
     public boolean hasNextGame() {
         return previousGames.size() < numberOfGames;
     }
@@ -117,6 +119,7 @@ public class GameSequencer {
      * Retorna uma instância do próximo jogo.
      * @return uma instância do próximo jogo.
      */
+    @Override
     public MiniGame nextGame() {
                 
         MiniGameFactory factory = (MiniGameFactory) availableGames
@@ -132,6 +135,7 @@ public class GameSequencer {
      * Retorna o índice deste jogo na série de jogos criados para o jogador.
      * @return o índice deste jogo na série de jogos criados para o jogador.
      */
+    @Override
     public int getGameNumber() {
         return previousGames.size();
     }

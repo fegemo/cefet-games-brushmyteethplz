@@ -12,19 +12,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.HashMap;
-import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
-import java.util.ArrayList;
 
 /**
  *
@@ -42,13 +34,12 @@ public class NinjaTooth extends MiniGame {
     private final Array<Sound> tartarusAppearingSound;
     private final Sound toothBreakingSound;
     private final Array<Tartarus> enemies;
-    private int numberOfBrokenTeeth;
 
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
     
-    private float bulletFloatSpeed;
+    private final float bulletFloatSpeed;
     private int spawnInterval;
 
     public NinjaTooth(BaseScreen screen,GameStateObserver observer, float difficulty) {
@@ -113,7 +104,6 @@ public class NinjaTooth extends MiniGame {
     @Override
     public void onHandlePlayingInput() {
         // atualiza a posição do alvo de acordo com o mouse
-        //Gdx.input.setCursorCatched(true);
         Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());  
         
         super.screen.viewport.unproject(click);
@@ -134,11 +124,7 @@ public class NinjaTooth extends MiniGame {
 
     private void toothWasHurt(SuperTooth superTooth, Tartarus enemy) {
         this.enemies.removeValue(enemy, false);
-        this.numberOfBrokenTeeth += superTooth.wasHurt() ? 1 : 0;
-
-       // if (this.numberOfBrokenTeeth >= this.totalTeeth) {
-            super.challengeFailed();
-        //}
+        super.challengeFailed();
         toothBreakingSound.play();
     }
     
@@ -259,7 +245,6 @@ public class NinjaTooth extends MiniGame {
 
         public boolean wasHurt() {
             super.setTexture(superToothTextureDead);
-            //super.setRegion(broken);
             return true;
         }
         
