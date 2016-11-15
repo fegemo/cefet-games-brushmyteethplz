@@ -80,7 +80,7 @@ public class PlayingGamesScreen extends BaseScreen
                             new DefenseOfFluorineFactory(),
                             new NinjaToothFactory(),
                             // carlos e bruno
-                            new CleanTheToothFactory(),
+                           new CleanTheToothFactory(),
                             // matheus ibrahim e luis gustavo
                             new DentalKombatFactory()
                     )
@@ -282,7 +282,7 @@ public class PlayingGamesScreen extends BaseScreen
     enum PlayScreenState {
         PLAYING,
         FINISHED_GAME_OVER,
-        FINISHED_WON
+        FINISHED_WON,
     }
 
 }

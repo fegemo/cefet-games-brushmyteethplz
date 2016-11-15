@@ -192,6 +192,11 @@ public abstract class BaseScreen extends ScreenAdapter {
         }
         this.cleanUp();
     }
+
+    public BaseScreen getPrevious() {
+        return previous;
+    }
+    
     
     /**
      * Executa ações de carregamento da tela. Esta função é chamada assim que

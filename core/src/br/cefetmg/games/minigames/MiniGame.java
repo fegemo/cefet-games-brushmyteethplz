@@ -17,8 +17,10 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import br.cefetmg.games.screens.MenuScreen;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 /**
  *
@@ -31,18 +33,22 @@ public abstract class MiniGame {
     protected final BaseScreen screen;
     protected final long initialTime;
     protected long playingInitialTime;
-    protected final long maxDuration;
+    protected long remainingTime;
+    protected long remainingDuration;
+    protected long maxDuration;
     protected MiniGameState state;
     protected Random rand;
     protected Timer timer;
-    private boolean isPaused;
+    public boolean isPaused;
 
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
-    private final Texture grayMask, pausedImage, unpausedImage;
-    private final Sprite pauseUnpauseSprite;
+    private final Texture grayMask, pausedImage, unpausedImage,voltarTexture;
+    private final Sprite pauseUnpauseSprite,voltarSprite;
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
+    private TextureRegion buttonVoltarTexture;
+    private Stage stage;
 
     public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
             TimeoutBehavior endOfGameSituation, final GameStateObserver observer) {
@@ -52,10 +58,12 @@ public abstract class MiniGame {
                     + "número entre 0 e 1. Você passou o número " + difficulty
                     + ".");
         }
+
         this.screen = screen;
         this.challengeSolved = endOfGameSituation
                 == TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS;
         this.maxDuration = maxDuration;
+        this.remainingDuration = maxDuration;
         this.stateObserver = observer;
         this.initialTime = TimeUtils.millis();
         this.state = MiniGameState.INSTRUCTIONS;
@@ -88,8 +96,14 @@ public abstract class MiniGame {
                 Texture.class);
         this.unpausedImage = screen.assets.get("images/unpausedImage.png",
                 Texture.class);
+   
         this.pauseUnpauseSprite = new Sprite(unpausedImage, 100, 100);
         this.pauseUnpauseSprite.setPosition(10, 10);
+        
+        this.voltarTexture = new Texture("buttons_menu/button_voltar.png");
+        this.voltarSprite = new Sprite(voltarTexture,166,77);
+        this.voltarSprite.setPosition(screen.viewport.getWorldWidth() / 2f, screen.viewport.getWorldHeight() / 2f);
+           
         this.rand = new Random();
         this.timer = new Timer();
         this.timer.stop();
@@ -97,20 +111,34 @@ public abstract class MiniGame {
     }
 
     public final void handleInput() {
+        Vector2 clickPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        this.screen.viewport.unproject(clickPosition);
+
+        if (Gdx.input.justTouched() && pauseUnpauseSprite.getBoundingRectangle()
+                .contains(clickPosition)) {
+            isPaused = !isPaused;
+            pauseUnpauseSprite.setTexture(isPaused ? pausedImage : unpausedImage);
+            if(isPaused) {
+                timer.stop();
+                remainingTime = remainingDuration - TimeUtils.millis();
+                //System.out.println("remainingTime:" + remainingTime);
+            
+            }
+            else {
+                remainingDuration = TimeUtils.millis() + remainingTime;
+                timer.start();
+            }
+            
+        }
+        
+        if (Gdx.input.justTouched() && voltarSprite.getBoundingRectangle().contains(clickPosition)) {
+            //this.screen.dispose();
+            //NÃO FUNCIONOU
+           // this.screen.game.setScreen(new MenuScreen(this.screen.game, this.screen.getPrevious()));
+        }
         switch (this.state) {
             case INSTRUCTIONS:
                 // caso aperte o isPaused, o tempo pausa
-                Vector2 clickPosition = new Vector2(
-                        Gdx.input.getX(), Gdx.input.getY());
-                this.screen.viewport.unproject(clickPosition);
-                
-                if(Gdx.input.justTouched() &&
-                        pauseUnpauseSprite.getBoundingRectangle()
-                                .contains(clickPosition)){
-                    isPaused = !isPaused;
-                    pauseUnpauseSprite.setTexture(
-                            isPaused ? pausedImage : unpausedImage);
-                }
                 break;
                 
             case PLAYING:
@@ -120,26 +148,26 @@ public abstract class MiniGame {
     }
 
     public final void update(float dt) {
-        switch (this.state) {
-            case INSTRUCTIONS:
-                if (!isPaused) {
+        if (!isPaused) {
+            switch (this.state) {
+                case INSTRUCTIONS:
                     this.countdown.update(dt);
-                    if(TimeUtils.timeSinceMillis(initialTime)
-                            > INSTRUCTIONS_TIME) {
+                    if (TimeUtils.timeSinceMillis(initialTime) > INSTRUCTIONS_TIME) {
                         transitionTo(MiniGameState.PLAYING);
                     }
-                }
-                break;
 
-            case PLAYING:
-                if (TimeUtils.timeSinceMillis(playingInitialTime)
-                        > maxDuration) {
-                    transitionTo(challengeSolved
-                            ? MiniGameState.WON
-                            : MiniGameState.FAILED);
-                }
-                onUpdate(dt);
-                break;
+                    break;
+
+                case PLAYING:
+                    //System.out.println("remainingDuration - TimeUtils.millis():" + (remainingDuration - TimeUtils.millis()));
+                    if (remainingDuration - TimeUtils.millis() < 0) {
+                        transitionTo(challengeSolved
+                                ? MiniGameState.WON
+                                : MiniGameState.FAILED);
+                    }
+                    onUpdate(dt);
+                    break;
+            }
         }
     }
 
@@ -177,26 +205,31 @@ public abstract class MiniGame {
                 0, 0,
                 this.screen.viewport.getWorldWidth(),
                 this.screen.viewport.getWorldHeight());
+        drawButtonVoltar();
+        
     }
 
     private void drawButtonPause() {
         pauseUnpauseSprite.draw(this.screen.batch);
     }
+    
+    private void drawButtonVoltar() {
+        voltarSprite.draw(this.screen.batch);
+    }
 
     public final void draw() {
         switch (this.state) {
             case INSTRUCTIONS:
-                drawButtonPause();
                 drawInstructions();
-                if (isPaused) {
-                    drawMask();
-                } else {
-                    drawCountdown();
-                }
+                drawButtonPause();
                 break;
 
             case PLAYING:
                 onDrawGame();
+                drawButtonPause();
+                if (isPaused) {
+                    drawMask();
+                }
                 break;
 
             case FAILED:
@@ -214,6 +247,8 @@ public abstract class MiniGame {
         switch (newState) {
             case PLAYING:
                 playingInitialTime = TimeUtils.millis();
+                remainingDuration += playingInitialTime;
+                //System.out.println("remainingDuration:" + remainingDuration + " playingInitialTime:" + playingInitialTime);
                 this.timer.scheduleTask(new Task() {
                     @Override
                     public void run() {
@@ -221,8 +256,9 @@ public abstract class MiniGame {
                                 + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT
                                 + 300);
                     }
-                }, (maxDuration - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
+                }, (remainingDuration - TimeUtils.millis() - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
                         / 1000f);
+                
                 timer.start();
                 break;
             case WON:
