@@ -6,7 +6,6 @@ import br.cefetmg.games.minigames.factories.*;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
@@ -17,9 +16,8 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
-import br.cefetmg.games.minigames.factories.RamtoothFactory;
 import br.cefetmg.games.minigames.util.GameOption;
-import java.util.List;
+import br.cefetmg.games.minigames.util.GameType;
 
 /**
  *
@@ -28,6 +26,8 @@ import java.util.List;
 public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
+    public static final boolean DEV_MODE = true;
+    
     private MiniGame currentGame;
     private final BaseGameSequencer sequencer;
     private final Hud hud;
@@ -35,8 +35,9 @@ public class PlayingGamesScreen extends BaseScreen
     private int lives;
     private final Sounds sound;
     private final GameOption option;
+    private  GameType gt;
 
-    public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option) {
+    public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option, GameType gt) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
@@ -47,9 +48,84 @@ public class PlayingGamesScreen extends BaseScreen
         this.lives = 3;
         this.sound = new Sounds();
         this.option = option;
+        this.gt = gt;
 
-        HashSet<MiniGameFactory> availableGames = new HashSet<MiniGameFactory>(
-                Arrays.asList(
+        if (this.option == GameOption.NORMAL) {        
+             if (this.gt == GameType.LEARNING_ABOUT_CANDY){
+                if (DEV_MODE){
+                    System.out.println("Type = LEARNING_ABOUT_CANDY OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // amanda e vinícius
+                            new CollectItensFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory()
+                    )
+                ), 0, 1, this, this);
+            } else if (this.gt == GameType.DESTRUCTION){
+                if (DEV_MODE){
+                    System.out.println("Type = DESTRUCTION OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // flávio
+                            new ShootTheCariesFactory(),
+                            // higor e matheus
+                            new CarieSwordFactory(),
+                            // lindley e lucas
+                            new SmashItFactory()
+                    )
+                ), 0, 1, this, this);
+            } else if (this.gt == GameType.RUNNING_PROTECTING){
+                if (DEV_MODE){
+                    System.out.println("Type = RUNNING_PROTECTING OK");
+                }
+                this.sequencer = new GameSequencer(2, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // gabriel e juan
+                            new SaveTheTeethFactory(),
+                            // amanda e vinícius
+                            new CollectItensFactory()     
+                    )
+                ), 0, 1, this, this);
+            } else if (this.gt == GameType.LEARNING_ABOUT_HYGIENE){
+                if (DEV_MODE){
+                     System.out.println("Type = LEARNING_ABOUT_HYGIENE OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // daniel
+                            new DefenseOfFluorineFactory(),
+                            // lucas
+                            new MouthLandingFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory()
+                    )
+                ), 0, 1, this, this);
+            } else {//(this.gt == GameType.CARING_FOR_TEETH){
+                if (DEV_MODE){
+                    System.out.println("Type = CARING_FOR_TEETH OK");
+                }
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            // nicolas e henrique
+                            new EscoveOsDentesFactory(),
+                            // carlos e bruno
+                            new CleanTheToothFactory()
+                    )
+                ), 0, 1, this, this);
+            }
+
+            
+        } else {    
+            if (DEV_MODE){
+                System.out.println("Mode SURVIVAL");
+            }
+            this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
+                    Arrays.asList(
                         // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
@@ -83,15 +159,8 @@ public class PlayingGamesScreen extends BaseScreen
                         new CleanTheToothFactory(),
                         // matheus ibrahim e luis gustavo
                         new DentalKombatFactory()
-                )
-        );
-
-        if (this.option == GameOption.NORMAL) {
-            this.sequencer = new GameSequencer(5, availableGames,
-                    0, 1, this, this);
-        } else {
-            this.sequencer = new InfiniteGameSequencer(availableGames,
-                    this, this);
+                    )
+            ), this, this);
         }
         this.hud = new Hud(this);
     }
@@ -172,10 +241,10 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
+
             Gdx.input.setCursorPosition(
                     (int) Gdx.graphics.getWidth() / 2,
                     (int) Gdx.graphics.getHeight() / 2);
-            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);

@@ -381,8 +381,13 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
             public void run() {
                 transitionState = states.doNothing;
                 menuMusic.stop();
-                game.setScreen(
-                        new PlayingGamesScreen(game, MenuScreen.this, option));
+                if (option == GameOption.NORMAL){
+                    game.setScreen(
+                        new Overworld(game, MenuScreen.this));
+                } else {
+                    game.setScreen(
+                        new PlayingGamesScreen(game, MenuScreen.this, option, null));
+                }
             }
         }, 0.75f);// 750ms
     }
