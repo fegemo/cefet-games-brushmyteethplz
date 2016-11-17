@@ -27,16 +27,13 @@ import br.cefetmg.games.minigames.util.GameType;
 public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
-    public static final boolean DEV_MODE = true;
-    
     private MiniGame currentGame;
     private final BaseGameSequencer sequencer;
     private final Hud hud;
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-    private final GameOption option;
-    private  GameType gt;
+    private  int gameT, opcao;
 
     public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option, GameType gt) {
         super(game, previous);
@@ -48,117 +45,141 @@ public class PlayingGamesScreen extends BaseScreen
         this.state = PlayScreenState.PLAYING;
         this.lives = 3;
         this.sound = new Sounds();
-        this.option = option;
-        this.gt = gt;
-
-        if (this.option == GameOption.NORMAL) {        
-             if (this.gt == GameType.LEARNING_ABOUT_CANDY){
-                if (DEV_MODE){
-                    System.out.println("Type = LEARNING_ABOUT_CANDY OK");
-                }
-                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                            // amanda e vinícius
-                            new CollectItensFactory(),
-                            // gabriel e juan
-                            new SaveTheTeethFactory()
-                    )
-                ), 0, 1, this, this);
-            } else if (this.gt == GameType.DESTRUCTION){
-                if (DEV_MODE){
-                    System.out.println("Type = DESTRUCTION OK");
-                }
-                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                            // flávio
-                            new ShootTheCariesFactory(),
-                            // higor e matheus
-                            new CarieSwordFactory(),
-                            // lindley e lucas
-                            new SmashItFactory()
-                    )
-                ), 0, 1, this, this);
-            } else if (this.gt == GameType.RUNNING_PROTECTING){
-                if (DEV_MODE){
-                    System.out.println("Type = RUNNING_PROTECTING OK");
-                }
-                this.sequencer = new GameSequencer(2, new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                            // gabriel e juan
-                            new SaveTheTeethFactory(),
-                            // amanda e vinícius
-                            new CollectItensFactory()     
-                    )
-                ), 0, 1, this, this);
-            } else if (this.gt == GameType.LEARNING_ABOUT_HYGIENE){
-                if (DEV_MODE){
-                     System.out.println("Type = LEARNING_ABOUT_HYGIENE OK");
-                }
-                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                            // daniel
-                            new DefenseOfFluorineFactory(),
-                            // lucas
-                            new MouthLandingFactory(),
-                            // higor e matheus
-                            new AngryToothsFactory()
-                    )
-                ), 0, 1, this, this);
-            } else {//(this.gt == GameType.CARING_FOR_TEETH){
-                if (DEV_MODE){
-                    System.out.println("Type = CARING_FOR_TEETH OK");
-                }
-                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                            // nicolas e henrique
-                            new PutTheBracesFactory(),
-                            // nicolas e henrique
-                            new EscoveOsDentesFactory(),
-                            // carlos e bruno
-                            new CleanTheToothFactory()
-                    )
-                ), 0, 1, this, this);
-            }
-
-            
-        } else {    
-            if (DEV_MODE){
-                System.out.println("Mode SURVIVAL");
-            }
-            this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
-                    Arrays.asList(
-                        // flávio
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        // gabriel e juan
-                        new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory(),
-                        // higor e matheus
-                        new AngryToothsFactory(),
-                        new CarieSwordFactory(),
-                        // nicolas e henrique
-                        new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory(),
-                        // lucas
-                        new FleeFactory(),
-                        new MouthLandingFactory(),                          
-                        // lindley e lucas
-                        new GallowsFactory(),
-                        new SmashItFactory(),
-                        // amanda e vinícius
-                        new FleeTheTartarusFactory(),
-                        new CollectItensFactory(),
-                        // daniel
-                        new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory(),
-                        // carlos e bruno
-                        new CleanTheToothFactory(),
-                        // matheus ibrahim e luis gustavo
-                        new DentalKombatFactory()
-                    )
-            ), this, this);
+        if (option==GameOption.NORMAL){
+            opcao=1;
+        } else{
+            opcao=2;
         }
-        this.hud = new Hud(this);
+
+        if(gt==GameType.LEARNING_ABOUT_CANDY){
+            this.gameT=1;
+        } else if(gt==GameType.DESTRUCTION){
+            this.gameT=2;
+        } else if(gt==GameType.RUNNING_PROTECTING){
+            this.gameT=3;
+        } else if(gt==GameType.LEARNING_ABOUT_HYGIENE){
+            this.gameT=4;
+        } else{
+            this.gameT=5;
+        }
+
+        switch(opcao){
+            default:
+                this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                        Arrays.asList(
+                                // amanda e vinícius
+                                new CollectItensFactory(),
+                                // gabriel e juan
+                                new SaveTheTeethFactory()
+                        )
+                ), 0, 1, this, this);
+                break;
+            case 1 :
+                switch(gameT) {
+                    default:
+                        this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                                Arrays.asList(
+                                        // amanda e vinícius
+                                        new CollectItensFactory(),
+                                        // gabriel e juan
+                                        new SaveTheTeethFactory()
+                                )
+                        ), 0, 1, this, this);
+                        break;
+                    case 1:
+                        this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                                Arrays.asList(
+                                        // amanda e vinícius
+                                        new CollectItensFactory(),
+                                        // gabriel e juan
+                                        new SaveTheTeethFactory()
+                                )
+                        ), 0, 1, this, this);
+                    break;
+                    case 2:
+                        this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                                Arrays.asList(
+                                        // flávio
+                                        new ShootTheCariesFactory(),
+                                        // higor e matheus
+                                        new CarieSwordFactory(),
+                                        // lindley e lucas
+                                        new SmashItFactory()
+                                )
+                        ), 0, 1, this, this);
+                    break;
+                    case 3:
+                        this.sequencer = new GameSequencer(2, new HashSet<MiniGameFactory>(
+                                Arrays.asList(
+                                        // gabriel e juan
+                                        new SaveTheTeethFactory(),
+                                        // amanda e vinícius
+                                        new CollectItensFactory()
+                                )
+                        ), 0, 1, this, this);
+                    break;
+                    case 4:
+                        this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                                Arrays.asList(
+                                        // daniel
+                                        new DefenseOfFluorineFactory(),
+                                        // lucas
+                                        new MouthLandingFactory(),
+                                        // higor e matheus
+                                        new AngryToothsFactory()
+                                )
+                        ), 0, 1, this, this);
+                    break;
+                    case 5:
+                        this.sequencer = new GameSequencer(3, new HashSet<MiniGameFactory>(
+                                Arrays.asList(
+                                        // nicolas e henrique
+                                        new PutTheBracesFactory(),
+                                        // nicolas e henrique
+                                        new EscoveOsDentesFactory(),
+                                        // carlos e bruno
+                                        new CleanTheToothFactory()
+                                )
+                        ), 0, 1, this, this);
+                    break;
+                }
+            break;
+            case 2:
+                this.sequencer = new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
+                        Arrays.asList(
+                                // flávio
+                                new ShootTheCariesFactory(),
+                                new ShooTheTartarusFactory(),
+                                // gabriel e juan
+                                new SaveTheTeethFactory(),
+                                new FleeFromTartarusFactory(),
+                                // higor e matheus
+                                new AngryToothsFactory(),
+                                new CarieSwordFactory(),
+                                // nicolas e henrique
+                                new PutTheBracesFactory(),
+                                new EscoveOsDentesFactory(),
+                                // lucas
+                                new FleeFactory(),
+                                new MouthLandingFactory(),
+                                // lindley e lucas
+                                new GallowsFactory(),
+                                new SmashItFactory(),
+                                // amanda e vinícius
+                                new FleeTheTartarusFactory(),
+                                new CollectItensFactory(),
+                                // daniel
+                                new CarieEvasionFactory(),
+                                new DefenseOfFluorineFactory(),
+                                // carlos e bruno
+                                new CleanTheToothFactory(),
+                                // matheus ibrahim e luis gustavo
+                                new DentalKombatFactory()
+                        )
+                ), this, this);
+            break;
+        }
+                this.hud = new Hud(this);
     }
 
     @Override
@@ -220,7 +241,7 @@ public class PlayingGamesScreen extends BaseScreen
     private void advance() {
         if (this.state == PlayScreenState.FINISHED_WON
                 || this.state == PlayScreenState.FINISHED_GAME_OVER) {
-            if (option == GameOption.SURVIVAL) {
+            if (opcao == 2) {
                 RankScreen ranque;
                 super.game.setScreen(ranque = new RankScreen(super.game, this));
                 ranque.setPoints(sequencer.getGameNumber());
@@ -246,7 +267,7 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void drawEndGame() {
-        if (option == GameOption.NORMAL) {
+        if (opcao == 1) {
             super.drawCenterAlignedText("Toque para voltar ao Menu",
                     0.5f, super.viewport.getWorldHeight() * 0.35f);
         }

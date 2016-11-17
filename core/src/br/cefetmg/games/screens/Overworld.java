@@ -21,22 +21,38 @@ import com.badlogic.gdx.utils.Timer;
 
 
 public class Overworld extends BaseScreen{
-
-    public static final boolean DEV_MODE = true;
-    
     private final Texture background;
-    //targetTexture;
-    private Stage stage;
-    private Object screen;
-    
+    private float fase1_X_max, fase1_X_min, fase1_Y_max, fase1_Y_min,
+            fase2_X_max, fase2_X_min, fase2_Y_max, fase2_Y_min,
+            fase3_X_max, fase3_X_min, fase3_Y_max, fase3_Y_min,
+            fase4_X_max, fase4_X_min, fase4_Y_max, fase4_Y_min,
+            fase5_X_max, fase5_X_min, fase5_Y_max, fase5_Y_min;
     public Overworld(Game game, BaseScreen previous) {
         super(game, previous);  
         
         //TODO assets.get
         super.assets.load("overworld/map.png", Texture.class);
         background = new Texture("overworld/map.png");
-        
-   
+        fase1_X_max=260;
+        fase1_X_min=0;
+        fase1_Y_max=420;
+        fase1_Y_min=260;
+        fase2_X_max=490;
+        fase2_X_min=315;
+        fase2_Y_max=130;
+        fase2_Y_min=0;
+        fase3_X_max=640;
+        fase3_X_min=290;
+        fase3_Y_max=viewport.getWorldHeight();
+        fase3_Y_min=390;
+        fase4_X_max=775;
+        fase4_X_min=600;
+        fase4_Y_max=130;
+        fase4_Y_min=0;
+        fase5_X_max=viewport.getWorldWidth();
+        fase5_X_min=680;
+        fase5_Y_max=410;
+        fase5_Y_min=280;
     }
 
     @Override
@@ -46,60 +62,32 @@ public class Overworld extends BaseScreen{
 
     @Override
     public void cleanUp() {
+
     }
 
     @Override
     public void handleInput() {
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-
-            if (Gdx.input.getX() > 0 && Gdx.input.getX() < 260
-                && Gdx.input.getY() > 260 && Gdx.input.getY() < 420){  
-                    if(DEV_MODE){ 
-                        System.out.println("CANDY: X = " + Gdx.input.getX()
-                            + "; Y = " + Gdx.input.getY());
-                    }
+        if(Gdx.input.justTouched()){
+            if (Gdx.input.getX() > fase1_X_min && Gdx.input.getX() < fase1_X_max
+                && Gdx.input.getY() > fase1_Y_min && Gdx.input.getY() < fase1_Y_max){
                     navigateToGamesScreen(GameType.LEARNING_ABOUT_CANDY);
             
-            } else if (Gdx.input.getX() > 315 && Gdx.input.getX() < 490
-                && Gdx.input.getY() > 0 && Gdx.input.getY() < 130){
-                    if(DEV_MODE){
-                        System.out.println("DESTRUCTION: X = " + Gdx.input.getX() 
-                            + "; Y = " + Gdx.input.getY());
-                    }
-                    navigateToGamesScreen(GameType.DESTRUCTION); 
+            } else if (Gdx.input.getX() > fase2_X_min && Gdx.input.getX() < fase2_X_max
+                && Gdx.input.getY() > fase2_Y_min && Gdx.input.getY() < fase2_Y_max){
+                    navigateToGamesScreen(GameType.DESTRUCTION);
                    
-            } else if (Gdx.input.getX() > 290 && Gdx.input.getX() < 640
-                && Gdx.input.getY() > 390 && Gdx.input.getY() < viewport.getWorldHeight()){  
-                    if(DEV_MODE){
-                        System.out.println("RUNNING_PROTECTING: X = " + Gdx.input.getX()
-                                     + "; Y = " + Gdx.input.getY());
-                    }
+            } else if (Gdx.input.getX() > fase3_X_min && Gdx.input.getX() < fase3_X_max
+                && Gdx.input.getY() > fase3_Y_min && Gdx.input.getY() < fase3_Y_max){
                     navigateToGamesScreen(GameType.RUNNING_PROTECTING);
                 
-            } else if (Gdx.input.getX() > 600 && Gdx.input.getX() < 775
-                && Gdx.input.getY() > 0 && Gdx.input.getY() < 130){  
-                    if(DEV_MODE){
-                        System.out.println("HYGIENE: X = " + Gdx.input.getX()
-                            + "; Y = " + Gdx.input.getY());
-                    }
+            } else if (Gdx.input.getX() > fase4_X_min && Gdx.input.getX() < fase4_X_max
+                && Gdx.input.getY() > fase4_Y_min && Gdx.input.getY() < fase4_Y_max){
                     navigateToGamesScreen(GameType.LEARNING_ABOUT_HYGIENE);
                     
                     
-            } else if (Gdx.input.getX() > 680 && Gdx.input.getX() < viewport.getWorldWidth()
-                && Gdx.input.getY() > 280 && Gdx.input.getY() < 410){  
-                    if(DEV_MODE){
-                        System.out.println("CARING: X = " + Gdx.input.getX()
-                            + "; Y = " + Gdx.input.getY());
-                    }
+            } else if (Gdx.input.getX() > fase5_X_min && Gdx.input.getX() < fase5_X_max
+                && Gdx.input.getY() > fase5_Y_min && Gdx.input.getY() < fase5_Y_max){
                     navigateToGamesScreen(GameType.CARING_FOR_TEETH);
-                    
-                    
-            } else {
-                if(DEV_MODE){
-                    System.out.println ("OUT: X = " + Gdx.input.getX()
-                        + "; Y = " + Gdx.input.getY());
-                }
-
             }
         }
 
@@ -111,17 +99,16 @@ public class Overworld extends BaseScreen{
             @Override
             public void run() {
                 transitionState = states.doNothing;
-                //menuMusic.stop();
-                game.setScreen(new PlayingGamesScreen(game, Overworld.this, 
+                game.setScreen(new PlayingGamesScreen(game, Overworld.this,
                         GameOption.NORMAL, gt));
-   
+
             }
         }, 0.75f);// 750ms
     }
 
     @Override
     public void update(float dt) {
-              
+
     }
     
 
@@ -135,8 +122,6 @@ public class Overworld extends BaseScreen{
             
             drawCenterAlignedText("Siga os tijolos amarelos",
                 1f, viewport.getWorldHeight() * 0.5f);
-            //stage.draw();
-
         batch.end();
     }
     
