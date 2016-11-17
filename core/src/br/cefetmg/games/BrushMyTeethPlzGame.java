@@ -1,5 +1,6 @@
 package br.cefetmg.games;
 
+import br.cefetmg.games.screens.MenuScreen;
 import br.cefetmg.games.screens.SplashScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

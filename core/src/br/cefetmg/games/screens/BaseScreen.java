@@ -31,7 +31,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public abstract class BaseScreen extends ScreenAdapter {
 
     public final Game game;
-    private final BaseScreen previous;
+    public final BaseScreen previous;
     public final SpriteBatch batch;
     public final OrthographicCamera camera;
     public Viewport viewport;

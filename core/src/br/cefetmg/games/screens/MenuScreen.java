@@ -68,8 +68,8 @@ public class MenuScreen extends BaseScreen {
         stage = new Stage();
         stageRanking = new Stage();
 
-        // creates a table that fills the screen. 
-        // everything else will go inside this table. 
+        // creates a table that fills the screen.
+        // everything else will go inside this table.
         final Table table = new Table();
         table.align(1);
         table.padBottom(160);
