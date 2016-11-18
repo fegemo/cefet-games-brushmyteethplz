@@ -251,7 +251,6 @@ public abstract class MiniGame {
                 this.timer.scheduleTask(new Task() {
                     @Override
                     public void run() {
-                        System.out.println("Subtracao:" + (remainingDuration - TimeUtils.millis()));
                         stateObserver.onTimeEnding(TimeUtils.millis()
                                 + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT
                                 + 300);
