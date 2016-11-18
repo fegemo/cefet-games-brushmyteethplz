@@ -1,12 +1,12 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.Config;
 import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.logic.chooser.GameSequencer;
 import br.cefetmg.games.minigames.factories.*;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
@@ -17,9 +17,8 @@ import br.cefetmg.games.minigames.MiniGame;
 import br.cefetmg.games.sounds.Sounds;
 import br.cefetmg.games.logic.chooser.BaseGameSequencer;
 import br.cefetmg.games.logic.chooser.InfiniteGameSequencer;
-import br.cefetmg.games.minigames.factories.RamtoothFactory;
-import br.cefetmg.games.minigames.util.GameOption;
-import java.util.List;
+import br.cefetmg.games.minigames.util.GameMode;
+import br.cefetmg.games.minigames.util.GameStage;
 
 /**
  *
@@ -28,15 +27,18 @@ import java.util.List;
 public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
+    public static final boolean DEV_MODE = true;
+    
     private MiniGame currentGame;
     private final BaseGameSequencer sequencer;
     private final Hud hud;
     private PlayScreenState state;
     private int lives;
     private final Sounds sound;
-    private final GameOption option;
+    private final GameMode mode;
 
-    public PlayingGamesScreen(Game game, BaseScreen previous, GameOption option) {
+    public PlayingGamesScreen(Game game, BaseScreen previous,
+            GameMode mode, GameStage gameType) {
         super(game, previous);
         super.assets.load("images/countdown.png", Texture.class);
         super.assets.load("images/gray-mask.png", Texture.class);
@@ -44,56 +46,58 @@ public class PlayingGamesScreen extends BaseScreen
         super.assets.load("images/unpausedImage.png", Texture.class);
 
         this.state = PlayScreenState.PLAYING;
-        this.lives = 3;
-        this.sound = new Sounds();
-        this.option = option;
+        this.lives = Config.MAX_LIVES;
+        this.mode = mode;
+        this.sequencer = initSequencer(mode, gameType);
 
-        HashSet<MiniGameFactory> availableGames = new HashSet<MiniGameFactory>(
-                Arrays.asList(
-                        // flávio
-                        new ShootTheCariesFactory(),
-                        new ShooTheTartarusFactory(),
-                        // gabriel e juan
-                        new SaveTheTeethFactory(),
-                        new FleeFromTartarusFactory(),
-                        // higor e matheus
-                        new AngryToothsFactory(),
-                        new CarieSwordFactory(),
-                        new ToothRunnerFactory(),
-                        // nicolas e henrique
-                        new PutTheBracesFactory(),
-                        new EscoveOsDentesFactory(),
-                        new SnakeCariesFactory(),
-                        // lucas carvalhais e lucas de aguilar
-                        new FleeFactory(),
-                        new MouthLandingFactory(),
-                        // lindley e lucas
-                        new GallowsFactory(),
-                        new SmashItFactory(),
-                        new SideWalkingFactory(),
-                        // amanda e vinícius
-                        new FleeTheTartarusFactory(),
-                        new CollectItensFactory(),
-                        new RamtoothFactory(),
-                        // daniel
-                        new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory(),
-                        new NinjaToothFactory(),
-                        // carlos e bruno
-                        new CleanTheToothFactory(),
-                        // matheus ibrahim e luis gustavo
-                        new DentalKombatFactory()
-                )
-        );
-
-        if (this.option == GameOption.NORMAL) {
-            this.sequencer = new GameSequencer(5, availableGames,
-                    0, 1, this, this);
-        } else {
-            this.sequencer = new InfiniteGameSequencer(availableGames,
-                    this, this);
-        }
         this.hud = new Hud(this);
+        this.sound = new Sounds();
+    }
+
+    private BaseGameSequencer initSequencer(GameMode mode, GameStage stage) {
+        if (mode == GameMode.CAMPAIGN) {
+            return new GameSequencer(5,
+                    new HashSet<MiniGameFactory>(stage.miniGames),
+                    stage.initialDifficulty, stage.finalDifficulty, this, this);
+        } else {
+            return new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
+                    Arrays.asList(
+                            // flávio
+                            new ShootTheCariesFactory(),
+                            new ShooTheTartarusFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory(),
+                            new FleeFromTartarusFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory(),
+                            new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            new EscoveOsDentesFactory(),
+                            new SnakeCariesFactory(),
+                            // lucas carvalhais e lucas de aguilar
+                            new FleeFactory(),
+                            new MouthLandingFactory(),
+                            // lindley e lucas
+                            new GallowsFactory(),
+                            new SmashItFactory(),
+                            new SideWalkingFactory(),
+                            // amanda e vinícius
+                            new FleeTheTartarusFactory(),
+                            new CollectItensFactory(),
+                            new RamtoothFactory(),
+                            // daniel
+                            new CarieEvasionFactory(),
+                            new DefenseOfFluorineFactory(),
+                            new NinjaToothFactory(),
+                            // carlos e bruno
+                            new CleanTheToothFactory(),
+                            // matheus ibrahim e luis gustavo
+                            new DentalKombatFactory()
+                    )
+            ), this, this);
+        }
     }
 
     @Override
@@ -133,15 +137,16 @@ public class PlayingGamesScreen extends BaseScreen
             hud.update(dt);
 
             if (transitionState == states.fadeOut && transition.isFinished()) {
-                switch (option) {
-                    case NORMAL:
+                switch (this.mode) {
+                    case CAMPAIGN:
                         super.game.setScreen(new MenuScreen(super.game, this));
                         break;
-                        
+
                     case SURVIVAL:
-                        RankingEntryScreen ranque = new RankingEntryScreen(super.game, this);
-                        ranque.setPoints(sequencer.getGameNumber());
-                        super.game.setScreen(ranque);
+                        RankingEntryScreen ranking = new RankingEntryScreen(
+                                super.game, this);
+                        ranking.setPoints(sequencer.getGameNumber());
+                        super.game.setScreen(ranking);
                         break;
                 }
             }
@@ -172,10 +177,10 @@ public class PlayingGamesScreen extends BaseScreen
         if (this.sequencer.hasNextGame()) {
             this.currentGame = this.sequencer.nextGame();
             hud.setGameIndex(sequencer.getGameNumber());
+
             Gdx.input.setCursorPosition(
                     (int) Gdx.graphics.getWidth() / 2,
                     (int) Gdx.graphics.getHeight() / 2);
-            Gdx.input.setCursorCatched(currentGame.shouldHideMousePointer());
         } else {
             // mostra mensagem de vitória
             this.transitionTo(PlayScreenState.FINISHED_WON);
@@ -184,7 +189,7 @@ public class PlayingGamesScreen extends BaseScreen
     }
 
     private void drawEndGame() {
-        if (option == GameOption.NORMAL) {
+        if (mode == GameMode.CAMPAIGN) {
             super.drawCenterAlignedText("Toque para voltar ao Menu",
                     0.5f, super.viewport.getWorldHeight() * 0.35f);
         }

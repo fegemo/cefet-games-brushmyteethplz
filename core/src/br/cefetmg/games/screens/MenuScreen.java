@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import br.cefetmg.games.ranking.Ranking;
 import br.cefetmg.games.ranking.RankingObserver;
 import br.cefetmg.games.minigames.util.MenuState;
-import br.cefetmg.games.minigames.util.GameOption;
+import br.cefetmg.games.minigames.util.GameMode;
 import br.cefetmg.games.minigames.util.Score;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
@@ -168,7 +168,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 menuMusic.stop();
-                navigateToMicroGameScreen(GameOption.SURVIVAL);
+                navigateToMicroGameScreen(GameMode.SURVIVAL);
             }
         });
 
@@ -176,7 +176,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 menuMusic.stop();
-                navigateToMicroGameScreen(GameOption.NORMAL);
+                navigateToMicroGameScreen(GameMode.CAMPAIGN);
             }
         });
 
@@ -374,15 +374,20 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
     /**
      * Navega para a tela de jogo.
      */
-    private void navigateToMicroGameScreen(final GameOption option) {
+    private void navigateToMicroGameScreen(final GameMode option) {
         transitionState = states.fadeOut;
         Timer.schedule(new Task() {
             @Override
             public void run() {
                 transitionState = states.doNothing;
                 menuMusic.stop();
-                game.setScreen(
-                        new PlayingGamesScreen(game, MenuScreen.this, option));
+                if (option == GameMode.CAMPAIGN){
+                    game.setScreen(
+                        new Overworld(game, MenuScreen.this));
+                } else {
+                    game.setScreen(
+                        new PlayingGamesScreen(game, MenuScreen.this, option, null));
+                }
             }
         }, 0.75f);// 750ms
     }
