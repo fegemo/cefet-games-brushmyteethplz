@@ -60,6 +60,7 @@ public class NinjaTooth extends MiniGame {
         this.enemies = new Array<Tartarus>();
         this.superTooth.setCenter(screen.viewport.getWorldWidth()/2, screen.viewport.getWorldHeight()/2);
 
+        
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
@@ -139,7 +140,6 @@ public class NinjaTooth extends MiniGame {
     @Override
     public void onUpdate(float dt) {
         // atualiza os inimigos (quadro de animação + colisão com dentes)
-        if (!isPaused) {
             if (superTooth.getHeadPosition().x > super.screen.viewport.getWorldWidth()
                     || superTooth.getHeadPosition().x < 0
                     || superTooth.getHeadPosition().y > super.screen.viewport.getWorldHeight()
@@ -167,7 +167,6 @@ public class NinjaTooth extends MiniGame {
                 }
             }
             superTooth.update(dt);
-        }
     }
 
     @Override
@@ -360,9 +359,11 @@ public class NinjaTooth extends MiniGame {
 
         @Override
         public void update(float dt) {
-            super.update(dt);
-            super.setPosition(super.getX() + this.speed.x * dt,
-                    super.getY() + this.speed.y * dt);
+            if(!isPaused){
+                super.update(dt);
+                super.setPosition(super.getX() + this.speed.x * dt,
+                        super.getY() + this.speed.y * dt);
+            }
         }
 
         public Vector2 getSpeed() {

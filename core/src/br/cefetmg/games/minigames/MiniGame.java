@@ -39,7 +39,7 @@ public abstract class MiniGame {
     protected MiniGameState state;
     protected Random rand;
     protected Timer timer;
-    public boolean isPaused;
+    protected boolean isPaused;
 
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
@@ -128,10 +128,8 @@ public abstract class MiniGame {
             
         }
         
-        if (Gdx.input.justTouched() && voltarSprite.getBoundingRectangle().contains(clickPosition)) {
-            //this.screen.dispose();
-            //NÃO FUNCIONOU
-           // this.screen.game.setScreen(new MenuScreen(this.screen.game, this.screen.getPrevious()));
+        if (Gdx.input.justTouched() && voltarSprite.getBoundingRectangle().contains(clickPosition) && isPaused) {
+           this.screen.game.setScreen(new MenuScreen(this.screen.game, this.screen));
         }
         switch (this.state) {
             case INSTRUCTIONS:
@@ -245,16 +243,20 @@ public abstract class MiniGame {
             case PLAYING:
                 playingInitialTime = TimeUtils.millis();
                 remainingDuration += playingInitialTime;
-                //System.out.println("remainingDuration:" + remainingDuration + " playingInitialTime:" + playingInitialTime);
                 this.onStart();
+                
+                //aqui está sendo chamado apenas uma vez, então o delay fica sendo 7 segundos e pronto, mesmo que o
+                // remainingDuration seja alterado, esse delay já foi especificado, fazendo com que a animação de
+                // relógio seja executada sempre no delay de 7 segundos, independente da pausa :/ é um bug.
                 this.timer.scheduleTask(new Task() {
                     @Override
                     public void run() {
+                        System.out.println("Subtracao:" + (remainingDuration - TimeUtils.millis()));
                         stateObserver.onTimeEnding(TimeUtils.millis()
                                 + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT
                                 + 300);
                     }
-                }, (remainingDuration - TimeUtils.millis() - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
+                }, (remainingDuration - playingInitialTime - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
                         / 1000f);
                 
                 timer.start();

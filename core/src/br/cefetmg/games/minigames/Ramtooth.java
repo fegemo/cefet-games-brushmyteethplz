@@ -324,8 +324,10 @@ public class Ramtooth extends MiniGame{
         
         @Override
         public void update(float dt) {
-            super.update(dt);
-            super.setPosition(super.getX(), super.getY());
+            if(!isPaused){
+                super.update(dt);
+                super.setPosition(super.getX(), super.getY());
+            }
         }
         
         public Vector2 getSpeed() {

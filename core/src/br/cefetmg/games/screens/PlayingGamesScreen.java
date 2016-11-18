@@ -49,7 +49,7 @@ public class PlayingGamesScreen extends BaseScreen
         this.option = option;
 
         HashSet<MiniGameFactory> availableGames = new HashSet<MiniGameFactory>(
-                Arrays.asList(
+                Arrays.asList(/*
                         // flávio
                         new ShootTheCariesFactory(),
                         new ShooTheTartarusFactory(),
@@ -77,12 +77,12 @@ public class PlayingGamesScreen extends BaseScreen
                         new RamtoothFactory(),
                         // daniel
                         new CarieEvasionFactory(),
-                        new DefenseOfFluorineFactory(),
-                        new NinjaToothFactory(),
+                        new DefenseOfFluorineFactory(),*/
+                        new NinjaToothFactory()
                         // carlos e bruno
-                        new CleanTheToothFactory(),
+                        //new CleanTheToothFactory(),
                         // matheus ibrahim e luis gustavo
-                        new DentalKombatFactory()
+                        //new DentalKombatFactory()
                 )
         );
 
@@ -254,7 +254,7 @@ public class PlayingGamesScreen extends BaseScreen
     enum PlayScreenState {
         PLAYING,
         FINISHED_GAME_OVER,
-        FINISHED_WON,
+        FINISHED_WON
     }
 
 }

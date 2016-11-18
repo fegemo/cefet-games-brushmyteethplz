@@ -246,9 +246,11 @@ public class CarieEvasion extends MiniGame {
 
         @Override
         public void update(float dt) {
-            super.update(dt);
-            super.setPosition(super.getX() + this.speed.x * dt,
-                    super.getY() + this.speed.y * dt);
+            if(!isPaused){
+                super.update(dt);
+                super.setPosition(super.getX() + this.speed.x * dt,
+                        super.getY() + this.speed.y * dt);
+            }
         }
 
         public Vector2 getSpeed() {
