@@ -16,6 +16,7 @@ public class MultiAnimatedSprite extends AnimatedSprite {
             String initialAnimationName) {
         super(animations.get(initialAnimationName));
         this.animations = animations;
+        super.setAutoUpdate(false);
     }
 
     public void startAnimation(String animationName) {

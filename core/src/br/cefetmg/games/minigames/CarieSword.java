@@ -1,25 +1,18 @@
 package br.cefetmg.games.minigames;
 
-import br.cefetmg.games.graphics.MultiAnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -94,42 +87,43 @@ public class CarieSword extends MiniGame {
     private final Texture cariesTexture;
     private final Texture cariesAnimation;
     private final Texture dentesTexture;
-    private final Sound espada1;
-    private final Sound espada2;
-    private final Sound espada3;
-    private final Sound bomb1;
-    private final Sound bomb2;
-    private final Sound caries1;
-    private final Sound caries2;
+    private final Array<Sound> swordSounds;
+    private final Array<Sound> bombSounds;
+    private final Array<Sound> cariesSounds;
 
     //vriaveis relacionadas aos personagens
     private int enemiesPass;
     private int spawnedEnemies;
     private int totalEnemies;
-    private int spawnInterval;
+    private float spawnInterval;
     private int limite;
     private int perdeu;
 
     //variaveis de cunho fisico para o jogo
-    private Vector2 gravidade;
-    private Random random;
+    private final Vector2 gravidade;
+    private final Random random;
 
     public CarieSword(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
-
+        super(screen, difficulty, 10f, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.enemies = new Array<Enemie>();
 
         //carrega texturas e sons
         this.cariesTexture = this.screen.assets.get("carie-sword/caries.png", Texture.class);
         this.cariesAnimation = this.screen.assets.get("carie-sword/cariesAnimacao.png", Texture.class);
         this.dentesTexture = this.screen.assets.get("carie-sword/tooth.png", Texture.class);
-        this.espada1 = this.screen.assets.get("carie-sword/som1.mp3", Sound.class);
-        this.espada2 = this.screen.assets.get("carie-sword/som2.mp3", Sound.class);
-        this.espada3 = this.screen.assets.get("carie-sword/som3.mp3", Sound.class);
-        this.bomb1 = this.screen.assets.get("carie-sword/bomb1.mp3", Sound.class);
-        this.bomb2 = this.screen.assets.get("carie-sword/bomb2.mp3", Sound.class);
-        this.caries1 = this.screen.assets.get("carie-sword/caries1.mp3", Sound.class);
-        this.caries2 = this.screen.assets.get("carie-sword/caries2.mp3", Sound.class);
+        this.swordSounds = new Array<Sound>(new Sound[] {
+            this.screen.assets.get("carie-sword/som1.mp3", Sound.class),
+            this.screen.assets.get("carie-sword/som2.mp3", Sound.class),
+            this.screen.assets.get("carie-sword/som3.mp3", Sound.class)
+        });
+        this.bombSounds = new Array<Sound>(new Sound[] {
+            this.screen.assets.get("carie-sword/bomb1.mp3", Sound.class),
+            this.screen.assets.get("carie-sword/bomb2.mp3", Sound.class)
+        });
+        this.cariesSounds = new Array<Sound>(new Sound[] {
+            this.screen.assets.get("carie-sword/caries1.mp3", Sound.class),
+            this.screen.assets.get("carie-sword/caries2.mp3", Sound.class)
+        });
 
         this.spawnedEnemies = 0;                            //inimigos criados
         this.enemiesPass = 0;                               //inimigos que passaram
@@ -161,7 +155,7 @@ public class CarieSword extends MiniGame {
 
         float nextSpawnMillis = this.spawnInterval
                 * (rand.nextFloat() / 3 + 0.15f);
-        super.timer.scheduleTask(t, nextSpawnMillis / 1000f);
+        super.timer.scheduleTask(t, nextSpawnMillis);
     }
 
     /**
@@ -187,48 +181,18 @@ public class CarieSword extends MiniGame {
     @Override
     protected void configureDifficultyParameters(float difficulty) {
         this.totalEnemies = 20 + (int)(difficulty*50);
-        this.spawnInterval = 1000 - (int)(difficulty*500);
+        this.spawnInterval = 1 - (difficulty/2f);
         this.limite = 15 - (int)(difficulty*5);
     }
 
     @Override
     public void onHandlePlayingInput() {
         Gdx.input.setInputProcessor(
-                new InputProcessor() {
-                    @Override
-                    public boolean keyDown(int keycode) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean keyUp(int keycode) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean keyTyped(char character) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                        return false;
-                    }
-
+                new InputAdapter() {
                     @Override
                     public boolean touchDragged(int screenX, int screenY, int pointer) {
                         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                         screen.viewport.unproject(click);
-                        ShapeRenderer renderAux = new ShapeRenderer();
-                        renderAux.setAutoShapeType(true);
-                        renderAux.begin();
-                        renderAux.setColor(1, 0, 0, 0);
-                        renderAux.line(100, 100, 200, 200);
                         for (int i = 0; i < enemies.size; i++) {
                             Enemie enemie = enemies.get(i);
                             //verifica se o mouse arrastou porcima da carie
@@ -237,27 +201,11 @@ public class CarieSword extends MiniGame {
                                 if (click.x > aux.getX() && click.x < aux.getX() + aux.getWidth() &&
                                         click.y > aux.getY() && click.y < aux.getY() + aux.getHeight()) {
                                     enemie.morre = true;
-                                    int som = random.nextInt(2);
-                                    if (som == 0) {
-                                        espada1.play();
-                                    }else if (som == 1) {
-                                            espada2.play();
-                                    }else {
-                                        espada3.play();
-                                    }
-                                    if (som == 0)
-                                        caries2.play();
+                                    swordSounds.random().play();
+                                    cariesSounds.random().play();
                                 }
                             }
                         }
-                        return false;
-                    }
-
-                    @Override
-                    public boolean mouseMoved(int screenX, int screenY) { return false; }
-
-                    @Override
-                    public boolean scrolled(int amount) {
                         return false;
                     }
                 }
@@ -290,12 +238,7 @@ public class CarieSword extends MiniGame {
             if (enemie.sprite.getX() > this.screen.viewport.getWorldWidth()) {
                 enemiesPass++;
                 enemies.removeValue(enemie, true);
-                int bomba = random.nextInt(2);
-                if (bomba == 0) {
-                    bomb1.play();
-                }else {
-                    bomb2.play();
-                }
+                bombSounds.random().play();
             }
         }
 
@@ -328,7 +271,7 @@ public class CarieSword extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Proteja com a \"katana\" ";
+        return "Corte as cáries com sua \"katana\" ";
     }
 
     @Override

@@ -74,7 +74,7 @@ public class ToothRunner extends MiniGame {
     private Texture bg;
 
     public ToothRunner(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 10f, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
 
         delta = 0;
         this.pirulito = new ArrayList<Enemie>();

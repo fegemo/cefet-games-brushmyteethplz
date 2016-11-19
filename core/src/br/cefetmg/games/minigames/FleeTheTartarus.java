@@ -38,7 +38,7 @@ public class FleeTheTartarus extends MiniGame {
     private final Texture deadToothTexture;
     private final Texture backgroundTexture;
 
-    private int spawnInterval;
+    private float spawnInterval;
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
     private final Array<Sound> tartarusAppearingSound;
@@ -49,8 +49,8 @@ public class FleeTheTartarus extends MiniGame {
     public FleeTheTartarus(BaseScreen screen,
             GameStateObserver observer, float difficulty){
         
-        super(screen, difficulty, 10000,
-                TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 10f,
+                TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         
         this.backgroundTexture = this.screen.assets.get(
                 "flee-the-tartarus/fundo.png", Texture.class);
@@ -93,7 +93,7 @@ public class FleeTheTartarus extends MiniGame {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
                 
     }
 
@@ -103,8 +103,8 @@ public class FleeTheTartarus extends MiniGame {
                 .getCurveValueBetween(difficulty, 30, 60);
         this.maximumEnemySpeed = DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 70, 120);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
     }
 
     @Override
@@ -121,12 +121,6 @@ public class FleeTheTartarus extends MiniGame {
                 super.challengeFailed();
             }
         }
-        
-        if ((this.initialTime + this.maxDuration + 3000) <= System.currentTimeMillis()){
-            venceu.play();
-            super.challengeSolved();
-        }
-        
     }
 
     @Override
@@ -206,11 +200,9 @@ public class FleeTheTartarus extends MiniGame {
 
         @Override
         public void update(float dt) {
-            if(!isPaused){
-                super.update(dt);
-                super.setPosition(super.getX() + this.speed.x * dt,
-                        super.getY() + this.speed.y * dt);
-            }
+            super.update(dt);
+            super.setPosition(super.getX() + this.speed.x * dt,
+                    super.getY() + this.speed.y * dt);
         }
 
         public Vector2 getSpeed() {

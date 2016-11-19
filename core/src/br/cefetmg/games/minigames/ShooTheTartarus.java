@@ -39,12 +39,12 @@ public class ShooTheTartarus extends MiniGame {
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
-    private int spawnInterval;
+    private float spawnInterval;
     private int totalTeeth;
 
     public ShooTheTartarus(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothbrushTexture = super.screen.assets.get(
                 "shoo-the-tartarus/toothbrush-spritesheet.png", Texture.class);
@@ -72,7 +72,7 @@ public class ShooTheTartarus extends MiniGame {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
 
         this.initializeTeeth();
     }
@@ -175,11 +175,11 @@ public class ShooTheTartarus extends MiniGame {
     @Override
     protected void configureDifficultyParameters(float difficulty) {
         this.minimumEnemySpeed = DifficultyCurve.LINEAR
-                .getCurveValueBetween(difficulty, 30, 60);
+                .getCurveValueBetween(difficulty, 120, 220);
         this.maximumEnemySpeed = DifficultyCurve.LINEAR
-                .getCurveValueBetween(difficulty, 70, 120);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
+                .getCurveValueBetween(difficulty, 240, 340);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.25f, 1.5f);
         this.totalTeeth = (int) Math.ceil(DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 0, 2)) + 1;
     }
@@ -271,6 +271,7 @@ public class ShooTheTartarus extends MiniGame {
                 }
             }));
             super.getAnimation().setPlayMode(Animation.PlayMode.LOOP);
+            super.setAutoUpdate(false);
         }
 
         Vector2 getHeadPosition() {
@@ -311,11 +312,9 @@ public class ShooTheTartarus extends MiniGame {
 
         @Override
         public void update(float dt) {
-            if(!isPaused){
-                super.update(dt);
-                super.setPosition(super.getX() + this.speed.x * dt,
-                        super.getY() + this.speed.y * dt);
-            }
+            super.update(dt);
+            super.setPosition(super.getX() + this.speed.x * dt,
+                    super.getY() + this.speed.y * dt);
         }
 
         public Vector2 getSpeed() {

@@ -17,8 +17,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.HashMap;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 
 /**
@@ -44,13 +42,13 @@ public class DefenseOfFluorine extends MiniGame {
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
-    private int spawnInterval;
+    private float spawnInterval;
     private int totalTeeth;
     private final int maximumFluorines;
     private final float maximumFluorineDuration;
 
     public DefenseOfFluorine(BaseScreen screen,GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothPasteTexture = super.screen.assets.get("defense-of-fluorine/toothPaste.png", Texture.class);
         this.fluorineTexture = super.screen.assets.get("defense-of-fluorine/fluorine.png", Texture.class);
@@ -67,15 +65,14 @@ public class DefenseOfFluorine extends MiniGame {
         this.fluorines = new Array<Fluorine>();
         this.numberOfBrokenTeeth = 0;
         this.maximumFluorines = 1000;
-        //System.out.println("spawnInter:" + this.spawnInterval + "difficulty: " + difficulty);
-        this.maximumFluorineDuration = (this.spawnInterval*2/500f);
+        this.maximumFluorineDuration = (this.spawnInterval*4);
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
         
         super.timer.scheduleTask(new Task() {
             @Override
@@ -181,8 +178,8 @@ public class DefenseOfFluorine extends MiniGame {
                 .getCurveValueBetween(difficulty, 30, 60);
         this.maximumEnemySpeed = DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 70, 120);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
         this.totalTeeth = (int) Math.ceil(DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 0, 2)) + 1;
     }
@@ -363,11 +360,9 @@ public class DefenseOfFluorine extends MiniGame {
 
         @Override
         public void update(float dt) {
-            if(!isPaused){
-                super.update(dt);
-                super.setPosition(super.getX() + this.speed.x * dt,
-                        super.getY() + this.speed.y * dt);
-            }
+            super.update(dt);
+            super.setPosition(super.getX() + this.speed.x * dt,
+                    super.getY() + this.speed.y * dt);
         }
 
         public Vector2 getSpeed() {
@@ -407,52 +402,6 @@ public class DefenseOfFluorine extends MiniGame {
             lives--;
             super.setRegion(broken);
             return true;
-        }
-    }
-    
-   class MyInputProcessor implements InputProcessor {
-   @Override
-   public boolean touchDown (int x, int y, int pointer, int button) {
-      if (button == Input.Buttons.LEFT) {
-          // Some stuff
-          return true;     
-      }
-      return false;
-   }
-
-        @Override
-        public boolean keyDown(int keycode) {
-            return false;
-        }
-
-        @Override
-        public boolean keyUp(int keycode) {
-            return false;
-        }
-
-        @Override
-        public boolean keyTyped(char character) {
-            return false;
-        }
-
-        @Override
-        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            return false;
-        }
-
-        @Override
-        public boolean touchDragged(int screenX, int screenY, int pointer) {
-           return false;
-        }
-
-        @Override
-        public boolean mouseMoved(int screenX, int screenY) {
-            return false;
-        }
-
-        @Override
-        public boolean scrolled(int amount) {
-            return false;
         }
     }
 }

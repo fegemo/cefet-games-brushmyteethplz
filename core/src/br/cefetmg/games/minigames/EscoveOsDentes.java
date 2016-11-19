@@ -42,7 +42,7 @@ public class EscoveOsDentes extends MiniGame {
     private float initialToothScale;
     private float minimumToothScale;
     private int totalTooths;
-    private int spawnInterval;
+    private float spawnInterval;
     private int numEscovada = 8;
     
     public class Escova{
@@ -58,7 +58,7 @@ public class EscoveOsDentes extends MiniGame {
 
     public EscoveOsDentes(BaseScreen screen, GameStateObserver observer, float difficulty) {
         
-        super(screen, difficulty, 10000, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 10f, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         
         this.Escovar = new Array<Escova>();
         this.Tooths = new Array<Sprite>();
@@ -95,7 +95,7 @@ public class EscoveOsDentes extends MiniGame {
         };
         // spawnInterval * 15% para mais ou para menos
         float nextSpawnMillis = this.spawnInterval * (rand.nextFloat() / 3 + 0.15f);
-        super.timer.scheduleTask(t, nextSpawnMillis / 1000f);
+        super.timer.scheduleTask(t, nextSpawnMillis);
     }
 
     private void spawnEnemy() {
@@ -118,9 +118,10 @@ public class EscoveOsDentes extends MiniGame {
     protected void configureDifficultyParameters(float difficulty) {
         this.initialToothScale = DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 1.15f, 0.8f);
         this.minimumToothScale = DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 0.15f, 0.4f);
-        this.spawnInterval = (int) DifficultyCurve.S_NEGATIVE.getCurveValueBetween(difficulty, 500, 1500);
-        this.totalTooths = (int) Math.ceil((float) maxDuration/ spawnInterval) - 3;
-        this.numEscovada = (int) Math.ceil((float) maxDuration/ spawnInterval) - 3;
+        this.spawnInterval = DifficultyCurve.S_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
+        this.totalTooths = (int) Math.ceil(maxDuration / spawnInterval) - 3;
+        this.numEscovada = (int) Math.ceil(maxDuration / spawnInterval) - 3;
     }
 
     @Override

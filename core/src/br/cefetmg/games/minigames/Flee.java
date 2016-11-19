@@ -7,7 +7,6 @@ import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import java.util.HashMap;
-import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 
 /**
  *
@@ -34,11 +32,11 @@ public class Flee extends MiniGame{
     private final Array<Tartarus> enemies;
     
     // variáveis do desafio - variam com a dificuldade do minigame
-    private float EnemySpeed;
-    private int spawnInterval;
+    private float enemySpeed;
+    private float spawnInterval;
 
     public Flee(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothTexture = super.screen.assets.get(
                 "flee/toothLiveDeath.png", Texture.class);
@@ -63,7 +61,7 @@ public class Flee extends MiniGame{
             public void run() {
                 spawnEnemy();
             }
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
 
     }
 
@@ -90,7 +88,7 @@ public class Flee extends MiniGame{
         Vector2 tartarusSpeed = tartarusGoal
                 .sub(tartarusPosition)
                 .nor()
-                .scl(this.EnemySpeed);
+                .scl(this.enemySpeed);
 
         Tartarus enemy = new Tartarus(tartarusTexture);
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
@@ -106,10 +104,10 @@ public class Flee extends MiniGame{
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        this.EnemySpeed = DifficultyCurve.LINEAR
+        this.enemySpeed = DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 75, 130);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1000);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.5f, 1f);
     }
 
     @Override
@@ -150,7 +148,7 @@ public class Flee extends MiniGame{
 
     @Override
     public String getInstructions() {
-        return "Fuja";
+        return "Não encoste nos Tártaros";
     }
 
     @Override
@@ -202,12 +200,10 @@ public class Flee extends MiniGame{
 
         @Override
         public void update(float dt) {
-            if(!isPaused){
-                super.update(dt);
-                if (hit == false) {
-                    super.setPosition(super.getX() + this.speed.x * dt,
-                        super.getY() + this.speed.y * dt);
-                }
+            super.update(dt);
+            if (hit == false) {
+                super.setPosition(super.getX() + this.speed.x * dt,
+                    super.getY() + this.speed.y * dt);
             }
         }
 

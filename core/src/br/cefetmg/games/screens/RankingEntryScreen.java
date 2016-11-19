@@ -204,6 +204,7 @@ public class RankingEntryScreen extends BaseScreen {
                 }
             }));
             super.getAnimation().setFrameDuration(1.0f);
+            super.setAutoUpdate(false);
         }
     }
 

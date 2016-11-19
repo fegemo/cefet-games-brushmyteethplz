@@ -37,7 +37,7 @@ public class MouthLanding extends MiniGame{
     
 
     public MouthLanding(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 10f,TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.mouthTexture = super.screen.assets.get("mouth-landing/mouth.png", Texture.class);
         this.toothTexture = super.screen.assets.get("mouth-landing/rocket-tooth.png", Texture.class);
         this.sucessSound = screen.assets.get("mouth-landing/sucess.wav", Sound.class);

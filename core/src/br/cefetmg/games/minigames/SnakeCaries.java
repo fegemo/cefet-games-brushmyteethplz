@@ -64,7 +64,7 @@ public class SnakeCaries extends MiniGame {
 
     public SnakeCaries(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 11000, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 11f, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.enemies = new Array<Sprite>();
         this.fundoTexture = this.screen.assets.get(
                 "snake-caries/fundo.png", Texture.class);
@@ -135,9 +135,8 @@ public class SnakeCaries extends MiniGame {
     @Override
     protected void configureDifficultyParameters(float difficulty) {
         this.spawnInterval = (int) DifficultyCurve.S_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
-        this.totalEnemies = (int) Math.ceil((float) maxDuration
-                / spawnInterval) - 4;
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
+        this.totalEnemies = (int) Math.ceil(maxDuration / spawnInterval) - 4;
         this.lenSnakeVelocity = (float) this.totalEnemies + 2;
         this.snakeVelocity = new Vector2(this.lenSnakeVelocity, 0);
     }

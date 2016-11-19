@@ -47,12 +47,17 @@ public class Config {
      * Número de vidas do jogador.
      */
     public static final int MAX_LIVES = 3;
+    
+    /**
+     * Tempo mostrando o countdown de cada MiniGame.
+     */
+    public static final float TIME_SHOWING_MINIGAME_INSTRUCTIONS = 4f;
 
     /**
      * A quantos milissegundos faltando para o término do minigame deve aparecer
      * o contador regressivo na HUD.
      */
-    public static final long MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT = 3000;
+    public static final float MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT = 3f;
 
     /**
      * O endereço do banco de dados que contém o ranking dos jogadores.
