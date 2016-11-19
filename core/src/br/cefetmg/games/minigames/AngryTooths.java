@@ -42,7 +42,7 @@ public class AngryTooths extends MiniGame {
 
     public AngryTooths(BaseScreen screen, GameStateObserver observer,
             float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
 
         this.toothSound = screen.assets.get("angry-tooths/missile.mp3",

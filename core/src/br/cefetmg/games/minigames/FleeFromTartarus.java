@@ -36,13 +36,13 @@ public class FleeFromTartarus extends MiniGame {
     private final Sprite bg;
 
     // variáveis do desafio - variam com a dificuldade do minigame
-    private float EnemySpeed;
-    private int spawnInterval;
+    private float enemySpeed;
+    private float spawnInterval;
     private final Vector2 window;
 
     public FleeFromTartarus(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.backGroundTexture = super.screen.assets.get(
                 "flee-from-tartarus/background.jpg", Texture.class);
@@ -82,7 +82,7 @@ public class FleeFromTartarus extends MiniGame {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
         this.window = new Vector2(super.screen.viewport.getWorldWidth(),super.screen.viewport.getWorldHeight());
         this.bg = new Sprite(backGroundTexture);
         this.bg.setSize(window.x, window.y);
@@ -126,10 +126,10 @@ public class FleeFromTartarus extends MiniGame {
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        this.EnemySpeed = DifficultyCurve.LINEAR
+        this.enemySpeed = DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 100, 120);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1000);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.5f, 1f);
     }
 
     @Override
@@ -227,7 +227,7 @@ public class FleeFromTartarus extends MiniGame {
         public void setSpeed() {
             Vector2 position = new Vector2(super.getX(), super.getY());
             Vector2 click = new Vector2(tooth.getPosition());
-            this.speed = click.sub(position).nor().scl(EnemySpeed);
+            this.speed = click.sub(position).nor().scl(enemySpeed);
         }
     }
 

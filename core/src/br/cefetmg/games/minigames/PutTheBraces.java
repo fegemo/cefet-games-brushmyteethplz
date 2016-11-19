@@ -35,7 +35,7 @@ public class PutTheBraces extends MiniGame{
     
     public PutTheBraces(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.toothTexture = super.screen.assets.get("put-the-braces/tooth.png", Texture.class);
         this.breteTexture = super.screen.assets.get("put-the-braces/brete.png", Texture.class);

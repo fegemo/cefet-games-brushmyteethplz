@@ -246,14 +246,25 @@ public class PlayingGamesScreen extends BaseScreen
                     }
 
                 }, 1.5f);
+                
                 Gdx.input.setCursorCatched(false);
+                this.hud.cancelEndingTimer();
                 break;
         }
     }
 
     @Override
-    public void onTimeEnding(long endingTime) {
-        this.hud.startEndingTimer(endingTime);
+    public void onTimeEnding() {
+        this.hud.startEndingTimer();
+    }
+
+    @Override
+    public void onGamePausedOrUnpaused(boolean justPaused) {
+        if (justPaused) {
+            this.hud.pauseEndingTimer();
+        } else {
+            this.hud.resumeEndingTimer();
+        }
     }
 
     enum PlayScreenState {

@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Timer.Task;
 
 public class DentalKombat extends MiniGame{
     
-    private Vector2 playerPosition = new Vector2();
+    private final Vector2 playerPosition = new Vector2();
     
     private final Texture backGroundTexture;
     private final Texture toothSpritesheet;
@@ -50,11 +50,11 @@ public class DentalKombat extends MiniGame{
     private static final int INITIAL_POSX_CARIE = 350;
     private static final int INITIAL_POSY_CARIE = 75;
     private final float TOOTH_MAX_HEALTH = toothHealth;
-    private final float ATTACK_TIME_MILLIS = 2;
+    private final float ATTACK_TIME_MILLIS = 2f;
 
     public DentalKombat (BaseScreen screen,
             GameStateObserver observer, float difficulty){
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         
         this.toothSpritesheet = this.screen.assets.get(

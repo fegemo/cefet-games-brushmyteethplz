@@ -40,10 +40,10 @@ public class NinjaTooth extends MiniGame {
     private float maximumEnemySpeed;
     
     private final float bulletFloatSpeed;
-    private int spawnInterval;
+    private float spawnInterval;
 
     public NinjaTooth(BaseScreen screen,GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 10f,TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.superToothTexture = super.screen.assets.get("ninja-tooth/ninjatooth.png", Texture.class);
         this.bulletTexture = super.screen.assets.get("ninja-tooth/bullet-spritesheet.png", Texture.class);
         this.aimTexture = super.screen.assets.get("ninja-tooth/aim.png", Texture.class);
@@ -60,13 +60,14 @@ public class NinjaTooth extends MiniGame {
         this.enemies = new Array<Tartarus>();
         this.superTooth.setCenter(screen.viewport.getWorldWidth()/2, screen.viewport.getWorldHeight()/2);
 
+        
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
 
     }
     private void spawnEnemy() {
@@ -98,7 +99,7 @@ public class NinjaTooth extends MiniGame {
     protected void configureDifficultyParameters(float difficulty) {
         this.minimumEnemySpeed = DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 120, 230);
         this.maximumEnemySpeed = DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 250, 450);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 50, 400);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 0.05f, 0.4f);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class NinjaTooth extends MiniGame {
 
     }
 
-    private void toothWasHurt(SuperTooth superTooth, Tartarus enemy) {
+    private void toothWasHurt(Tartarus enemy) {
         this.enemies.removeValue(enemy, false);
         super.challengeFailed();
         toothBreakingSound.play();
@@ -139,33 +140,33 @@ public class NinjaTooth extends MiniGame {
     @Override
     public void onUpdate(float dt) {
         // atualiza os inimigos (quadro de animação + colisão com dentes)
-        if (superTooth.getHeadPosition().x > super.screen.viewport.getWorldWidth()
-                || superTooth.getHeadPosition().x < 0
-                || superTooth.getHeadPosition().y > super.screen.viewport.getWorldHeight()
-                || superTooth.getHeadPosition().y < 0) {
+            if (superTooth.getHeadPosition().x > super.screen.viewport.getWorldWidth()
+                    || superTooth.getHeadPosition().x < 0
+                    || superTooth.getHeadPosition().y > super.screen.viewport.getWorldHeight()
+                    || superTooth.getHeadPosition().y < 0) {
 
-            superTooth.wasHurt();
-            super.challengeFailed();
-            toothBreakingSound.play();
-        }
-
-        for (int i = 0; i < this.enemies.size; i++) {
-            Tartarus tart = this.enemies.get(i);
-            tart.update(dt);
-
-            // verifica se este inimigo está colidindo com algum dente
-            if (tart.getBoundingRectangle().overlaps(superTooth.getBoundingRectangle())) {
-                toothWasHurt(superTooth, tart);
+                superTooth.wasHurt();
+                super.challengeFailed();
+                toothBreakingSound.play();
             }
-            // bullet collision
-            for (Bullet b : superTooth.bullets) {
 
-                if (b.getBoundingRectangle().overlaps(tart.getBoundingRectangle())) {
-                    killTartarus(b,tart);
+            for (int i = 0; i < this.enemies.size; i++) {
+                Tartarus tart = this.enemies.get(i);
+                tart.update(dt);
+
+                // verifica se este inimigo está colidindo com algum dente
+                if (tart.getBoundingRectangle().overlaps(superTooth.getBoundingRectangle())) {
+                    toothWasHurt(tart);
+                }
+                // bullet collision
+                for (Bullet b : superTooth.bullets) {
+
+                    if (b.getBoundingRectangle().overlaps(tart.getBoundingRectangle())) {
+                        killTartarus(b, tart);
+                    }
                 }
             }
-        }
-        superTooth.update(dt);
+            superTooth.update(dt);
     }
 
     @Override
@@ -175,21 +176,20 @@ public class NinjaTooth extends MiniGame {
             tart.draw(super.screen.batch);
         }
         
-        //draw rambo tooth
+        //draw ninja tooth
         superTooth.draw(super.screen.batch);
         
-        //draw rambo bullets
+        //draw ninja shurikens
         for(Bullet b : superTooth.bullets)
             b.draw(super.screen.batch);
         
         //draw aim
-        
         aim.draw(super.screen.batch);
     }
 
     @Override
     public String getInstructions() {
-        return "Atire e fuja dos tártaros";
+        return "Proteja-se dos tártaros com shurikens";
     }
 
     @Override
@@ -223,9 +223,11 @@ public class NinjaTooth extends MiniGame {
         }
         
         public void update(float dt) {
-            
             super.setPosition(super.getX() + this.speed.x * dt,
                     super.getY() + this.speed.y * dt);
+            for (Bullet b : bullets) {
+                b.update(dt);
+            }
         }
 
         Vector2 getHeadPosition() {

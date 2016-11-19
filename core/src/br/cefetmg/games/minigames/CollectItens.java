@@ -66,7 +66,7 @@ public class CollectItens extends MiniGame{
 
     public CollectItens(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.characters = new Array<Sprite>();
         
@@ -150,7 +150,7 @@ public class CollectItens extends MiniGame{
         // spawnInterval * 15% para mais ou para menos
         float nextSpawnMillis = this.spawnInterval
                 * (rand.nextFloat() / 3 + 0.15f);
-        super.timer.scheduleTask(t, nextSpawnMillis / 1000f);
+        super.timer.scheduleTask(t, nextSpawnMillis);
     }
     
     private void spawnLollipop() {
@@ -255,11 +255,9 @@ public class CollectItens extends MiniGame{
         this.minimumCharactersScale = DifficultyCurve.LINEAR_NEGATIVE
                 .getCurveValueBetween(difficulty, 0.5f, 0.4f);
         this.spawnInterval = (int) DifficultyCurve.S_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
-        this.totalCharacters = (int) Math.ceil((float) maxDuration
-                / spawnInterval) - 3;
-        this.enemies = (int) Math.ceil((float) maxDuration
-                / spawnInterval) - 3;
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
+        this.totalCharacters = (int) Math.ceil(maxDuration / spawnInterval) - 3;
+        this.enemies = (int) Math.ceil(maxDuration / spawnInterval) - 3;
         
         if ((totalCharacters % 2) != 0){
             totalCharacters++;
