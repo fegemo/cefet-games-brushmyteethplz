@@ -38,8 +38,9 @@ public abstract class MiniGame {
 
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
-    private final Texture grayMask, pausedImage, unpausedImage, voltarTexture;
-    private final Sprite pauseUnpauseSprite, voltarSprite;
+    private final Texture grayMask, pausedImage, unpausedImage,
+            goBackTexture, leaveTexture;
+    private final Sprite pauseUnpauseSprite, goBackSprite, leaveSprite;
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
     private long timeWhenPausedLastTime;
@@ -95,9 +96,16 @@ public abstract class MiniGame {
         this.pauseUnpauseSprite = new Sprite(unpausedImage, 100, 100);
         this.pauseUnpauseSprite.setPosition(10, 10);
 
-        this.voltarTexture = new Texture("buttons_menu/button_voltar.png");
-        this.voltarSprite = new Sprite(voltarTexture, 166, 77);
-        this.voltarSprite.setPosition(screen.viewport.getWorldWidth() / 2f - 100, screen.viewport.getWorldHeight() / 2f - 100);
+        this.goBackTexture = new Texture("buttons_menu/button_voltar.png");
+        this.goBackSprite = new Sprite(goBackTexture, 166, 77);
+        this.goBackSprite.setPosition(
+                screen.viewport.getWorldWidth() / 2f - 100,
+                screen.viewport.getWorldHeight() / 2f);
+        this.leaveTexture = new Texture("buttons_menu/button_sair.png");
+        this.leaveSprite = new Sprite(leaveTexture, 166, 77);
+        this.leaveSprite.setPosition(
+                screen.viewport.getWorldWidth() / 2f - 100,
+                screen.viewport.getWorldHeight() / 2f - 100);
 
         this.rand = new Random();
         this.timer = new Timer();
@@ -111,12 +119,14 @@ public abstract class MiniGame {
 
         if (Gdx.input.justTouched()) {
             if (pauseUnpauseSprite.getBoundingRectangle()
-                    .contains(clickPosition)) {
+                    .contains(clickPosition)
+                    || (isPaused && goBackSprite.getBoundingRectangle()
+                    .contains(clickPosition))) {
                 isPaused = !isPaused;
                 pauseUnpauseSprite.setTexture(isPaused
                         ? pausedImage : unpausedImage);
-                if (timeSpentPlaying > maxDuration - 
-                        Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT) {
+                if (timeSpentPlaying > maxDuration
+                        - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT) {
                     stateObserver.onGamePausedOrUnpaused(isPaused);
                 }
 
@@ -130,7 +140,9 @@ public abstract class MiniGame {
                     Gdx.input.setCursorCatched(shouldHideMousePointer());
                 }
             }
-            if (voltarSprite.getBoundingRectangle()
+
+            // jogador clicou em "sair" da tela de jogo: volta para menu
+            if (leaveSprite.getBoundingRectangle()
                     .contains(clickPosition) && isPaused) {
                 this.screen.game.setScreen(
                         new MenuScreen(this.screen.game, this.screen));
@@ -206,18 +218,15 @@ public abstract class MiniGame {
                 0, 0,
                 this.screen.viewport.getWorldWidth(),
                 this.screen.viewport.getWorldHeight());
-        if (isPaused) {
-            drawButtonVoltar();
-        }
-
     }
 
     private void drawPauseButton() {
         pauseUnpauseSprite.draw(this.screen.batch);
     }
 
-    private void drawButtonVoltar() {
-        voltarSprite.draw(this.screen.batch);
+    private void drawPauseMenu() {
+        goBackSprite.draw(this.screen.batch);
+        leaveSprite.draw(this.screen.batch);
     }
 
     public final void draw() {
@@ -226,16 +235,15 @@ public abstract class MiniGame {
                 drawInstructions();
                 drawCountdown();
                 drawPauseButton();
-//                drawMessage(String.valueOf(timeSpentOnInstructions), 1);
                 break;
 
             case PLAYING:
                 onDrawGame();
                 if (isPaused) {
                     drawMask();
+                    drawPauseMenu();
                 }
                 drawPauseButton();
-//                drawMessage(String.valueOf(timeSpentPlaying), 1);
                 break;
 
             case FAILED:
