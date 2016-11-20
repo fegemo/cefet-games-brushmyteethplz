@@ -28,7 +28,7 @@ public class PlayingGamesScreen extends BaseScreen
         implements GameStateObserver {
 
     public static final boolean DEV_MODE = true;
-    
+
     private MiniGame currentGame;
     private final BaseGameSequencer sequencer;
     private final Hud hud;
@@ -246,7 +246,7 @@ public class PlayingGamesScreen extends BaseScreen
                     }
 
                 }, 1.5f);
-                
+
                 Gdx.input.setCursorCatched(false);
                 this.hud.cancelEndingTimer();
                 break;

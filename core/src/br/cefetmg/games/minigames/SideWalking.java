@@ -30,7 +30,7 @@ public class SideWalking extends MiniGame {
     private float velocidade;
     private float pulo;
     private final float gravidade;
-    private final float velocidadeNuvem;  
+    private final float velocidadeNuvem;
     private final float alturachao;
     private final Array<Sprite> enemies;
     private final Array<Sprite> clouds;
@@ -58,6 +58,10 @@ public class SideWalking extends MiniGame {
         this.clouds = new Array<Sprite>();
         background = new Texture(Gdx.files.internal("side_walking/candy.png"));
         background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
@@ -162,6 +166,7 @@ public class SideWalking extends MiniGame {
     }
 
     class Teeth extends MultiAnimatedSprite {
+
         public Teeth(final Texture thoothTexture) {
             super(new HashMap<String, Animation>() {
                 {
@@ -177,6 +182,6 @@ public class SideWalking extends MiniGame {
                 }
             }, "walking");
             super.setPosition(30f, alturachao);
-        }              
+        }
     }
 }

@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by matheus on 02/11/16.
@@ -19,6 +17,7 @@ import java.util.Random;
 public class ToothRunner extends MiniGame {
 
     public class Dente {
+
         public Sprite sprite;
         public float sobe;
         public boolean chao;
@@ -37,11 +36,10 @@ public class ToothRunner extends MiniGame {
             TextureRegion[][] quadrosDaAnimacao;
             quadrosDaAnimacao = TextureRegion.split(textura, 610, 755);
 
-            corre = new Animation(1f, new TextureRegion[] {
-                    quadrosDaAnimacao[0][0],
-                    quadrosDaAnimacao[0][1],
-                    quadrosDaAnimacao[0][2],
-            });
+            corre = new Animation(1f, new TextureRegion[]{
+                quadrosDaAnimacao[0][0],
+                quadrosDaAnimacao[0][1],
+                quadrosDaAnimacao[0][2],});
 
             corre.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
             tempoAnimacao = 0;
@@ -49,6 +47,7 @@ public class ToothRunner extends MiniGame {
     }
 
     private class Enemie {
+
         public Sprite sprite;
         public Vector2 direcaoX;
 
@@ -59,7 +58,7 @@ public class ToothRunner extends MiniGame {
     };
 
     private final Dente dente;
-    private ArrayList<Enemie> pirulito;
+    private final ArrayList<Enemie> pirulito;
     private int maxEnemies;
     private final Texture pirulitoTexture;
     private final Texture denteAnimation;
@@ -67,11 +66,10 @@ public class ToothRunner extends MiniGame {
     private final Sound pulo;
 
     private int velocidade;
-    private Vector2 gravidade;
-    private Random random;
+    private final Vector2 gravidade;
     private int delta;
 
-    private Texture bg;
+    private final Texture bg;
 
     public ToothRunner(BaseScreen screen, GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10f, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
@@ -84,7 +82,6 @@ public class ToothRunner extends MiniGame {
         this.pulo = this.screen.assets.get("tooth-runner/pulo.mp3", Sound.class);
 
         this.gravidade = new Vector2(0, (float) 1);
-        this.random = new Random();
 
         bg = new Texture(Gdx.files.internal("tooth-runner/fundo.png"));
         bg.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
@@ -92,7 +89,10 @@ public class ToothRunner extends MiniGame {
         this.dente.sprite.setSize(100, 100);
         this.dente.sprite.setX(100);
         this.dente.sprite.setY(100);
+    }
 
+    @Override
+    protected void onStart() {
         createEnemies();
     }
 
@@ -101,8 +101,8 @@ public class ToothRunner extends MiniGame {
         for (int i = 0; i < maxEnemies; i++) {
             Enemie aux;
             aux = new Enemie(pirulitoTexture, new Vector2(-1, 0));
-            aux.sprite.setSize(100, 100 + random.nextInt(30));
-            aux.sprite.setX(this.screen.viewport.getWorldWidth()-aux.sprite.getWidth() + distancia);
+            aux.sprite.setSize(100, 100 + rand.nextInt(30));
+            aux.sprite.setX(this.screen.viewport.getWorldWidth() - aux.sprite.getWidth() + distancia);
             distancia += this.screen.viewport.getWorldWidth() / 3 + 100;
             aux.sprite.setY(100);
             this.pirulito.add(aux);
@@ -112,12 +112,12 @@ public class ToothRunner extends MiniGame {
     @Override
     protected void configureDifficultyParameters(float difficulty) {
         maxEnemies = 3;
-        this.velocidade = 8 + (int)(difficulty*6);
+        this.velocidade = 8 + (int) (difficulty * 6);
     }
 
     @Override
     public void onHandlePlayingInput() {
-        if(Gdx.input.justTouched()) {
+        if (Gdx.input.justTouched()) {
             if (dente.chao) {
                 dente.chao = false;
                 pulo.play();
@@ -133,11 +133,11 @@ public class ToothRunner extends MiniGame {
         //atualizacao de logica
         dente.atual = dente.corre.getKeyFrame(dente.tempoAnimacao);
         if (!dente.chao) {
-            if (dente.sprite.getY()+dente.sobe < 100) {
+            if (dente.sprite.getY() + dente.sobe < 100) {
                 dente.sprite.setY(100);
                 dente.chao = true;
                 dente.sobe = dente.impulso;
-            }else {
+            } else {
                 dente.sprite.setY(dente.sprite.getY() + dente.sobe);
             }
 
@@ -149,8 +149,8 @@ public class ToothRunner extends MiniGame {
             Enemie enemie = pirulito.get(i);
             enemie.sprite.setX(enemie.sprite.getX() - this.velocidade);
             if (enemie.sprite.getX() + enemie.sprite.getWidth() < 0) {
-                enemie.sprite.setSize(enemie.sprite.getWidth(), 100 + random.nextInt(30));
-                enemie.sprite.setX(this.screen.viewport.getWorldWidth()+random.nextInt(100) + 350);
+                enemie.sprite.setSize(enemie.sprite.getWidth(), 100 + rand.nextInt(30));
+                enemie.sprite.setX(this.screen.viewport.getWorldWidth() + rand.nextInt(100) + 350);
             }
         }
 
@@ -166,8 +166,9 @@ public class ToothRunner extends MiniGame {
 
         int aux = (int) dente.tempoAnimacao;
 
-        if (this.dente.chao)
-            dente.tempoAnimacao += Gdx.graphics.getDeltaTime()*7;
+        if (this.dente.chao) {
+            dente.tempoAnimacao += Gdx.graphics.getDeltaTime() * 7;
+        }
 
         if ((int) dente.tempoAnimacao > aux) {
             passo.play();
@@ -180,22 +181,21 @@ public class ToothRunner extends MiniGame {
     public void onDrawGame() {
         //controla se perdeu, para que isso nao seja chamado em um intervalo curto do jogo
 
-        this.screen.batch.draw(bg, 0, 0, delta , 0, (int)this.screen.viewport.getWorldWidth(), (int)this.screen.viewport.getWorldHeight());
+        this.screen.batch.draw(bg, 0, 0, delta, 0, (int) this.screen.viewport.getWorldWidth(), (int) this.screen.viewport.getWorldHeight());
 
         for (int i = 0; i < pirulito.size(); i++) {
             Enemie enemie = pirulito.get(i);
             enemie.sprite.draw(this.screen.batch);
         }
 
-
         if (dente.atual != null) {
-            this.screen.batch.draw(dente.atual, dente.sprite.getX()-10, dente.sprite.getY(), 0, 0, dente.sprite.getWidth()+10, dente.sprite.getHeight()+20, 1.0f, 1.0f, 0);
+            this.screen.batch.draw(dente.atual, dente.sprite.getX() - 10, dente.sprite.getY(), 0, 0, dente.sprite.getWidth() + 10, dente.sprite.getHeight() + 20, 1.0f, 1.0f, 0);
         }
     }
 
     @Override
     public String getInstructions() {
-        return "Corra, salte e salve-se";
+        return "Salte os pirulitos";
     }
 
     @Override

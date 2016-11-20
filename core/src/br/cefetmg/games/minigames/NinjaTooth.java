@@ -38,12 +38,12 @@ public class NinjaTooth extends MiniGame {
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
-    
+
     private final float bulletFloatSpeed;
     private float spawnInterval;
 
-    public NinjaTooth(BaseScreen screen,GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10f,TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
+    public NinjaTooth(BaseScreen screen, GameStateObserver observer, float difficulty) {
+        super(screen, difficulty, 10f, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.superToothTexture = super.screen.assets.get("ninja-tooth/ninjatooth.png", Texture.class);
         this.bulletTexture = super.screen.assets.get("ninja-tooth/bullet-spritesheet.png", Texture.class);
         this.aimTexture = super.screen.assets.get("ninja-tooth/aim.png", Texture.class);
@@ -58,9 +58,11 @@ public class NinjaTooth extends MiniGame {
                 screen.assets.get("ninja-tooth/appearing3.wav", Sound.class));
         this.toothBreakingSound = screen.assets.get("ninja-tooth/tooth-breaking.wav", Sound.class);
         this.enemies = new Array<Tartarus>();
-        this.superTooth.setCenter(screen.viewport.getWorldWidth()/2, screen.viewport.getWorldHeight()/2);
+        this.superTooth.setCenter(screen.viewport.getWorldWidth() / 2, screen.viewport.getWorldHeight() / 2);
+    }
 
-        
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
@@ -68,16 +70,16 @@ public class NinjaTooth extends MiniGame {
             }
 
         }, 0, this.spawnInterval);
-
     }
+
     private void spawnEnemy() {
         Vector2 goalCenter = new Vector2();
         goalCenter.x = MathUtils.random(super.screen.viewport.getWorldWidth());
         goalCenter.y = MathUtils.random(super.screen.viewport.getWorldHeight());
-        
+
         Vector2 tartarusGoal = goalCenter;
         Vector2 tartarusPosition = new Vector2();
-  
+
         tartarusPosition.x = super.screen.viewport.getWorldWidth();
         tartarusPosition.y = MathUtils.random(super.screen.viewport.getWorldHeight());
 
@@ -87,7 +89,7 @@ public class NinjaTooth extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -105,15 +107,15 @@ public class NinjaTooth extends MiniGame {
     @Override
     public void onHandlePlayingInput() {
         // atualiza a posição do alvo de acordo com o mouse
-        Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());  
-        
+        Vector2 click = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+
         super.screen.viewport.unproject(click);
 
         aim.setPosition(click.x, click.y);
         if (Gdx.input.justTouched()) {
             superTooth.shoot(click);
         }
-        
+
         for (Tartarus tart : this.enemies) {
             float distance = this.superTooth.getHeadDistanceTo(tart.getX(), tart.getY());
             if (distance <= 30) {
@@ -128,45 +130,44 @@ public class NinjaTooth extends MiniGame {
         super.challengeFailed();
         toothBreakingSound.play();
     }
-    
-     private void killTartarus(Bullet b,Tartarus enemy) {
+
+    private void killTartarus(Bullet b, Tartarus enemy) {
         this.enemies.removeValue(enemy, false);
-        superTooth.bullets.removeValue(b,false);
+        superTooth.bullets.removeValue(b, false);
 
         toothBreakingSound.play();
     }
 
-
     @Override
     public void onUpdate(float dt) {
         // atualiza os inimigos (quadro de animação + colisão com dentes)
-            if (superTooth.getHeadPosition().x > super.screen.viewport.getWorldWidth()
-                    || superTooth.getHeadPosition().x < 0
-                    || superTooth.getHeadPosition().y > super.screen.viewport.getWorldHeight()
-                    || superTooth.getHeadPosition().y < 0) {
+        if (superTooth.getHeadPosition().x > super.screen.viewport.getWorldWidth()
+                || superTooth.getHeadPosition().x < 0
+                || superTooth.getHeadPosition().y > super.screen.viewport.getWorldHeight()
+                || superTooth.getHeadPosition().y < 0) {
 
-                superTooth.wasHurt();
-                super.challengeFailed();
-                toothBreakingSound.play();
+            superTooth.wasHurt();
+            super.challengeFailed();
+            toothBreakingSound.play();
+        }
+
+        for (int i = 0; i < this.enemies.size; i++) {
+            Tartarus tart = this.enemies.get(i);
+            tart.update(dt);
+
+            // verifica se este inimigo está colidindo com algum dente
+            if (tart.getBoundingRectangle().overlaps(superTooth.getBoundingRectangle())) {
+                toothWasHurt(tart);
             }
+            // bullet collision
+            for (Bullet b : superTooth.bullets) {
 
-            for (int i = 0; i < this.enemies.size; i++) {
-                Tartarus tart = this.enemies.get(i);
-                tart.update(dt);
-
-                // verifica se este inimigo está colidindo com algum dente
-                if (tart.getBoundingRectangle().overlaps(superTooth.getBoundingRectangle())) {
-                    toothWasHurt(tart);
-                }
-                // bullet collision
-                for (Bullet b : superTooth.bullets) {
-
-                    if (b.getBoundingRectangle().overlaps(tart.getBoundingRectangle())) {
-                        killTartarus(b, tart);
-                    }
+                if (b.getBoundingRectangle().overlaps(tart.getBoundingRectangle())) {
+                    killTartarus(b, tart);
                 }
             }
-            superTooth.update(dt);
+        }
+        superTooth.update(dt);
     }
 
     @Override
@@ -175,53 +176,55 @@ public class NinjaTooth extends MiniGame {
         for (Tartarus tart : this.enemies) {
             tart.draw(super.screen.batch);
         }
-        
+
         //draw ninja tooth
         superTooth.draw(super.screen.batch);
-        
+
         //draw ninja shurikens
-        for(Bullet b : superTooth.bullets)
+        for (Bullet b : superTooth.bullets) {
             b.draw(super.screen.batch);
-        
+        }
+
         //draw aim
         aim.draw(super.screen.batch);
     }
 
     @Override
     public String getInstructions() {
-        return "Proteja-se dos tártaros com shurikens";
+        return "Proteja-se dos Tártaros com shurikens";
     }
 
     @Override
     public boolean shouldHideMousePointer() {
         return true;
     }
-    
-    class Aim extends Sprite{
+
+    class Aim extends Sprite {
+
         static final int FRAME_WIDTH = 70;
         static final int FRAME_HEIGHT = 52;
-        
+
         Aim(final Texture aimTexture) {
             super(aimTexture);
         }
     }
 
-    class SuperTooth extends Sprite{
+    class SuperTooth extends Sprite {
 
         static final int FRAME_WIDTH = 70;
         static final int FRAME_HEIGHT = 52;
-        
+
         private Vector2 speed;
-        
+
         public Array<Bullet> bullets = new Array<Bullet>();
 
         SuperTooth(final Texture superToothTexture) {
             super(superToothTexture);
             bullets = new Array<Bullet>();
             speed = new Vector2();
-            
+
         }
-        
+
         public void update(float dt) {
             super.setPosition(super.getX() + this.speed.x * dt,
                     super.getY() + this.speed.y * dt);
@@ -235,8 +238,8 @@ public class NinjaTooth extends MiniGame {
                     this.getX(),
                     this.getY());
         }
-        
-        void setHeadPosition(float x, float y){
+
+        void setHeadPosition(float x, float y) {
             this.setX(x);
             this.setY(y);
         }
@@ -249,22 +252,18 @@ public class NinjaTooth extends MiniGame {
             super.setTexture(superToothTextureDead);
             return true;
         }
-        
-        
-        
-        
-        public void shoot(Vector2 click){
+
+        public void shoot(Vector2 click) {
             Bullet bullet = new Bullet(bulletTexture);
-           
+
             Vector2 direction = new Vector2(superTooth.getHeadPosition().sub(click)).nor();
             Vector2 directionBullet = new Vector2(click.sub(bullet.getHeadPosition())).nor();
 
-            bullet.setPosition(superTooth.getHeadPosition().x,superTooth.getHeadPosition().y);
+            bullet.setPosition(superTooth.getHeadPosition().x, superTooth.getHeadPosition().y);
 
             Vector2 toothSpeed = direction.scl(bulletFloatSpeed);
             superTooth.setSpeed(toothSpeed);
-            
-                        
+
             Vector2 bulletSpeed = directionBullet.scl(bulletFloatSpeed);
             bullet.setSpeed(bulletSpeed);
             bullets.add(bullet);
@@ -277,16 +276,18 @@ public class NinjaTooth extends MiniGame {
         public void setSpeed(Vector2 speed) {
             this.speed = speed;
         }
-        
+
     }
 
-     class Bullet extends MultiAnimatedSprite {
+    class Bullet extends MultiAnimatedSprite {
 
         private Vector2 speed;
-        private float radians;
+        private float orientation;
 
         static final int FRAME_WIDTH = 29;
         static final int FRAME_HEIGHT = 36;
+        
+        static final int ANGULAR_SPEED = 300;
 
         public Bullet(final Texture bulletSpriteSheet) {
             super(new HashMap<String, Animation>() {
@@ -308,8 +309,8 @@ public class NinjaTooth extends MiniGame {
         @Override
         public void update(float dt) {
             super.update(dt);
-            super.setPosition(super.getX() + this.speed.x * dt,super.getY() + this.speed.y * dt);
-            
+            super.setPosition(super.getX() + this.speed.x * dt, super.getY() + this.speed.y * dt);
+            super.setRotation(orientation += ANGULAR_SPEED * dt);
         }
 
         public Vector2 getSpeed() {
@@ -319,17 +320,9 @@ public class NinjaTooth extends MiniGame {
         public void setSpeed(Vector2 speed) {
             this.speed = speed;
         }
-        
-        public Vector2 getHeadPosition(){
+
+        public Vector2 getHeadPosition() {
             return new Vector2(this.getX(), this.getY());
-        }
-
-        public float getRadians() {
-            return radians;
-        }
-
-        public void setRadians(float radians) {
-            this.radians = radians;
         }
     }
 

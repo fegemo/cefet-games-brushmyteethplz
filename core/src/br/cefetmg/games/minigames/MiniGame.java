@@ -17,6 +17,7 @@ import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.screens.MenuScreen;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
@@ -44,6 +45,7 @@ public abstract class MiniGame {
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
     private long timeWhenPausedLastTime;
+    private InputProcessor miniGameInputProcessor;
 
     public MiniGame(BaseScreen screen, float difficulty, float maxDuration,
             TimeoutBehavior endOfGameSituation, final GameStateObserver observer) {
@@ -118,26 +120,56 @@ public abstract class MiniGame {
         this.screen.viewport.unproject(clickPosition);
 
         if (Gdx.input.justTouched()) {
+            // se o botão pause/play foi clicado, ou então o botão voltar quando
+            // já estamos em pausa (i.e., o botão está visível)...
             if (pauseUnpauseSprite.getBoundingRectangle()
                     .contains(clickPosition)
                     || (isPaused && goBackSprite.getBoundingRectangle()
                     .contains(clickPosition))) {
+                // alterna entre pausado/jogando
                 isPaused = !isPaused;
                 pauseUnpauseSprite.setTexture(isPaused
                         ? pausedImage : unpausedImage);
+                
+                // se pausou quando o relojinho de fim do tempo já está 
+                // aparecendo, precisa avisar a HUD sobre isso
                 if (timeSpentPlaying > maxDuration
                         - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT) {
                     stateObserver.onGamePausedOrUnpaused(isPaused);
                 }
 
+                // acabou de pausar
                 if (isPaused) {
+                    // interrompe o timer do minigame, salvando o momento em
+                    // que o jogo foi pausado
                     this.timer.stop();
-                    this.timeWhenPausedLastTime = TimeUtils.nanosToMillis(TimeUtils.nanoTime());
+                    this.timeWhenPausedLastTime = TimeUtils.nanosToMillis(
+                            TimeUtils.nanoTime());
+                    
+                    // libera o cursor do mouse
                     Gdx.input.setCursorCatched(false);
-                } else {
+                    
+                    // salva um possível processador de input do minigame e o
+                    // desabilita até que o jogo seja despausado
+                    this.miniGameInputProcessor = Gdx.input.getInputProcessor();
+                    Gdx.input.setInputProcessor(null);
+                }
+                // acabou de despausar
+                else {
+                    // retoma o timer, atrasando-o pelo tempo que o jogo ficou
+                    // pausado
                     this.timer.start();
-                    this.timer.delay(TimeUtils.nanosToMillis(TimeUtils.nanoTime()) - this.timeWhenPausedLastTime);
-                    Gdx.input.setCursorCatched(shouldHideMousePointer());
+                    this.timer.delay(TimeUtils.nanosToMillis(
+                            TimeUtils.nanoTime()) - this.timeWhenPausedLastTime);
+                    
+                    // recupera o possível processador de input do minigame
+                    Gdx.input.setInputProcessor(this.miniGameInputProcessor);
+                    
+                    // se a pausa foi feita durante o jogo (fora das instruções
+                    // ou do final do jogo), oculta novamente o cursor
+                    if (state == MiniGameState.PLAYING) {
+                        Gdx.input.setCursorCatched(shouldHideMousePointer());
+                    }
                 }
             }
 
@@ -150,8 +182,8 @@ public abstract class MiniGame {
         }
 
         // deixa o MiniGame lidar com o input apenas se estivermos no estado
-        // de jogo propriamente dito
-        if (this.state == MiniGameState.PLAYING) {
+        // de jogo propriamente dito e sem pausa
+        if (this.state == MiniGameState.PLAYING && !isPaused) {
             onHandlePlayingInput();
         }
     }

@@ -42,6 +42,10 @@ public final class SmashIt extends MiniGame {
         caries = new Carie[caries_hole];
         configureDifficultyParameters(difficulty);
         initCaries();
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {

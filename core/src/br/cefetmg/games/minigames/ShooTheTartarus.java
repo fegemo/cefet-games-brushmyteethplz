@@ -66,6 +66,11 @@ public class ShooTheTartarus extends MiniGame {
         this.teeth = new Array<Tooth>();
         this.numberOfBrokenTeeth = 0;
 
+        this.initializeTeeth();
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
@@ -73,8 +78,6 @@ public class ShooTheTartarus extends MiniGame {
             }
 
         }, 0, this.spawnInterval);
-
-        this.initializeTeeth();
     }
 
     private void initializeTeeth() {
@@ -164,7 +167,7 @@ public class ShooTheTartarus extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -206,7 +209,7 @@ public class ShooTheTartarus extends MiniGame {
         this.numberOfBrokenTeeth += tooth.wasHurt() ? 1 : 0;
 
         if (this.numberOfBrokenTeeth >= this.totalTeeth) {
-            super.challengeFailed();            
+            super.challengeFailed();
         }
         toothBreakingSound.play();
     }
@@ -244,7 +247,7 @@ public class ShooTheTartarus extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Espante o tártaro";
+        return "Espante o Tártaro";
     }
 
     @Override

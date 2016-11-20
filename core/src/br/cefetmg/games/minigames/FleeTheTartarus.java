@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.Config;
@@ -28,11 +23,11 @@ import java.util.HashMap;
  * @author afp11
  */
 public class FleeTheTartarus extends MiniGame {
-    
+
     private final Array<Tartarus> enemies;
     private final Tooth tooth;
     private final Sprite background;
-    
+
     private final Texture toothTexture;
     private final Texture tartarusTexture;
     private final Texture deadToothTexture;
@@ -42,26 +37,25 @@ public class FleeTheTartarus extends MiniGame {
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
     private final Array<Sound> tartarusAppearingSound;
-    
+
     private final Sound venceu, perdeu;
 
-    
     public FleeTheTartarus(BaseScreen screen,
-            GameStateObserver observer, float difficulty){
-        
+            GameStateObserver observer, float difficulty) {
+
         super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
-        
+
         this.backgroundTexture = this.screen.assets.get(
                 "flee-the-tartarus/fundo.png", Texture.class);
         this.background = new Sprite(this.backgroundTexture);
         this.background.setOriginCenter();
-        
+
         float novaEscala = 1.4f;
         float escalaX = novaEscala * Gdx.graphics.getWidth();
         float escalaY = novaEscala * Gdx.graphics.getHeight();
         this.background.setSize(escalaX, escalaY);
-        
+
         this.enemies = new Array<Tartarus>();
         this.tartarusTexture = this.screen.assets.get(
                 "flee-the-tartarus/spritecarie.png", Texture.class);
@@ -72,7 +66,7 @@ public class FleeTheTartarus extends MiniGame {
         this.tooth = new Tooth(toothTexture);
         this.tooth.setOriginCenter();
         this.tooth.setScale(0.7f);
-        
+
         this.tartarusAppearingSound = new Array<Sound>(3);
         this.tartarusAppearingSound.addAll(screen.assets.get(
                 "flee-the-tartarus/aperta2.mp3", Sound.class),
@@ -80,13 +74,16 @@ public class FleeTheTartarus extends MiniGame {
                         "flee-the-tartarus/aperta2.mp3", Sound.class),
                 screen.assets.get(
                         "flee-the-tartarus/aperta2.mp3", Sound.class));
-        
+
         this.venceu = screen.assets.get(
                 "flee-the-tartarus/venceu.mp3", Sound.class);
-        
+
         this.perdeu = screen.assets.get(
                 "flee-the-tartarus/game-over.mp3", Sound.class);
-        
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
@@ -94,7 +91,6 @@ public class FleeTheTartarus extends MiniGame {
             }
 
         }, 0, this.spawnInterval);
-                
     }
 
     @Override
@@ -125,55 +121,55 @@ public class FleeTheTartarus extends MiniGame {
 
     @Override
     public void onUpdate(float dt) {
-        
+
         // atualiza os inimigos (quadro de animação + colisão com dentes)
         for (int i = 0; i < this.enemies.size; i++) {
             Tartarus t = this.enemies.get(i);
             t.update(dt);
         }
-        
+
     }
 
     @Override
     public void onDrawGame() {
-        
+
         this.background.draw(this.screen.batch);
-        
+
         tooth.draw(this.screen.batch);
-        
+
         for (Tartarus tart : this.enemies) {
             tart.draw(super.screen.batch);
         }
-        
+
     }
 
     @Override
     public String getInstructions() {
-        return "Fuja das cáries até acabar o tempo!";
+        return "Evite as Cáries e sobreviva!";
     }
 
     @Override
     public boolean shouldHideMousePointer() {
         return true;
     }
-    
+
     class Tooth extends Sprite {
-        
+
         static final int FRAME_WIDTH = 60;
         static final int FRAME_HEIGHT = 140;
 
-        public Tooth (final Texture tooth) {
+        public Tooth(final Texture tooth) {
             super(tooth);
         }
 
         Vector2 getToothPosition() {
             return new Vector2(
-                this.getX() + this.getWidth() * 0.5f,
-                this.getY() + this.getHeight() * 0.8f);
+                    this.getX() + this.getWidth() * 0.5f,
+                    this.getY() + this.getHeight() * 0.8f);
         }
 
     }
-    
+
     class Tartarus extends MultiAnimatedSprite {
 
         private Vector2 speed;
@@ -214,15 +210,15 @@ public class FleeTheTartarus extends MiniGame {
         }
 
     }
-    
+
     private void spawnEnemy() {
 
         Vector2 tartarusPosition = new Vector2();
-        
+
         boolean appearFromSides = MathUtils.randomBoolean();
         if (appearFromSides) {
             boolean appearFromLeft = MathUtils.randomBoolean();
-            if (appearFromLeft){
+            if (appearFromLeft) {
                 tartarusPosition.x = 0;
                 tartarusPosition.y = MathUtils.random(
                         Config.WORLD_HEIGHT);
@@ -233,7 +229,7 @@ public class FleeTheTartarus extends MiniGame {
             }
         } else {
             boolean appearFromBottom = MathUtils.randomBoolean();
-            if (appearFromBottom){
+            if (appearFromBottom) {
                 tartarusPosition.y = 0;
                 tartarusPosition.x = MathUtils.random(
                         Config.WORLD_WIDTH);
@@ -243,19 +239,18 @@ public class FleeTheTartarus extends MiniGame {
                         Config.WORLD_WIDTH);
             }
         }
-       
-        
+
         Vector2 obj = new Vector2(tooth.getToothPosition());
-        
+
         Vector2 tartarusSpeed = obj.sub(tartarusPosition).nor()
-                .scl(2*this.maximumEnemySpeed);
+                .scl(2 * this.maximumEnemySpeed);
 
         Tartarus enemy = new Tartarus(tartarusTexture);
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemy.setScale(0.7f);
         enemies.add(enemy);
-        
+
         tartarusAppearingSound.random().play(); //toca sempre a mesma musica
 
     }

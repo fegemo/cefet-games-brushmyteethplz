@@ -13,11 +13,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
-import java.awt.Point;
 
 /**
  *
@@ -32,23 +29,23 @@ enum OrientacaoSnake {
 
 public class SnakeCaries extends MiniGame {
 
-    private Array<Sprite> enemies;
+    private final Array<Sprite> enemies;
     private Sprite snake;
 
     private Sprite setaLeft;
     private Sprite setaRight;
     private Sprite setaTop;
     private Sprite setaDown;
-    private Sprite fundo;
+    private final Sprite fundo;
 
-    private Texture cariesTexture;
-    private Texture setaTopTexture;
-    private Texture setaRightTexture;
-    private Texture setaLeftTexture;
-    private Texture setaDownTexture;
-    private Texture setaPretaTexture;
-    private Texture snakeTexture;
-    private Texture fundoTexture;
+    private final Texture cariesTexture;
+    private final Texture setaTopTexture;
+    private final Texture setaRightTexture;
+    private final Texture setaLeftTexture;
+    private final Texture setaDownTexture;
+    private final Texture setaPretaTexture;
+    private final Texture snakeTexture;
+    private final Texture fundoTexture;
 
     private Vector2 snakeVelocity;
     private float lenSnakeVelocity;
@@ -88,8 +85,12 @@ public class SnakeCaries extends MiniGame {
         this.fundo.setPosition(0, 0);
         generateSetas();
         generateSnake();
-        spawnEnemies();
         this.orientacao = OrientacaoSnake.Right;
+    }
+
+    @Override
+    protected void onStart() {
+        spawnEnemies();
     }
 
     private void generateSnake() {

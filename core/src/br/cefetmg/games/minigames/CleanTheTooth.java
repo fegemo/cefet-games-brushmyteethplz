@@ -133,7 +133,7 @@ public class CleanTheTooth extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Limpe os dentes (clique antes na pasta de dentes)";
+        return "Use a pasta e limpe os dentes";
     }
 
     @Override

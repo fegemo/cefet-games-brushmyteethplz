@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 
 /**
@@ -78,6 +77,17 @@ public class AngryTooths extends MiniGame {
     @Override
     public void onStart() {
         Gdx.input.setInputProcessor(new InputAdapter() {
+            private boolean toothDragged;
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                // assegura que o cursor (mouse ou dedo) arrastou na tela.
+                // isto previne que o dente seja lançado quando se clica 
+                // no botã de pausa
+                toothDragged = true;
+                return false;
+            }
+
             @Override
             public boolean touchDown(int screenX, int screenY,
                     int pointer, int button) {
@@ -92,6 +102,12 @@ public class AngryTooths extends MiniGame {
             @Override
             public boolean touchUp(int screenX, int screenY,
                     int pointer, int button) {
+                // assegura de que o mouse/dedo arrastou na tela, evitando
+                // que o dente seja lançado ao retornar da pausa
+                if (!toothDragged) {
+                    posicao_inicial = null;
+                }
+
                 if (posicao_inicial != null && trigger_click == true) {
                     click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                     screen.viewport.unproject(click);

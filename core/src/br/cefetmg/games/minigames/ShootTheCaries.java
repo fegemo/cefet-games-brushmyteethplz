@@ -50,7 +50,10 @@ public class ShootTheCaries extends MiniGame {
         this.target.setOriginCenter();
         this.enemiesKilled = 0;
         this.spawnedEnemies = 0;
+    }
 
+    @Override
+    protected void onStart() {
         scheduleEnemySpawn();
     }
 
@@ -84,7 +87,7 @@ public class ShootTheCaries extends MiniGame {
         enemy.setPosition(position.x, position.y);
         enemy.setScale(initialEnemyScale);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         cariesAppearingSound.play(0.5f);
     }

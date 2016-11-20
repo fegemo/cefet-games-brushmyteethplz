@@ -65,17 +65,25 @@ public class FleeFromTartarus extends MiniGame {
                 "flee-from-tartarus/gameover.wav", Sound.class);
         this.enemies = new Array<Tartarus>();
         TextureRegion[][] frames = TextureRegion.split(toothTexture,
-            Tooth.FRAME_WIDTH, Tooth.FRAME_HEIGHT);
+                Tooth.FRAME_WIDTH, Tooth.FRAME_HEIGHT);
         this.tooth = new Tooth(
-                        frames[0][0],
-                        frames[0][1],
-                        frames[0][2],
-                        2);
+                frames[0][0],
+                frames[0][1],
+                frames[0][2],
+                2);
         tooth.setCenter(
                 super.screen.viewport.getWorldWidth() / 2f,
                 super.screen.viewport.getWorldHeight() / 2f);
         this.numberOfBrokenTeeth = 0;
 
+        this.window = new Vector2(super.screen.viewport.getWorldWidth(), super.screen.viewport.getWorldHeight());
+        this.bg = new Sprite(backGroundTexture);
+        this.bg.setSize(window.x, window.y);
+        backGroundSound.play();
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
@@ -83,13 +91,8 @@ public class FleeFromTartarus extends MiniGame {
             }
 
         }, 0, this.spawnInterval);
-        this.window = new Vector2(super.screen.viewport.getWorldWidth(),super.screen.viewport.getWorldHeight());
-        this.bg = new Sprite(backGroundTexture);
-        this.bg.setSize(window.x, window.y);
-        backGroundSound.play();
     }
-    
-    
+
     private void spawnEnemy() {
         Vector2 goalCenter = new Vector2();
         Vector2 tartarusGoal = this.tooth
@@ -116,7 +119,7 @@ public class FleeFromTartarus extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed();
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -134,8 +137,8 @@ public class FleeFromTartarus extends MiniGame {
 
     @Override
     public void onHandlePlayingInput() {
-        
-        tooth.update();        
+
+        tooth.update();
         for (Tartarus tart : this.enemies) {
             tart.setSpeed();
         }
@@ -176,12 +179,12 @@ public class FleeFromTartarus extends MiniGame {
         for (Tartarus tart : this.enemies) {
             tart.draw(super.screen.batch);
         }
-   //     toothBrush.draw(super.screen.batch);
+        //     toothBrush.draw(super.screen.batch);
     }
 
     @Override
     public String getInstructions() {
-        return "Fuja dos tártaros";
+        return "Fuja dos Tártaros";
     }
 
     @Override
@@ -247,28 +250,31 @@ public class FleeFromTartarus extends MiniGame {
             this.broken = textureBroken;
             this.lives = lives;
         }
+
         public void update() {
-            Vector2 mouse= new Vector2 (Gdx.input.getX(), window.y -Gdx.input.getY());
-            if(mouse.x<0)
-                mouse.x=0;
-            else if(mouse.x>window.x-Tooth.FRAME_WIDTH)
-                mouse.x=window.x-Tooth.FRAME_WIDTH;
-            if(mouse.y<0)
-                mouse.y=0;
-            else if(mouse.y>window.y-Tooth.FRAME_HEIGHT)
-                mouse.y=window.y-Tooth.FRAME_HEIGHT;
-            
+            Vector2 mouse = new Vector2(Gdx.input.getX(), window.y - Gdx.input.getY());
+            if (mouse.x < 0) {
+                mouse.x = 0;
+            } else if (mouse.x > window.x - Tooth.FRAME_WIDTH) {
+                mouse.x = window.x - Tooth.FRAME_WIDTH;
+            }
+            if (mouse.y < 0) {
+                mouse.y = 0;
+            } else if (mouse.y > window.y - Tooth.FRAME_HEIGHT) {
+                mouse.y = window.y - Tooth.FRAME_HEIGHT;
+            }
+
             super.setPosition(mouse.x, mouse.y);
         }
-        
-        public Vector2 getPosition(){
+
+        public Vector2 getPosition() {
             return new Vector2(super.getX(), super.getY());
         }
 
         public boolean wasHurt() {
             lives--;
             super.setRegion(lives > 0 ? hurt : broken);
-                return lives == 0;
+            return lives == 0;
         }
     }
 }

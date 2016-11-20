@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.minigames.util.DifficultyCurve;
@@ -64,7 +59,10 @@ public class SaveTheTeeth extends MiniGame {
 
         this.bg = new Sprite(backGroundTexture);
         this.bg.setSize(super.screen.viewport.getWorldWidth(), super.screen.viewport.getWorldHeight());
+    }
 
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {

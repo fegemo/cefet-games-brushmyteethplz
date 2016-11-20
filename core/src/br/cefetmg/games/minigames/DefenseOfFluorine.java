@@ -37,7 +37,7 @@ public class DefenseOfFluorine extends MiniGame {
     private final Array<Fluorine> fluorines;
     private int numberOfBrokenTeeth;
     private boolean clicked = false;
-    private boolean canDraw= true;
+    private boolean canDraw = true;
 
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
@@ -47,7 +47,7 @@ public class DefenseOfFluorine extends MiniGame {
     private final int maximumFluorines;
     private final float maximumFluorineDuration;
 
-    public DefenseOfFluorine(BaseScreen screen,GameStateObserver observer, float difficulty) {
+    public DefenseOfFluorine(BaseScreen screen, GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothPasteTexture = super.screen.assets.get("defense-of-fluorine/toothPaste.png", Texture.class);
@@ -65,7 +65,13 @@ public class DefenseOfFluorine extends MiniGame {
         this.fluorines = new Array<Fluorine>();
         this.numberOfBrokenTeeth = 0;
         this.maximumFluorines = 1000;
-        this.maximumFluorineDuration = (this.spawnInterval*4);
+        this.maximumFluorineDuration = (this.spawnInterval * 4);
+
+        this.initializeTeeth();
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
@@ -73,16 +79,14 @@ public class DefenseOfFluorine extends MiniGame {
             }
 
         }, 0, this.spawnInterval);
-        
+
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
                 fluorines.clear();
             }
 
-        }, 0, this.maximumFluorineDuration); 
-
-        this.initializeTeeth();
+        }, 0, this.maximumFluorineDuration);
     }
 
     private void initializeTeeth() {
@@ -143,7 +147,8 @@ public class DefenseOfFluorine extends MiniGame {
         Vector2 tartarusGoal = this.teeth.random().getBoundingRectangle().getCenter(goalCenter);
         Vector2 tartarusPosition = new Vector2();
         boolean appearFromSides = MathUtils.randomBoolean();
-        if (appearFromSides) {tartarusPosition.x = MathUtils.randomBoolean()? -Tartarus.FRAME_WIDTH : super.screen.viewport.getWorldWidth();
+        if (appearFromSides) {
+            tartarusPosition.x = MathUtils.randomBoolean() ? -Tartarus.FRAME_WIDTH : super.screen.viewport.getWorldWidth();
             tartarusPosition.y = MathUtils.random(
                     -Tartarus.FRAME_HEIGHT,
                     super.screen.viewport.getWorldHeight());
@@ -164,7 +169,7 @@ public class DefenseOfFluorine extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -189,18 +194,19 @@ public class DefenseOfFluorine extends MiniGame {
         // atualiza a posição do alvo de acordo com o mouse
         //Gdx.input.setCursorCatched(true);
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            
+
         super.screen.viewport.unproject(click);
         this.toothPaste.setCenter(click.x, click.y);
-        
+
         if (Gdx.input.isTouched()) {
-            if(this.fluorines.size >= maximumFluorines){
-                canDraw=false;
+            if (this.fluorines.size >= maximumFluorines) {
+                canDraw = false;
             }
             drawFluorine(click);
-        } else if(!Gdx.input.isTouched()){
-            if(!canDraw)
+        } else if (!Gdx.input.isTouched()) {
+            if (!canDraw) {
                 this.fluorines.clear();
+            }
             canDraw = true;
         }
 
@@ -214,13 +220,13 @@ public class DefenseOfFluorine extends MiniGame {
             }
         }
     }
-    
-    
+
     public void drawFluorine(Vector3 click) {
-        
-       if(canDraw){
-           if(this.fluorines.size>=maximumFluorines) 
+
+        if (canDraw) {
+            if (this.fluorines.size >= maximumFluorines) {
                 this.fluorines.clear();
+            }
             Fluorine fluorine = new Fluorine(fluorineTexture);
             fluorine.setCenter((click.x + 90), (click.y + 90));
             if (this.fluorines.size <= maximumFluorines) {
@@ -231,14 +237,13 @@ public class DefenseOfFluorine extends MiniGame {
                 clicked = false;
                 canDraw = false;
             }
-       }
+        }
     }
 
     private void toothWasHurt(Tooth tooth, Tartarus enemy) {
         this.enemies.removeValue(enemy, false);
         this.numberOfBrokenTeeth += tooth.wasHurt() ? 1 : 0;
 
-        
         super.challengeFailed();
 
         toothBreakingSound.play();
@@ -273,15 +278,16 @@ public class DefenseOfFluorine extends MiniGame {
             tart.draw(super.screen.batch);
         }
         toothPaste.draw(super.screen.batch);
-        for(Fluorine fluor : this.fluorines){
-            if(clicked == true)
+        for (Fluorine fluor : this.fluorines) {
+            if (clicked == true) {
                 fluor.draw(super.screen.batch);
+            }
         }
     }
 
     @Override
     public String getInstructions() {
-        return "Defenda com flúor";
+        return "Proteja os dentes com Flúor";
     }
 
     @Override
@@ -289,14 +295,14 @@ public class DefenseOfFluorine extends MiniGame {
         return true;
     }
 
-    class ToothPaste extends Sprite{
+    class ToothPaste extends Sprite {
 
         static final int FRAME_WIDTH = 120;
         static final int FRAME_HEIGHT = 280;
 
         ToothPaste(final Texture toothPasteTexture) {
             super(toothPasteTexture);
-            
+
         }
 
         Vector2 getHeadPosition() {
@@ -309,15 +315,15 @@ public class DefenseOfFluorine extends MiniGame {
             return getHeadPosition().dst(enemyX, enemyY);
         }
     }
-    
-    class Fluorine extends Sprite{
+
+    class Fluorine extends Sprite {
 
         static final int FRAME_WIDTH = 49;
         static final int FRAME_HEIGHT = 44;
 
         Fluorine(final Texture fluorineTexture) {
             super(fluorineTexture);
-            
+
         }
 
         Vector2 getHeadPosition() {
@@ -330,8 +336,6 @@ public class DefenseOfFluorine extends MiniGame {
             return getHeadPosition().dst(enemyX, enemyY);
         }
     }
-
-    
 
     class Tartarus extends MultiAnimatedSprite {
 
@@ -392,7 +396,7 @@ public class DefenseOfFluorine extends MiniGame {
         static final int FRAME_WIDTH = 85;
         static final int FRAME_HEIGHT = 109;
 
-        public Tooth(TextureRegion textureOk,TextureRegion textureBroken, int lives) {
+        public Tooth(TextureRegion textureOk, TextureRegion textureBroken, int lives) {
             super(textureOk);
             this.broken = textureBroken;
             this.lives = lives;

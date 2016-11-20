@@ -78,7 +78,10 @@ public class Ramtooth extends MiniGame{
                 "ramtooth/tiro.mp3", Sound.class);   
         this.somDenteFicandoBranco = screen.assets.get(
                 "ramtooth/dente-branco.mp3", Sound.class);
-        
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
@@ -88,7 +91,6 @@ public class Ramtooth extends MiniGame{
         }, 0, this.spawnInterval);
         
         this.spawnRamtooth();
-             
     }
     
     private void spawnRamtooth(){
