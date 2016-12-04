@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  *
@@ -18,7 +19,7 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class MouthLanding extends MiniGame {
 
-    private double gravityFactor;
+    private final double GRAVITY_FACTOR;
     private final Tooth tooth;
     private final Texture toothTexture;
     private final Texture mouthTexture;
@@ -34,6 +35,9 @@ public class MouthLanding extends MiniGame {
     private final Sound fire2;
     private final Sound fire3;
     private int counter;
+    private final Texture targetTexture;
+    private Sprite target;
+    private int velocidadeMaxima;
 
     public MouthLanding(BaseScreen screen, GameStateObserver observer, float difficulty) {
         super(screen, difficulty, 10f, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
@@ -44,6 +48,8 @@ public class MouthLanding extends MiniGame {
         this.fire1 = screen.assets.get("mouth-landing/fire1.wav", Sound.class);
         this.fire2 = screen.assets.get("mouth-landing/fire2.wav", Sound.class);
         this.fire3 = screen.assets.get("mouth-landing/fire3.wav", Sound.class);
+        this.targetTexture = screen.assets.get("mouth-landing/target.png", Texture.class);
+        this.target = new Sprite(targetTexture);
 
         TextureRegion[][] framesTooth = TextureRegion.split(toothTexture, Tooth.FRAME_WIDTH, Tooth.FRAME_HEIGHT);
         this.tooth = new Tooth(framesTooth[0][0], framesTooth[0][1], framesTooth[0][2]);
@@ -55,18 +61,30 @@ public class MouthLanding extends MiniGame {
         verticalUpForceFactor = 0.035;
         velNow = 10;
         counter = 0;
+        this.GRAVITY_FACTOR = 1.0206665992736816;
     }
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        this.gravityFactor = DifficultyCurve.LINEAR
-                .getCurveValueBetween(difficulty, (float) 1.02, (float) 1.04);
+        if (difficulty <= 0.33){
+            this.velocidadeMaxima = 150;
+        }
+        else if(difficulty <= 0.66){
+            this.velocidadeMaxima = 100; 
+        }
+        else if(difficulty <= 1.0){
+            this.velocidadeMaxima = 75;            
+        }
     }
 
     @Override
     public void onHandlePlayingInput() {
         System.out.println(counter);
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        
+        Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        super.screen.viewport.unproject(click);
+        
+        if ((click.y > toothPosition.y) && (Gdx.input.isTouched())) {
             tooth.isFlying();
             verticalUpForceFactor = 0.035;
             counter++;
@@ -83,13 +101,13 @@ public class MouthLanding extends MiniGame {
             verticalUpForceFactor = 0;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if ((click.x < toothPosition.x) && (Gdx.input.isTouched())){
             leftForce = 2;
         } else {
             leftForce = 0;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if ((click.x > toothPosition.x) && (Gdx.input.isTouched())) {
             rightForce = 2;
         } else {
             rightForce = 0;
@@ -103,17 +121,17 @@ public class MouthLanding extends MiniGame {
         if (velNow <= 5) {
             velNow = 10;
         }
+        
+        toothPosition.y = (float) (posBefore - (velNow * GRAVITY_FACTOR * dt) + velNow * verticalUpForceFactor * dt);
 
-        toothPosition.y = (float) (posBefore - (velNow * gravityFactor * dt) + velNow * verticalUpForceFactor * dt);
-
-        velNow = (posBefore - toothPosition.y) / dt;
+        velNow = (posBefore - toothPosition.y) / dt;       
 
         toothPosition.x = toothPosition.x + rightForce - leftForce;
 
         tooth.setCenter(toothPosition.x, toothPosition.y);
 
         if (toothPosition.y <= 100) {
-            if (velNow <= 50) {
+            if (velNow <= this.velocidadeMaxima) {
                 sucessSound.play();
                 super.challengeSolved();
             } else {
@@ -128,15 +146,16 @@ public class MouthLanding extends MiniGame {
     @Override
     public void onDrawGame() {
         mouth.draw(super.screen.batch);
+        target.draw(super.screen.batch);
         tooth.draw(super.screen.batch);
-
+        
+        target.setPosition(550, 50);
         tooth.setPosition(toothPosition.x, toothPosition.y);
-
     }
 
     @Override
     public String getInstructions() {
-        return "Pouse o dente voador na boca (com as teclas direcionais)";
+        return "Pouse o dente voador com cuidado";
     }
 
     @Override
