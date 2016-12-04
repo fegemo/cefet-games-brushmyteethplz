@@ -47,16 +47,36 @@ public class Config {
      * Número de vidas do jogador.
      */
     public static final int MAX_LIVES = 3;
+    
+    /**
+     * Tempo mostrando o countdown de cada MiniGame.
+     */
+    public static final float TIME_SHOWING_MINIGAME_INSTRUCTIONS = 4f;
 
     /**
      * A quantos milissegundos faltando para o término do minigame deve aparecer
      * o contador regressivo na HUD.
      */
-    public static final long MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT = 3000;
+    public static final float MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT = 3f;
 
     /**
      * O endereço do banco de dados que contém o ranking dos jogadores.
      */
     public static final String RANKING_DATABASE_ENDPOINT
             = "https://escove-meus-dentes.firebaseio.com/";
+
+    /**
+     * Nome do arquivo de texto que contém o texto dos créditos.
+     */
+    public static final String CREDITS_FILE_NAME = "creditos.txt";
+
+    /**
+     * Mensagem padrão dos créditos exibida se houver problema no arquivo.
+     */
+    public static final String CREDITS_DEFAULT_MESSAGE = "Feito com amor pela"
+            + "turma de \n"
+            + "Engenharia da Computação do CEFET-MG\n"
+            + "em 2016/02";
+
+    public static String RANKING_WAITING_FOR = "Recebendo ranking...";
 }

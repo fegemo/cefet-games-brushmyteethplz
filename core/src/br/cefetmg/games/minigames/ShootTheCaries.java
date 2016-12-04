@@ -35,7 +35,7 @@ public class ShootTheCaries extends MiniGame {
 
     public ShootTheCaries(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         this.enemies = new Array<Sprite>();
         this.cariesTexture = this.screen.assets.get(
@@ -50,7 +50,10 @@ public class ShootTheCaries extends MiniGame {
         this.target.setOriginCenter();
         this.enemiesKilled = 0;
         this.spawnedEnemies = 0;
+    }
 
+    @Override
+    protected void onStart() {
         scheduleEnemySpawn();
     }
 
@@ -67,7 +70,7 @@ public class ShootTheCaries extends MiniGame {
         // spawnInterval * 15% para mais ou para menos
         float nextSpawnMillis = this.spawnInterval
                 * (rand.nextFloat() / 3 + 0.15f);
-        super.timer.scheduleTask(t, nextSpawnMillis / 1000f);
+        super.timer.scheduleTask(t, nextSpawnMillis);
     }
 
     private void spawnEnemy() {
@@ -84,7 +87,7 @@ public class ShootTheCaries extends MiniGame {
         enemy.setPosition(position.x, position.y);
         enemy.setScale(initialEnemyScale);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         cariesAppearingSound.play(0.5f);
     }
@@ -96,9 +99,8 @@ public class ShootTheCaries extends MiniGame {
         this.minimumEnemyScale = DifficultyCurve.LINEAR_NEGATIVE
                 .getCurveValueBetween(difficulty, 0.15f, 0.4f);
         this.spawnInterval = (int) DifficultyCurve.S_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
-        this.totalEnemies = (int) Math.ceil((float) maxDuration
-                / spawnInterval) - 3;
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
+        this.totalEnemies = (int) Math.ceil(maxDuration / spawnInterval) - 3;
     }
 
     @Override

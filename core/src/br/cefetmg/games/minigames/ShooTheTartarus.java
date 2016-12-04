@@ -39,12 +39,12 @@ public class ShooTheTartarus extends MiniGame {
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
-    private int spawnInterval;
+    private float spawnInterval;
     private int totalTeeth;
 
     public ShooTheTartarus(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothbrushTexture = super.screen.assets.get(
                 "shoo-the-tartarus/toothbrush-spritesheet.png", Texture.class);
@@ -66,15 +66,18 @@ public class ShooTheTartarus extends MiniGame {
         this.teeth = new Array<Tooth>();
         this.numberOfBrokenTeeth = 0;
 
+        this.initializeTeeth();
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
-
-        this.initializeTeeth();
+        }, 0, this.spawnInterval);
     }
 
     private void initializeTeeth() {
@@ -164,7 +167,7 @@ public class ShooTheTartarus extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -175,11 +178,11 @@ public class ShooTheTartarus extends MiniGame {
     @Override
     protected void configureDifficultyParameters(float difficulty) {
         this.minimumEnemySpeed = DifficultyCurve.LINEAR
-                .getCurveValueBetween(difficulty, 30, 60);
+                .getCurveValueBetween(difficulty, 120, 220);
         this.maximumEnemySpeed = DifficultyCurve.LINEAR
-                .getCurveValueBetween(difficulty, 70, 120);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
+                .getCurveValueBetween(difficulty, 240, 340);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.25f, 1.5f);
         this.totalTeeth = (int) Math.ceil(DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 0, 2)) + 1;
     }
@@ -206,7 +209,7 @@ public class ShooTheTartarus extends MiniGame {
         this.numberOfBrokenTeeth += tooth.wasHurt() ? 1 : 0;
 
         if (this.numberOfBrokenTeeth >= this.totalTeeth) {
-            super.challengeFailed();            
+            super.challengeFailed();
         }
         toothBreakingSound.play();
     }
@@ -244,7 +247,7 @@ public class ShooTheTartarus extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Espante o tártaro";
+        return "Espante o Tártaro";
     }
 
     @Override
@@ -271,6 +274,7 @@ public class ShooTheTartarus extends MiniGame {
                 }
             }));
             super.getAnimation().setPlayMode(Animation.PlayMode.LOOP);
+            super.setAutoUpdate(false);
         }
 
         Vector2 getHeadPosition() {

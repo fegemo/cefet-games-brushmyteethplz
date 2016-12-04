@@ -16,14 +16,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer.Task;
 import java.util.HashMap;
-import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 
 /**
  *
@@ -38,17 +32,15 @@ public class CarieEvasion extends MiniGame {
     private final Array<Sound> tartarusAppearingSound;
     private final Sound toothBreakingSound;
     private final Array<Tartarus> enemies;
-    private int numberOfBrokenTeeth;
-    private boolean clicked = false;
 
     // variáveis do desafio - variam com a dificuldade do minigame
     private float minimumEnemySpeed;
     private float maximumEnemySpeed;
-    private int spawnInterval;
+    private float spawnInterval;
 
     public CarieEvasion(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.superToothTexture = super.screen.assets.get("carie-evasion/supertooth.png", Texture.class);
         this.superToothTextureDead = super.screen.assets.get("carie-evasion/supertoothDead.png", Texture.class);
@@ -60,24 +52,27 @@ public class CarieEvasion extends MiniGame {
                 screen.assets.get("shoo-the-tartarus/appearing3.wav", Sound.class));
         this.toothBreakingSound = screen.assets.get("shoo-the-tartarus/tooth-breaking.wav", Sound.class);
         this.enemies = new Array<Tartarus>();
+    }
 
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
                 spawnEnemy();
             }
 
-        }, 0, this.spawnInterval / 1000f);
-
+        }, 0, this.spawnInterval);
     }
+
     private void spawnEnemy() {
         Vector2 goalCenter = new Vector2();
         goalCenter.x = MathUtils.random(super.screen.viewport.getWorldWidth());
         goalCenter.y = MathUtils.random(super.screen.viewport.getWorldHeight());
-        
+
         Vector2 tartarusGoal = goalCenter;
         Vector2 tartarusPosition = new Vector2();
-  
+
         tartarusPosition.x = super.screen.viewport.getWorldWidth();
         tartarusPosition.y = MathUtils.random(super.screen.viewport.getWorldHeight());
 
@@ -87,7 +82,7 @@ public class CarieEvasion extends MiniGame {
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -99,7 +94,7 @@ public class CarieEvasion extends MiniGame {
     protected void configureDifficultyParameters(float difficulty) {
         this.minimumEnemySpeed = DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 120, 230);
         this.maximumEnemySpeed = DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 250, 450);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 50, 400);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 0.05f, 0.4f);
     }
 
     @Override
@@ -107,8 +102,7 @@ public class CarieEvasion extends MiniGame {
         // atualiza a posição do alvo de acordo com o mouse
         //Gdx.input.setCursorCatched(true);
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        
-        
+
         super.screen.viewport.unproject(click);
         this.superTooth.setCenter(click.x, click.y);
 
@@ -122,13 +116,9 @@ public class CarieEvasion extends MiniGame {
 
     }
 
-    private void toothWasHurt(SuperTooth superTooth, Tartarus enemy) {
+    private void toothWasHurt(Tartarus enemy) {
         this.enemies.removeValue(enemy, false);
-        this.numberOfBrokenTeeth += superTooth.wasHurt() ? 1 : 0;
-
-       // if (this.numberOfBrokenTeeth >= this.totalTeeth) {
-            super.challengeFailed();
-        //}
+        super.challengeFailed();
         toothBreakingSound.play();
     }
 
@@ -144,7 +134,7 @@ public class CarieEvasion extends MiniGame {
 
             // verifica se este inimigo está colidindo com algum dente
             if (tart.getBoundingRectangle().overlaps(superTooth.getBoundingRectangle())) {
-                toothWasHurt(superTooth, tart);
+                toothWasHurt(tart);
             }
 
         }
@@ -156,12 +146,12 @@ public class CarieEvasion extends MiniGame {
             tart.draw(super.screen.batch);
         }
         superTooth.draw(super.screen.batch);
-        
+
     }
 
     @Override
     public String getInstructions() {
-        return "Fuja dos tártaros";
+        return "Evite a chuva de Tártaro";
     }
 
     @Override
@@ -169,14 +159,14 @@ public class CarieEvasion extends MiniGame {
         return true;
     }
 
-    class SuperTooth extends Sprite{
+    class SuperTooth extends Sprite {
 
         static final int FRAME_WIDTH = 70;
         static final int FRAME_HEIGHT = 52;
 
         SuperTooth(final Texture superToothTexture) {
             super(superToothTexture);
-            
+
         }
 
         Vector2 getHeadPosition() {
@@ -188,36 +178,12 @@ public class CarieEvasion extends MiniGame {
         float getHeadDistanceTo(float enemyX, float enemyY) {
             return getHeadPosition().dst(enemyX, enemyY);
         }
-        
-         public boolean wasHurt() {
+
+        public boolean wasHurt() {
             super.setTexture(superToothTextureDead);
-            //super.setRegion(broken);
             return true;
         }
     }
-    
-    class Fluorine extends Sprite{
-
-        static final int FRAME_WIDTH = 49;
-        static final int FRAME_HEIGHT = 44;
-
-        Fluorine(final Texture fluorineTexture) {
-            super(fluorineTexture);
-            
-        }
-
-        Vector2 getHeadPosition() {
-            return new Vector2(
-                    this.getX(),
-                    this.getY());
-        }
-
-        float getHeadDistanceTo(float enemyX, float enemyY) {
-            return getHeadPosition().dst(enemyX, enemyY);
-        }
-    }
-
-    
 
     class Tartarus extends MultiAnimatedSprite {
 
@@ -242,6 +208,7 @@ public class CarieEvasion extends MiniGame {
                     put("walking", walking);
                 }
             }, "walking");
+            super.setAutoUpdate(false);
         }
 
         @Override

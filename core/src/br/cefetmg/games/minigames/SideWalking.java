@@ -26,12 +26,12 @@ public class SideWalking extends MiniGame {
     private final Texture teeth;
     private final Texture monster;
     private final Texture cloud;
-    private int spawnInterval;
+    private float spawnInterval;
     private float velocidade;
     private float pulo;
-    private final float gravidade = 0.4f;
-    private final float velocidadeNuvem = 2f;  
-    private final float alturachao = 100f;
+    private final float gravidade;
+    private final float velocidadeNuvem;
+    private final float alturachao;
     private final Array<Sprite> enemies;
     private final Array<Sprite> clouds;
     private final Sound teethJumpingSound;
@@ -41,7 +41,10 @@ public class SideWalking extends MiniGame {
     private int incremento;
 
     public SideWalking(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 15000, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 15f, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
+        this.alturachao = 100f;
+        this.velocidadeNuvem = 2f;
+        this.gravidade = 0.4f;
         this.teeth = this.screen.assets.get("side_walking/walking_tooth.png", Texture.class);
         dente = new Teeth(teeth);
         this.monster = this.screen.assets.get("side_walking/monster.png", Texture.class);
@@ -55,6 +58,10 @@ public class SideWalking extends MiniGame {
         this.clouds = new Array<Sprite>();
         background = new Texture(Gdx.files.internal("side_walking/candy.png"));
         background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
@@ -63,12 +70,12 @@ public class SideWalking extends MiniGame {
                 spawnEnemie();
                 spawnCloud();
             }
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
     }
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 2500, 4000);
+        spawnInterval = DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 2.5f, 4f);
         velocidade = (float) DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 4f, 12f);
     }
 
@@ -95,6 +102,7 @@ public class SideWalking extends MiniGame {
         if (dente.getY() < alturachao) {
             dente.setY(alturachao);
         }
+        dente.update(dt);
         for (int i = 0; i < enemies.size; i++) {
             Sprite mst = enemies.get(i);
             mst.setX(mst.getX() - velocidade);
@@ -132,7 +140,7 @@ public class SideWalking extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Clique para saltar os obstáculos";
+        return "Salte os monstros de açúcar";
     }
 
     @Override
@@ -158,6 +166,7 @@ public class SideWalking extends MiniGame {
     }
 
     class Teeth extends MultiAnimatedSprite {
+
         public Teeth(final Texture thoothTexture) {
             super(new HashMap<String, Animation>() {
                 {
@@ -173,6 +182,6 @@ public class SideWalking extends MiniGame {
                 }
             }, "walking");
             super.setPosition(30f, alturachao);
-        }              
+        }
     }
 }

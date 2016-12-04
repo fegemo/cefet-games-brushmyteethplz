@@ -42,6 +42,8 @@ public abstract class BaseScreen extends ScreenAdapter {
     protected TransitionEffect transition;
     protected enum states{fadeIn,doNothing,fadeOut,stopDrawing};
     protected states transitionState;
+    private boolean wasJustDisposed = false;
+    
     /**
      * Cria uma instância de tela.
      * 
@@ -106,6 +108,12 @@ public abstract class BaseScreen extends ScreenAdapter {
             
             // chama função para atualizar a lógica da tela
             update(dt);
+            
+            // a tela pode ter sido "disposed" durante este último update, então
+            // verificamos se isso aconteceu para saber se seguimos adiante
+            if (wasJustDisposed) {
+                return;
+            }
             
             // chama função para atualizar o estado da transição
             updateTransition(dt);
@@ -186,11 +194,14 @@ public abstract class BaseScreen extends ScreenAdapter {
     
     @Override
     public final void dispose() {
-        batch.dispose();
-        if (messagesFont != null) {
-            messagesFont.dispose();
+        if (!wasJustDisposed) {
+            wasJustDisposed = true;
+            batch.dispose();
+            if (messagesFont != null) {
+                messagesFont.dispose();
+            }
+            this.cleanUp();
         }
-        this.cleanUp();
     }
     
     /**

@@ -1,7 +1,6 @@
 package br.cefetmg.games.minigames;
 
 import br.cefetmg.games.Config;
-import br.cefetmg.games.graphics.Hud;
 import br.cefetmg.games.minigames.util.MiniGameState;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
@@ -17,6 +16,8 @@ import com.badlogic.gdx.utils.Timer.Task;
 import java.util.Random;
 import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 import br.cefetmg.games.minigames.util.GameStateObserver;
+import br.cefetmg.games.screens.MenuScreen;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
@@ -26,12 +27,11 @@ import com.badlogic.gdx.math.Vector2;
  */
 public abstract class MiniGame {
 
-    public static final int INSTRUCTIONS_TIME = 4000;
-
     protected final BaseScreen screen;
-    protected final long initialTime;
-    protected long playingInitialTime;
-    protected final long maxDuration;
+    protected long remainingTime;
+    protected float maxDuration;
+    private float timeSpentOnInstructions;
+    private float timeSpentPlaying;
     protected MiniGameState state;
     protected Random rand;
     protected Timer timer;
@@ -39,12 +39,15 @@ public abstract class MiniGame {
 
     private final BitmapFont messagesFont;
     private final AnimatedSprite countdown;
-    private final Texture grayMask, pausedImage, unpausedImage;
-    private final Sprite pauseUnpauseSprite;
+    private final Texture grayMask, pausedImage, unpausedImage,
+            goBackTexture, leaveTexture;
+    private final Sprite pauseUnpauseSprite, goBackSprite, leaveSprite;
     private boolean challengeSolved;
     private GameStateObserver stateObserver;
+    private long timeWhenPausedLastTime;
+    private InputProcessor miniGameInputProcessor;
 
-    public MiniGame(BaseScreen screen, float difficulty, long maxDuration,
+    public MiniGame(BaseScreen screen, float difficulty, float maxDuration,
             TimeoutBehavior endOfGameSituation, final GameStateObserver observer) {
         if (difficulty < 0 || difficulty > 1) {
             throw new IllegalArgumentException(
@@ -52,12 +55,14 @@ public abstract class MiniGame {
                     + "número entre 0 e 1. Você passou o número " + difficulty
                     + ".");
         }
+
         this.screen = screen;
         this.challengeSolved = endOfGameSituation
                 == TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS;
         this.maxDuration = maxDuration;
+        this.timeSpentPlaying = 0;
+        this.timeSpentOnInstructions = 0;
         this.stateObserver = observer;
-        this.initialTime = TimeUtils.millis();
         this.state = MiniGameState.INSTRUCTIONS;
         this.messagesFont = this.screen.assets.get("fonts/sawasdee-50.fnt");
         this.messagesFont.getRegion().getTexture().setFilter(
@@ -65,7 +70,7 @@ public abstract class MiniGame {
                 Texture.TextureFilter.Linear);
         Texture countdownTexture = screen.assets.get("images/countdown.png",
                 Texture.class);
-        this.countdown = new AnimatedSprite(new Animation(2,
+        this.countdown = new AnimatedSprite(new Animation(1,
                 new TextureRegion[]{
                     // 3
                     new TextureRegion(countdownTexture, 0, 0, 180, 200),
@@ -76,6 +81,7 @@ public abstract class MiniGame {
                     // Começar!
                     new TextureRegion(countdownTexture, 0, 200, 540, 200),}
         ));
+        this.countdown.setAutoUpdate(false);
         this.countdown.setUseFrameRegionSize(true);
         this.countdown.setCenterFrames(true);
         this.countdown.setCenter(
@@ -88,8 +94,21 @@ public abstract class MiniGame {
                 Texture.class);
         this.unpausedImage = screen.assets.get("images/unpausedImage.png",
                 Texture.class);
+
         this.pauseUnpauseSprite = new Sprite(unpausedImage, 100, 100);
         this.pauseUnpauseSprite.setPosition(10, 10);
+
+        this.goBackTexture = new Texture("buttons_menu/button_voltar.png");
+        this.goBackSprite = new Sprite(goBackTexture, 166, 77);
+        this.goBackSprite.setPosition(
+                screen.viewport.getWorldWidth() / 2f - 100,
+                screen.viewport.getWorldHeight() / 2f);
+        this.leaveTexture = new Texture("buttons_menu/button_sair.png");
+        this.leaveSprite = new Sprite(leaveTexture, 166, 77);
+        this.leaveSprite.setPosition(
+                screen.viewport.getWorldWidth() / 2f - 100,
+                screen.viewport.getWorldHeight() / 2f - 100);
+
         this.rand = new Random();
         this.timer = new Timer();
         this.timer.stop();
@@ -97,43 +116,102 @@ public abstract class MiniGame {
     }
 
     public final void handleInput() {
-        switch (this.state) {
-            case INSTRUCTIONS:
-                // caso aperte o isPaused, o tempo pausa
-                Vector2 clickPosition = new Vector2(
-                        Gdx.input.getX(), Gdx.input.getY());
-                this.screen.viewport.unproject(clickPosition);
+        Vector2 clickPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        this.screen.viewport.unproject(clickPosition);
+
+        if (Gdx.input.justTouched()) {
+            // se o botão pause/play foi clicado, ou então o botão voltar quando
+            // já estamos em pausa (i.e., o botão está visível)...
+            if (pauseUnpauseSprite.getBoundingRectangle()
+                    .contains(clickPosition)
+                    || (isPaused && goBackSprite.getBoundingRectangle()
+                    .contains(clickPosition))) {
+                // alterna entre pausado/jogando
+                isPaused = !isPaused;
+                pauseUnpauseSprite.setTexture(isPaused
+                        ? pausedImage : unpausedImage);
                 
-                if(Gdx.input.justTouched() &&
-                        pauseUnpauseSprite.getBoundingRectangle()
-                                .contains(clickPosition)){
-                    isPaused = !isPaused;
-                    pauseUnpauseSprite.setTexture(
-                            isPaused ? pausedImage : unpausedImage);
+                // se pausou quando o relojinho de fim do tempo já está 
+                // aparecendo, precisa avisar a HUD sobre isso
+                if (timeSpentPlaying > maxDuration
+                        - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT) {
+                    stateObserver.onGamePausedOrUnpaused(isPaused);
                 }
-                break;
-                
-            case PLAYING:
-                onHandlePlayingInput();
-                break;
+
+                // acabou de pausar
+                if (isPaused) {
+                    // interrompe o timer do minigame, salvando o momento em
+                    // que o jogo foi pausado
+                    this.timer.stop();
+                    this.timeWhenPausedLastTime = TimeUtils.nanosToMillis(
+                            TimeUtils.nanoTime());
+                    
+                    // libera o cursor do mouse
+                    Gdx.input.setCursorCatched(false);
+                    
+                    // salva um possível processador de input do minigame e o
+                    // desabilita até que o jogo seja despausado
+                    this.miniGameInputProcessor = Gdx.input.getInputProcessor();
+                    Gdx.input.setInputProcessor(null);
+                }
+                // acabou de despausar
+                else {
+                    // retoma o timer, atrasando-o pelo tempo que o jogo ficou
+                    // pausado
+                    this.timer.start();
+                    this.timer.delay(TimeUtils.nanosToMillis(
+                            TimeUtils.nanoTime()) - this.timeWhenPausedLastTime);
+                    
+                    // recupera o possível processador de input do minigame
+                    Gdx.input.setInputProcessor(this.miniGameInputProcessor);
+                    
+                    // se a pausa foi feita durante o jogo (fora das instruções
+                    // ou do final do jogo), oculta novamente o cursor
+                    if (state == MiniGameState.PLAYING) {
+                        Gdx.input.setCursorCatched(shouldHideMousePointer());
+                    }
+                }
+            }
+
+            // jogador clicou em "sair" da tela de jogo: volta para menu
+            if (leaveSprite.getBoundingRectangle()
+                    .contains(clickPosition) && isPaused) {
+                this.screen.game.setScreen(
+                        new MenuScreen(this.screen.game, this.screen));
+            }
+        }
+
+        // deixa o MiniGame lidar com o input apenas se estivermos no estado
+        // de jogo propriamente dito e sem pausa
+        if (this.state == MiniGameState.PLAYING && !isPaused) {
+            onHandlePlayingInput();
         }
     }
 
+    private void updateCountdown(float dt) {
+        this.countdown.setScale(getCurrentCountdownScale());
+        this.countdown.update(dt);
+    }
+
     public final void update(float dt) {
+        if (isPaused) {
+            return;
+        }
+
         switch (this.state) {
             case INSTRUCTIONS:
-                if (!isPaused) {
-                    this.countdown.update(dt);
-                    if(TimeUtils.timeSinceMillis(initialTime)
-                            > INSTRUCTIONS_TIME) {
-                        transitionTo(MiniGameState.PLAYING);
-                    }
+                this.timeSpentOnInstructions += dt;
+                updateCountdown(dt);
+                if (timeSpentOnInstructions
+                        > Config.TIME_SHOWING_MINIGAME_INSTRUCTIONS) {
+                    transitionTo(MiniGameState.PLAYING);
                 }
+
                 break;
 
             case PLAYING:
-                if (TimeUtils.timeSinceMillis(playingInitialTime)
-                        > maxDuration) {
+                timeSpentPlaying += dt;
+                if (timeSpentPlaying > maxDuration) {
                     transitionTo(challengeSolved
                             ? MiniGameState.WON
                             : MiniGameState.FAILED);
@@ -144,20 +222,15 @@ public abstract class MiniGame {
     }
 
     private float getCurrentCountdownScale() {
-        long ellapsed = TimeUtils.timeSinceMillis(initialTime);
-        if (ellapsed >= 3000) {
+        if (timeSpentOnInstructions >= 3) {
             return 1;
         } else {
-            long ellapsedThisSecond = (long) (ellapsed % 1000);
-            return Math.max(1 - (float) (ellapsedThisSecond / 1000f), 0.5f);
+            float ellapsedThisSecond = timeSpentOnInstructions % 1;
+            return Math.max(1 - ellapsedThisSecond, 0.5f);
         }
     }
 
     private void drawCountdown() {
-        this.countdown.setCenter(
-                screen.viewport.getWorldWidth() / 2f,
-                screen.viewport.getWorldHeight() / 2f);
-        this.countdown.setScale(getCurrentCountdownScale());
         this.countdown.draw(this.screen.batch);
     }
 
@@ -179,24 +252,30 @@ public abstract class MiniGame {
                 this.screen.viewport.getWorldHeight());
     }
 
-    private void drawButtonPause() {
+    private void drawPauseButton() {
         pauseUnpauseSprite.draw(this.screen.batch);
+    }
+
+    private void drawPauseMenu() {
+        goBackSprite.draw(this.screen.batch);
+        leaveSprite.draw(this.screen.batch);
     }
 
     public final void draw() {
         switch (this.state) {
             case INSTRUCTIONS:
-                drawButtonPause();
                 drawInstructions();
-                if (isPaused) {
-                    drawMask();
-                } else {
-                    drawCountdown();
-                }
+                drawCountdown();
+                drawPauseButton();
                 break;
 
             case PLAYING:
                 onDrawGame();
+                if (isPaused) {
+                    drawMask();
+                    drawPauseMenu();
+                }
+                drawPauseButton();
                 break;
 
             case FAILED:
@@ -213,25 +292,25 @@ public abstract class MiniGame {
     private void transitionTo(MiniGameState newState) {
         switch (newState) {
             case PLAYING:
-                playingInitialTime = TimeUtils.millis();
+                this.onStart();
+
                 this.timer.scheduleTask(new Task() {
                     @Override
                     public void run() {
-                        stateObserver.onTimeEnding(TimeUtils.millis()
-                                + Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT
-                                + 300);
+                        stateObserver.onTimeEnding();
                     }
-                }, (maxDuration - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT)
-                        / 1000f);
+                }, (maxDuration - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT));
+
                 timer.start();
                 break;
+
             case WON:
             case FAILED:
+                this.onEnd();
                 timer.stop();
                 break;
         }
         this.state = newState;
-        Hud.currentState = state;
         this.stateObserver.onStateChanged(state);
     }
 
@@ -246,6 +325,14 @@ public abstract class MiniGame {
     }
 
     protected abstract void configureDifficultyParameters(float difficulty);
+
+    protected void onStart() {
+        // intentionally left for MiniGames to implement
+    }
+
+    protected void onEnd() {
+        // intentionally left for MiniGames to implement
+    }
 
     public abstract void onHandlePlayingInput();
 

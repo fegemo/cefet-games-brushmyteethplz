@@ -6,5 +6,6 @@ package br.cefetmg.games.minigames.util;
  */
 public interface GameStateObserver {
     void onStateChanged(MiniGameState state);
-    void onTimeEnding(long remainingTime);
+    void onTimeEnding();
+    void onGamePausedOrUnpaused(boolean justPaused);
 }

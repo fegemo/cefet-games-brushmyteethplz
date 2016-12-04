@@ -25,14 +25,14 @@ public final class SmashIt extends MiniGame {
     private final Carie[] caries;
     private int caries_max;
     private int score = 0;
-    private int spawnInterval;
+    private float spawnInterval;
     private final int n_lines = 4;
     private final int caries_hole = n_lines * n_lines;
     private final float dy = screen.viewport.getWorldHeight() / 6;
     private final float dx = screen.viewport.getWorldWidth() / 6;
 
     public SmashIt(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
+        super(screen, difficulty, 10f, TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         hole_texture = this.screen.assets.get("smash-it/hole.png", Texture.class);
         carie_texture = this.screen.assets.get("smash-it/carie.png", Texture.class);
         tooth_texture = new Sprite(this.screen.assets.get("smash-it/tooth.png", Texture.class));
@@ -42,12 +42,16 @@ public final class SmashIt extends MiniGame {
         caries = new Carie[caries_hole];
         configureDifficultyParameters(difficulty);
         initCaries();
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
                 spawnCarie();
             }
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
     }
 
     private void initCaries() {
@@ -69,7 +73,7 @@ public final class SmashIt extends MiniGame {
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 300, 800);
+        spawnInterval = DifficultyCurve.LINEAR_NEGATIVE.getCurveValueBetween(difficulty, 0.3f, 0.8f);
         caries_max = (int) DifficultyCurve.LINEAR.getCurveValueBetween(difficulty, 5, 20);
     }
 
@@ -107,7 +111,7 @@ public final class SmashIt extends MiniGame {
 
     @Override
     public String getInstructions() {
-        return "Destrua " + caries_max + " cáries!";
+        return "Obture " + caries_max + " cáries!";
     }
 
     @Override

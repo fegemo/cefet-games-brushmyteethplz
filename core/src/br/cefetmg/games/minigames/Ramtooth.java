@@ -49,7 +49,7 @@ public class Ramtooth extends MiniGame{
           
     public Ramtooth(BaseScreen screen,
             GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000, 
+        super(screen, difficulty, 10f, 
                 TimeoutBehavior.FAILS_WHEN_MINIGAME_ENDS, observer);
         
         this.texturaFundo = this.screen.assets.get(
@@ -78,17 +78,19 @@ public class Ramtooth extends MiniGame{
                 "ramtooth/tiro.mp3", Sound.class);   
         this.somDenteFicandoBranco = screen.assets.get(
                 "ramtooth/dente-branco.mp3", Sound.class);
-        
+    }
+
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
                 spawnTooth();
             }
 
-        }, 0, this.spawnInterval / 1000f);
+        }, 0, this.spawnInterval);
         
         this.spawnRamtooth();
-             
     }
     
     private void spawnRamtooth(){
@@ -167,9 +169,8 @@ public class Ramtooth extends MiniGame{
         this.maximumEnemySpeed = DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 70, 120);
         this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1500);
-        this.alvo = (int) Math.ceil((float) maxDuration
-                / spawnInterval) - 3;
+                .getCurveValueBetween(difficulty, 0.5f, 1.5f);
+        this.alvo = (int) Math.ceil(maxDuration / spawnInterval) - 3;
     }
 
     @Override
@@ -186,11 +187,7 @@ public class Ramtooth extends MiniGame{
         
         if (numberOfCleanTeeth >= alvo){
             super.challengeSolved();
-        }
-        
-        if ((this.initialTime + this.maxDuration + 20000) <= System.currentTimeMillis()){
-            super.challengeFailed();
-        }
+        }        
     }
 
     @Override

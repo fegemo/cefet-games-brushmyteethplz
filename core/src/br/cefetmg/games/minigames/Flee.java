@@ -7,7 +7,6 @@ import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,27 +17,26 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import java.util.HashMap;
-import net.dermetfan.gdx.graphics.g2d.AnimatedSprite;
 
 /**
  *
  * @author Lucas Batista
  */
-public class Flee extends MiniGame{
-    
+public class Flee extends MiniGame {
+
     private final Texture toothTexture;
     private final Tooth tooth;
     private final Texture tartarusTexture;
     private final Array<Sound> tartarusAppearingSound;
     private final Sound toothBreakingSound;
     private final Array<Tartarus> enemies;
-    
+
     // variáveis do desafio - variam com a dificuldade do minigame
-    private float EnemySpeed;
-    private int spawnInterval;
+    private float enemySpeed;
+    private float spawnInterval;
 
     public Flee(BaseScreen screen, GameStateObserver observer, float difficulty) {
-        super(screen, difficulty, 10000,
+        super(screen, difficulty, 10f,
                 TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
         this.toothTexture = super.screen.assets.get(
                 "flee/toothLiveDeath.png", Texture.class);
@@ -57,14 +55,16 @@ public class Flee extends MiniGame{
         this.toothBreakingSound = screen.assets.get(
                 "shoo-the-tartarus/tooth-breaking.wav", Sound.class);
         this.enemies = new Array<Tartarus>();
+    }
 
+    @Override
+    protected void onStart() {
         super.timer.scheduleTask(new Timer.Task() {
             @Override
             public void run() {
                 spawnEnemy();
             }
-        }, 0, this.spawnInterval / 1000f);
-
+        }, 0, this.spawnInterval);
     }
 
     private void spawnEnemy() {
@@ -90,13 +90,13 @@ public class Flee extends MiniGame{
         Vector2 tartarusSpeed = tartarusGoal
                 .sub(tartarusPosition)
                 .nor()
-                .scl(this.EnemySpeed);
+                .scl(this.enemySpeed);
 
         Tartarus enemy = new Tartarus(tartarusTexture);
         enemy.setPosition(tartarusPosition.x, tartarusPosition.y);
         enemy.setSpeed(tartarusSpeed);
         enemies.add(enemy);
-        
+
         // toca um efeito sonoro
         Sound sound = tartarusAppearingSound.random();
         long id = sound.play(0.5f);
@@ -106,10 +106,10 @@ public class Flee extends MiniGame{
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        this.EnemySpeed = DifficultyCurve.LINEAR
+        this.enemySpeed = DifficultyCurve.LINEAR
                 .getCurveValueBetween(difficulty, 75, 130);
-        this.spawnInterval = (int) DifficultyCurve.LINEAR_NEGATIVE
-                .getCurveValueBetween(difficulty, 500, 1000);
+        this.spawnInterval = DifficultyCurve.LINEAR_NEGATIVE
+                .getCurveValueBetween(difficulty, 0.5f, 1f);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class Flee extends MiniGame{
         // verifica se o dente está próximo do inimigo
         for (Tartarus tart : this.enemies) {
             if (tart.getBoundingRectangle()
-                        .overlaps(tooth.getBoundingRectangle())) {
+                    .overlaps(tooth.getBoundingRectangle())) {
                 tooth.wasHurt();
                 tart.hit = true;
                 toothBreakingSound.play();
@@ -150,7 +150,7 @@ public class Flee extends MiniGame{
 
     @Override
     public String getInstructions() {
-        return "Fuja";
+        return "Não encoste nos Tártaros";
     }
 
     @Override
@@ -165,12 +165,12 @@ public class Flee extends MiniGame{
         static final int FRAME_WIDTH = 80;
         static final int FRAME_HEIGHT = 120;
 
-        public Tooth (TextureRegion textureOk, TextureRegion textureHurt) {
+        public Tooth(TextureRegion textureOk, TextureRegion textureHurt) {
             super(textureOk);
             this.hurt = textureHurt;
         }
 
-        void wasHurt(){
+        void wasHurt() {
             super.setRegion(hurt);
         }
     }
@@ -205,7 +205,7 @@ public class Flee extends MiniGame{
             super.update(dt);
             if (hit == false) {
                 super.setPosition(super.getX() + this.speed.x * dt,
-                    super.getY() + this.speed.y * dt);
+                        super.getY() + this.speed.y * dt);
             }
         }
 
