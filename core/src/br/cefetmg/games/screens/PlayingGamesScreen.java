@@ -62,39 +62,39 @@ public class PlayingGamesScreen extends BaseScreen
         } else {
             return new InfiniteGameSequencer(new HashSet<MiniGameFactory>(
                     Arrays.asList(
-//                            // flávio
-//                            new ShootTheCariesFactory(),
-//                            new ShooTheTartarusFactory(),
-//                            // gabriel e juan
-//                            new SaveTheTeethFactory(),
-//                            new FleeFromTartarusFactory(),
-//                            // higor e matheus
-//                            new AngryToothsFactory(),
-//                            new CarieSwordFactory(),
-//                            new ToothRunnerFactory(),
-//                            // nicolas e henrique
-//                            new PutTheBracesFactory(),
-//                            new EscoveOsDentesFactory(),
-//                            new SnakeCariesFactory(),
-//                            // lucas carvalhais e lucas de aguilar
-//                            new FleeFactory(),
-                            new MouthLandingFactory()
-//                            // lindley e lucas
-//                            new GallowsFactory(),
-//                            new SmashItFactory(),
-//                            new SideWalkingFactory(),
-//                            // amanda e vinícius
-//                            new FleeTheTartarusFactory(),
-//                            new CollectItensFactory(),
-//                            new RamtoothFactory(),
-//                            // daniel
-//                            new CarieEvasionFactory(),
-//                            new DefenseOfFluorineFactory(),
-//                            new NinjaToothFactory(),
-//                            // carlos e bruno
-//                            new CleanTheToothFactory(),
-//                            // matheus ibrahim e luis gustavo
-//                            new DentalKombatFactory()
+                            // flávio
+                            new ShootTheCariesFactory(),
+                            new ShooTheTartarusFactory(),
+                            // gabriel e juan
+                            new SaveTheTeethFactory(),
+                            new FleeFromTartarusFactory(),
+                            // higor e matheus
+                            new AngryToothsFactory(),
+                            new CarieSwordFactory(),
+                            new ToothRunnerFactory(),
+                            // nicolas e henrique
+                            new PutTheBracesFactory(),
+                            new EscoveOsDentesFactory(),
+                            new SnakeCariesFactory(),
+                            // lucas carvalhais e lucas de aguilar
+                            new FleeFactory(),
+                            new MouthLandingFactory(),
+                            // lindley e lucas
+                            new GallowsFactory(),
+                            new SmashItFactory(),
+                            new SideWalkingFactory(),
+                            // amanda e vinícius
+                            new FleeTheTartarusFactory(),
+                            new CollectItensFactory(),
+                            new RamtoothFactory(),
+                            // daniel
+                            new CarieEvasionFactory(),
+                            new DefenseOfFluorineFactory(),
+                            new NinjaToothFactory(),
+                            // carlos e bruno
+                            new CleanTheToothFactory(),
+                            // matheus ibrahim e luis gustavo
+                            new DentalKombatFactory()
                     )
             ), this, this);
         }
