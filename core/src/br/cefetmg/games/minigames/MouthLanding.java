@@ -1,11 +1,9 @@
 package br.cefetmg.games.minigames;
 
-import br.cefetmg.games.minigames.util.DifficultyCurve;
 import br.cefetmg.games.minigames.util.GameStateObserver;
 import br.cefetmg.games.minigames.util.TimeoutBehavior;
 import br.cefetmg.games.screens.BaseScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,7 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 
 /**
  *
- * @author Lucas de Aguilar
+ * @author Lucas de Aguilar, Luis Gustavo
  */
 public class MouthLanding extends MiniGame {
 
@@ -36,7 +34,7 @@ public class MouthLanding extends MiniGame {
     private final Sound fire3;
     private int counter;
     private final Texture targetTexture;
-    private Sprite target;
+    private final Sprite target;
     private int velocidadeMaxima;
 
     public MouthLanding(BaseScreen screen, GameStateObserver observer, float difficulty) {
@@ -66,24 +64,22 @@ public class MouthLanding extends MiniGame {
 
     @Override
     protected void configureDifficultyParameters(float difficulty) {
-        if (difficulty <= 0.33){
+        if (difficulty <= 0.33) {
             this.velocidadeMaxima = 150;
-        }
-        else if(difficulty <= 0.66){
-            this.velocidadeMaxima = 100; 
-        }
-        else if(difficulty <= 1.0){
-            this.velocidadeMaxima = 75;            
+        } else if (difficulty <= 0.66) {
+            this.velocidadeMaxima = 100;
+        } else if (difficulty <= 1.0) {
+            this.velocidadeMaxima = 75;
         }
     }
 
     @Override
     public void onHandlePlayingInput() {
         System.out.println(counter);
-        
+
         Vector3 click = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         super.screen.viewport.unproject(click);
-        
+
         if ((click.y > toothPosition.y) && (Gdx.input.isTouched())) {
             tooth.isFlying();
             verticalUpForceFactor = 0.035;
@@ -101,7 +97,7 @@ public class MouthLanding extends MiniGame {
             verticalUpForceFactor = 0;
         }
 
-        if ((click.x < toothPosition.x) && (Gdx.input.isTouched())){
+        if ((click.x < toothPosition.x) && (Gdx.input.isTouched())) {
             leftForce = 2;
         } else {
             leftForce = 0;
@@ -121,10 +117,10 @@ public class MouthLanding extends MiniGame {
         if (velNow <= 5) {
             velNow = 10;
         }
-        
+
         toothPosition.y = (float) (posBefore - (velNow * GRAVITY_FACTOR * dt) + velNow * verticalUpForceFactor * dt);
 
-        velNow = (posBefore - toothPosition.y) / dt;       
+        velNow = (posBefore - toothPosition.y) / dt;
 
         toothPosition.x = toothPosition.x + rightForce - leftForce;
 
@@ -148,7 +144,7 @@ public class MouthLanding extends MiniGame {
         mouth.draw(super.screen.batch);
         target.draw(super.screen.batch);
         tooth.draw(super.screen.batch);
-        
+
         target.setPosition(550, 50);
         tooth.setPosition(toothPosition.x, toothPosition.y);
     }
