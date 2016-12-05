@@ -26,6 +26,7 @@ public class MouthLandingFactory implements MiniGameFactory{
             {
                 put("mouth-landing/rocket-tooth.png", Texture.class);
                 put("mouth-landing/mouth.png", Texture.class);
+                put("mouth-landing/target.png", Texture.class);
                 put("mouth-landing/fire1.wav", Sound.class);
                 put("mouth-landing/fire2.wav", Sound.class);
                 put("mouth-landing/fire3.wav", Sound.class);
@@ -34,7 +35,7 @@ public class MouthLandingFactory implements MiniGameFactory{
                 put("shoo-the-tartarus/appearing1.wav", Sound.class);
                 put("shoo-the-tartarus/appearing2.wav", Sound.class);
                 put("shoo-the-tartarus/appearing3.wav", Sound.class);
-                put("shoo-the-tartarus/tooth-breaking.wav", Sound.class);
+                put("shoo-the-tartarus/tooth-breaking.wav", Sound.class);                
             }
         };
     }
