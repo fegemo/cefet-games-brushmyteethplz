@@ -30,8 +30,12 @@ public class SaveTheTeethFactory implements MiniGameFactory {
         return new HashMap<String, Class>() {
             {
                 put("save-the-teeth/fundo.wav", Sound.class);
+                put("save-the-teeth/Nice.wav", Sound.class);
+                put("save-the-teeth/Hurt.wav", Sound.class);
                 put("save-the-teeth/background.jpg", Texture.class);
                 put("save-the-teeth/boca-spritesheet.png", Texture.class);
+                put("save-the-teeth/boca-spritesheet-meio.png", Texture.class);
+                put("save-the-teeth/boca-spritesheet-fim.png", Texture.class);
                 put("save-the-teeth/bad.png", Texture.class);
                 put("save-the-teeth/cursor.png", Texture.class);
                 put("save-the-teeth/good.png", Texture.class);

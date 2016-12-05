@@ -29,7 +29,6 @@ public class FleeFromTartarus extends MiniGame {
     private final Array<Sound> tartarusAppearingSound;
     private final Sound toothBreakingSound;
     private final Sound backGroundSound;
-    private final Sound gameOverSound;
     private final Array<Tartarus> enemies;
     private final Tooth tooth;
     private int numberOfBrokenTeeth;
@@ -61,8 +60,6 @@ public class FleeFromTartarus extends MiniGame {
                 "flee-from-tartarus/tooth-breaking.mp3", Sound.class);
         this.backGroundSound = screen.assets.get(
                 "flee-from-tartarus/fundo.wav", Sound.class);
-        this.gameOverSound = screen.assets.get(
-                "flee-from-tartarus/gameover.wav", Sound.class);
         this.enemies = new Array<Tartarus>();
         TextureRegion[][] frames = TextureRegion.split(toothTexture,
                 Tooth.FRAME_WIDTH, Tooth.FRAME_HEIGHT);
@@ -79,11 +76,11 @@ public class FleeFromTartarus extends MiniGame {
         this.window = new Vector2(super.screen.viewport.getWorldWidth(), super.screen.viewport.getWorldHeight());
         this.bg = new Sprite(backGroundTexture);
         this.bg.setSize(window.x, window.y);
-        backGroundSound.play();
     }
 
     @Override
     protected void onStart() {
+        backGroundSound.loop();
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {
@@ -91,6 +88,11 @@ public class FleeFromTartarus extends MiniGame {
             }
 
         }, 0, this.spawnInterval);
+    }
+
+    @Override
+    protected void onEnd() {
+        backGroundSound.stop();
     }
 
     private void spawnEnemy() {
@@ -149,8 +151,6 @@ public class FleeFromTartarus extends MiniGame {
         this.numberOfBrokenTeeth += tooth.wasHurt() ? 1 : 0;
 
         if (this.numberOfBrokenTeeth >= 1) {
-            backGroundSound.stop();
-            gameOverSound.play();
             super.challengeFailed();
         }
         toothBreakingSound.play();

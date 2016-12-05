@@ -33,7 +33,6 @@ public class FleeFromTartarusFactory implements MiniGameFactory {
                 put("flee-from-tartarus/appearing2.wav", Sound.class);
                 put("flee-from-tartarus/appearing3.wav", Sound.class);
                 put("flee-from-tartarus/fundo.wav", Sound.class);
-                put("flee-from-tartarus/gameover.wav", Sound.class);
                 put("flee-from-tartarus/tooth-breaking.mp3", Sound.class);
             }
         };
