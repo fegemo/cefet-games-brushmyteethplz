@@ -80,7 +80,7 @@ public class FleeFromTartarus extends MiniGame {
 
     @Override
     protected void onStart() {
-        backGroundSound.play();
+        backGroundSound.loop();
         super.timer.scheduleTask(new Task() {
             @Override
             public void run() {

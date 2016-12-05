@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 /**
  *
@@ -23,13 +24,19 @@ public class SaveTheTeeth extends MiniGame {
 
     private final Texture backGroundTexture;
     private final Sound backGroundSound;
+    private final Sound hurtSound;
+    private final Sound niceSound;
 
     private float foodSpawnInterval;
     private final Texture MouthTexture;
+    private final Texture MouthTexture2;
+    private final Texture MouthTexture3;
     private final Texture CursorTexture;
     private final Mouth mouth;
     private final Cursor cursor;
     private final TextureRegion[][] mouthFrames;
+    private final TextureRegion[][] mouthFrames2;
+    private final TextureRegion[][] mouthFrames3;
 
     private final Array<Food> food;
     private final Texture GoodFoodSpritesheet;
@@ -43,6 +50,8 @@ public class SaveTheTeeth extends MiniGame {
         super(screen, difficulty, 10f, TimeoutBehavior.WINS_WHEN_MINIGAME_ENDS, observer);
 
         this.MouthTexture = super.screen.assets.get("save-the-teeth/boca-spritesheet.png", Texture.class);
+        this.MouthTexture2 = super.screen.assets.get("save-the-teeth/boca-spritesheet-meio.png", Texture.class);
+        this.MouthTexture3 = super.screen.assets.get("save-the-teeth/boca-spritesheet-fim.png", Texture.class);
         this.CursorTexture = super.screen.assets.get("save-the-teeth/cursor.png", Texture.class);
         this.BadFoodSpritesheet = super.screen.assets.get("save-the-teeth/bad.png", Texture.class);
         this.BadFoodTextures = TextureRegion.split(BadFoodSpritesheet, Food.BAD_WIDTH, Food.BAD_HEIGHT);
@@ -50,8 +59,16 @@ public class SaveTheTeeth extends MiniGame {
         this.GoodFoodTextures = TextureRegion.split(GoodFoodSpritesheet, Food.GOOD_WIDTH, Food.GOOD_HEIGHT);
         this.food = new Array<Food>();
         this.mouthFrames = TextureRegion.split(MouthTexture, Mouth.FRAME_WIDTH, Mouth.FRAME_HEIGHT);
-        this.mouth = new Mouth(mouthFrames[0][0], mouthFrames[0][1], mouthFrames[0][2], 2);
+        this.mouthFrames2 = TextureRegion.split(MouthTexture2, Mouth.FRAME_WIDTH, Mouth.FRAME_HEIGHT);
+        this.mouthFrames3 = TextureRegion.split(MouthTexture3, Mouth.FRAME_WIDTH, Mouth.FRAME_HEIGHT);
+        this.mouth = new Mouth(mouthFrames[0][0], mouthFrames[0][1], mouthFrames[0][2], 
+                               mouthFrames2[0][0], mouthFrames2[0][1], mouthFrames2[0][2], 
+                               mouthFrames3[0][0], mouthFrames3[0][1], mouthFrames3[0][2], 2);
         this.cursor = new Cursor(CursorTexture);
+        this.hurtSound = screen.assets.get(
+                "save-the-teeth/Hurt.wav", Sound.class);
+        this.niceSound = screen.assets.get(
+                "save-the-teeth/Nice.wav", Sound.class);
         this.backGroundSound = screen.assets.get(
                 "save-the-teeth/fundo.wav", Sound.class);
         this.backGroundTexture = super.screen.assets.get(
@@ -69,7 +86,12 @@ public class SaveTheTeeth extends MiniGame {
                 throwFood();
             }
         }, 0, this.foodSpawnInterval);
-        backGroundSound.play();
+        backGroundSound.loop();
+    }
+    
+    @Override
+    protected void onEnd() {
+        backGroundSound.stop();        
     }
 
     @Override
@@ -90,10 +112,10 @@ public class SaveTheTeeth extends MiniGame {
                 if (s.getBoundingRectangle().overlaps(cursor.getBoundingRectangle())) {
                     if (food.get(i).getIsGood()) {
                         if (mouth.touchedGoodFood() == 0) {
-                            backGroundSound.stop();
                             super.challengeFailed();
-                        }
-                    }
+                        }else
+                            hurtSound.play();
+                    }else niceSound.play();
                     food.removeIndex(i);
                     break;
                 }
@@ -175,31 +197,55 @@ public class SaveTheTeeth extends MiniGame {
 
     class Mouth extends Sprite {
 
-        final static int FRAME_WIDTH = 270;
-        final static int FRAME_HEIGHT = 390;
-        final float radius = 50f;
+        final static int FRAME_WIDTH = 135;
+        final static int FRAME_HEIGHT = 195;
         private final TextureRegion tHit;
+        private final TextureRegion tInit;
         private final TextureRegion tBad;
+        private final TextureRegion tHit2;
+        private final TextureRegion tInit2;
+        private final TextureRegion tBad2;
+        private final TextureRegion tHit3;
+        private final TextureRegion tInit3;
+        private final TextureRegion tBad3;
         private int lives;
+        protected Timer timer;
 
-        Mouth(TextureRegion tInit, TextureRegion tHit, TextureRegion tBad, int lives) {
+        Mouth(TextureRegion tInit, TextureRegion tHit, TextureRegion tBad, 
+              TextureRegion tInit2, TextureRegion tHit2, TextureRegion tBad2, 
+              TextureRegion tInit3, TextureRegion tHit3, TextureRegion tBad3, int lives) {
             super(tInit);
             this.tHit = tHit;
+            this.tInit = tInit;
             this.tBad = tBad;
+            this.tHit2 = tHit2;
+            this.tInit2 = tInit2;
+            this.tBad2 = tBad2;
+            this.tHit3 = tHit3;
+            this.tInit3 = tInit3;
+            this.tBad3 = tBad3;
             this.lives = lives;
             this.setCenter(screen.viewport.getWorldWidth() / 2.0f, screen.viewport.getWorldHeight() / 2.0f);
+            this.timer = new Timer();
         }
 
         public boolean foodEntered(Food f) {
             if (f.getBoundingRectangle().overlaps(this.getBoundingRectangle())) {
                 if (!f.getIsGood()) {
                     lives--;
+                    hurtSound.play();
                     if (lives == 1) {
                         super.setRegion(tHit);
                     } else {
                         super.setRegion(tBad);
                     }
-                }
+                }else niceSound.play();
+                if (lives == 2)
+                    movimentaBoca(tInit,tInit2,tInit3);
+                else if(lives == 1)
+                    movimentaBoca(tHit,tHit2,tHit3);                
+                else
+                    movimentaBoca(tBad,tBad2,tBad3);
                 return true;
             } else {
                 return false;
@@ -208,13 +254,36 @@ public class SaveTheTeeth extends MiniGame {
 
         public int touchedGoodFood() {
             lives--;
+            hurtSound.play();
             if (lives == 1) {
                 super.setRegion(tHit);
             } else {
                 super.setRegion(tBad);
             }
-
             return lives;
+        }
+        
+        public void movimentaBoca(final TextureRegion t1, TextureRegion t2, final TextureRegion t3) {     
+            super.setRegion(t2);                    
+            this.timer.scheduleTask(new Task() {
+                @Override
+                public void run() {
+                    setaRegiao(t3);
+                }
+
+            }, 0.1f);
+                
+            this.timer.scheduleTask(new Task() {
+                @Override
+                public void run() {
+                    setaRegiao(t1);
+                }
+
+            }, 0.2f);
+        }
+        
+        public void setaRegiao(TextureRegion t){
+            super.setRegion(t);                   
         }
     }
 
