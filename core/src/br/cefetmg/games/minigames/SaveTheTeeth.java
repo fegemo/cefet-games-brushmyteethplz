@@ -61,9 +61,9 @@ public class SaveTheTeeth extends MiniGame {
         this.mouthFrames = TextureRegion.split(MouthTexture, Mouth.FRAME_WIDTH, Mouth.FRAME_HEIGHT);
         this.mouthFrames2 = TextureRegion.split(MouthTexture2, Mouth.FRAME_WIDTH, Mouth.FRAME_HEIGHT);
         this.mouthFrames3 = TextureRegion.split(MouthTexture3, Mouth.FRAME_WIDTH, Mouth.FRAME_HEIGHT);
-        this.mouth = new Mouth(mouthFrames[0][0], mouthFrames[0][1], mouthFrames[0][2], 
-                               mouthFrames2[0][0], mouthFrames2[0][1], mouthFrames2[0][2], 
-                               mouthFrames3[0][0], mouthFrames3[0][1], mouthFrames3[0][2], 2);
+        this.mouth = new Mouth(mouthFrames[0][0], mouthFrames[0][1], mouthFrames[0][2],
+                mouthFrames2[0][0], mouthFrames2[0][1], mouthFrames2[0][2],
+                mouthFrames3[0][0], mouthFrames3[0][1], mouthFrames3[0][2], 2);
         this.cursor = new Cursor(CursorTexture);
         this.hurtSound = screen.assets.get(
                 "save-the-teeth/Hurt.wav", Sound.class);
@@ -88,10 +88,10 @@ public class SaveTheTeeth extends MiniGame {
         }, 0, this.foodSpawnInterval);
         backGroundSound.loop();
     }
-    
+
     @Override
     protected void onEnd() {
-        backGroundSound.stop();        
+        backGroundSound.stop();
     }
 
     @Override
@@ -113,9 +113,12 @@ public class SaveTheTeeth extends MiniGame {
                     if (food.get(i).getIsGood()) {
                         if (mouth.touchedGoodFood() == 0) {
                             super.challengeFailed();
-                        }else
+                        } else {
                             hurtSound.play();
-                    }else niceSound.play();
+                        }
+                    } else {
+                        niceSound.play();
+                    }
                     food.removeIndex(i);
                     break;
                 }
@@ -211,9 +214,9 @@ public class SaveTheTeeth extends MiniGame {
         private int lives;
         protected Timer timer;
 
-        Mouth(TextureRegion tInit, TextureRegion tHit, TextureRegion tBad, 
-              TextureRegion tInit2, TextureRegion tHit2, TextureRegion tBad2, 
-              TextureRegion tInit3, TextureRegion tHit3, TextureRegion tBad3, int lives) {
+        Mouth(TextureRegion tInit, TextureRegion tHit, TextureRegion tBad,
+                TextureRegion tInit2, TextureRegion tHit2, TextureRegion tBad2,
+                TextureRegion tInit3, TextureRegion tHit3, TextureRegion tBad3, int lives) {
             super(tInit);
             this.tHit = tHit;
             this.tInit = tInit;
@@ -239,13 +242,16 @@ public class SaveTheTeeth extends MiniGame {
                     } else {
                         super.setRegion(tBad);
                     }
-                }else niceSound.play();
-                if (lives == 2)
-                    movimentaBoca(tInit,tInit2,tInit3);
-                else if(lives == 1)
-                    movimentaBoca(tHit,tHit2,tHit3);                
-                else
-                    movimentaBoca(tBad,tBad2,tBad3);
+                } else {
+                    niceSound.play();
+                }
+                if (lives == 2) {
+                    movimentaBoca(tInit, tInit2, tInit3);
+                } else if (lives == 1) {
+                    movimentaBoca(tHit, tHit2, tHit3);
+                } else {
+                    movimentaBoca(tBad, tBad2, tBad3);
+                }
                 return true;
             } else {
                 return false;
@@ -262,9 +268,9 @@ public class SaveTheTeeth extends MiniGame {
             }
             return lives;
         }
-        
-        public void movimentaBoca(final TextureRegion t1, TextureRegion t2, final TextureRegion t3) {     
-            super.setRegion(t2);                    
+
+        public void movimentaBoca(final TextureRegion t1, TextureRegion t2, final TextureRegion t3) {
+            super.setRegion(t2);
             this.timer.scheduleTask(new Task() {
                 @Override
                 public void run() {
@@ -272,7 +278,7 @@ public class SaveTheTeeth extends MiniGame {
                 }
 
             }, 0.1f);
-                
+
             this.timer.scheduleTask(new Task() {
                 @Override
                 public void run() {
@@ -281,9 +287,9 @@ public class SaveTheTeeth extends MiniGame {
 
             }, 0.2f);
         }
-        
-        public void setaRegiao(TextureRegion t){
-            super.setRegion(t);                   
+
+        public void setaRegiao(TextureRegion t) {
+            super.setRegion(t);
         }
     }
 

@@ -89,10 +89,10 @@ public class FleeFromTartarus extends MiniGame {
 
         }, 0, this.spawnInterval);
     }
-    
+
     @Override
     protected void onEnd() {
-        backGroundSound.stop();        
+        backGroundSound.stop();
     }
 
     private void spawnEnemy() {
