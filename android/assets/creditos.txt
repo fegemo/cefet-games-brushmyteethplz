@@ -1,0 +1,74 @@
+
+Feito com amor pela turma de
+Engenharia da Computação do CEFET-MG
+em 2016/02
+
+
+MicroGames
+
+Amanda Fernandes Pereira
+Bruno Goulart Meneghin
+Carlos Henrique Alvarenga Soares
+Daniel de Aguilar Gonçalves
+Flávio Roberto dos Santos Coutinho
+Gabriel Pires de Miranda Magalhães
+Henrique Hideki Sampaio
+Higor Coimbra Amorim
+Juan Lopes Ferreira
+Lindley Werner Soares Vieira
+Lucas Batista Magalhães Carvalhais
+Lucas de Aguilar Junqueira Campos
+Lucas Silvestre Viana
+Luis Gustavo Diniz de Carvalho
+Matheus de Almeida Rosa
+Matheus Ibrahim Nesteruk Moreira
+Nicolas Arruda Maduro
+Vinicius Mendes Pinto
+
+Design
+
+Amanda Fernandes Pereira
+Flávio Roberto dos Santos Coutinho
+Henrique Gesler Medeiros Ferreira
+Henrique Hideki Sampaio
+Lindley Werner Soares Vieira
+Lucas Sivestre Viana
+Nicolas Arruda Maduro
+Thaís Diniz Braz
+Vinicius Mendes Pinto
+
+Telas
+
+Bruno Goulart Meneghin
+Carlos Henrique Alvarenga Soares
+Flávio Roberto dos Santos Coutinho
+Lucas Batista Magalhães Carvalhais
+Lucas de Aguilar Junqueira Campos
+
+Programação
+
+Flávio Roberto dos Santos Coutinho
+Henrique Gesler Medeiros Ferreira
+Higor Coimbra Amorim
+Thais Diniz Braz
+
+Áudio
+
+Flávio Roberto dos Santos Coutinho
+Gabriel Pires de Miranda Magalhães
+Juan Lopes Ferreira
+Lucas Batista Magalhães Carvalhais
+Lucas de Aguilar Junqueira Campos
+
+Correção de Bugs
+
+Amanda Fernandes Pereira
+Bruno Goulart Meneghin
+Carlos Henrique Alvarenga Soares
+Daniel de Aguilar Gonçalves
+Vinicius Mendes Pinto
+
+
+Professor Orientador
+
+Flávio Roberto dos Santos Coutinho
