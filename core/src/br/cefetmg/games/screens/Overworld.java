@@ -31,6 +31,11 @@ public class Overworld extends BaseScreen {
     }
 
     @Override
+    protected void onBackButtonPressed() {
+        super.game.setScreen(new MenuScreen(game, this));
+    }
+
+    @Override
     public void handleInput() {
         if (Gdx.input.justTouched()) {
             // traz a coordenada do clique para o sistema de coordenadas do 

@@ -39,6 +39,15 @@ public class Config {
             = (float) WORLD_WIDTH / (float) WORLD_HEIGHT;
 
     /**
+     * A porcentagem máxima que uma tela de um dispositivo pode ter sua
+     * razão de aspecto maior ou menor que a razão de aspecto ideal 
+     * (DESIRED_ASPECT_RATIO) para que será usada uma Viewport que preenche o
+     * espaço todo da tela (e pode deixar algumas coisas pra fora) ou se 
+     * faz com que tudo caiba nela (e surgem barras pretas).
+     */
+    public static float MAXIMUM_ASPECTO_RATIO_DIFFERENCE = 0.1f;
+
+    /**
      * Tempo em que a tela de splash fica sendo mostrada.
      */
     public static final long TIME_ON_SPLASH_SCREEN = 3750;

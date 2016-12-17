@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import br.cefetmg.games.BrushMyTeethPlzGame;
 import br.cefetmg.games.Config;
+import br.cefetmg.games.ranking.factories.FirebaseRankingFactory;
 
 public class DesktopLauncher {
 
@@ -26,6 +27,8 @@ public class DesktopLauncher {
         config.samples = 4;
         config.vSyncEnabled = true;
 
-        new LwjglApplication(new BrushMyTeethPlzGame(), config);
+        new LwjglApplication(new BrushMyTeethPlzGame(
+                new FirebaseRankingFactory()
+        ), config);
     }
 }

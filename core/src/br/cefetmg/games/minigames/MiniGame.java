@@ -96,7 +96,9 @@ public abstract class MiniGame {
                 Texture.class);
 
         this.pauseUnpauseSprite = new Sprite(unpausedImage, 100, 100);
-        this.pauseUnpauseSprite.setPosition(10, 10);
+        this.pauseUnpauseSprite.setPosition(
+                10 + this.screen.getVisibleWorldBounds().x,
+                10 + this.screen.getVisibleWorldBounds().y);
 
         this.goBackTexture = new Texture("buttons_menu/button_voltar.png");
         this.goBackSprite = new Sprite(goBackTexture, 166, 77);
@@ -127,50 +129,7 @@ public abstract class MiniGame {
                     || (isPaused && goBackSprite.getBoundingRectangle()
                     .contains(clickPosition))) {
                 // alterna entre pausado/jogando
-                isPaused = !isPaused;
-                pauseUnpauseSprite.setTexture(isPaused
-                        ? pausedImage : unpausedImage);
-                
-                // se pausou quando o relojinho de fim do tempo já está 
-                // aparecendo, precisa avisar a HUD sobre isso
-                if (timeSpentPlaying > maxDuration
-                        - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT) {
-                    stateObserver.onGamePausedOrUnpaused(isPaused);
-                }
-
-                // acabou de pausar
-                if (isPaused) {
-                    // interrompe o timer do minigame, salvando o momento em
-                    // que o jogo foi pausado
-                    this.timer.stop();
-                    this.timeWhenPausedLastTime = TimeUtils.nanosToMillis(
-                            TimeUtils.nanoTime());
-                    
-                    // libera o cursor do mouse
-                    Gdx.input.setCursorCatched(false);
-                    
-                    // salva um possível processador de input do minigame e o
-                    // desabilita até que o jogo seja despausado
-                    this.miniGameInputProcessor = Gdx.input.getInputProcessor();
-                    Gdx.input.setInputProcessor(null);
-                }
-                // acabou de despausar
-                else {
-                    // retoma o timer, atrasando-o pelo tempo que o jogo ficou
-                    // pausado
-                    this.timer.start();
-                    this.timer.delay(TimeUtils.nanosToMillis(
-                            TimeUtils.nanoTime()) - this.timeWhenPausedLastTime);
-                    
-                    // recupera o possível processador de input do minigame
-                    Gdx.input.setInputProcessor(this.miniGameInputProcessor);
-                    
-                    // se a pausa foi feita durante o jogo (fora das instruções
-                    // ou do final do jogo), oculta novamente o cursor
-                    if (state == MiniGameState.PLAYING) {
-                        Gdx.input.setCursorCatched(shouldHideMousePointer());
-                    }
-                }
+                setPaused(!isPaused);
             }
 
             // jogador clicou em "sair" da tela de jogo: volta para menu
@@ -185,6 +144,52 @@ public abstract class MiniGame {
         // de jogo propriamente dito e sem pausa
         if (this.state == MiniGameState.PLAYING && !isPaused) {
             onHandlePlayingInput();
+        }
+    }
+
+    public void setPaused(boolean isPaused) {
+        this.isPaused = isPaused;
+        pauseUnpauseSprite.setTexture(isPaused
+                ? pausedImage : unpausedImage);
+
+        // se pausou quando o relojinho de fim do tempo já está 
+        // aparecendo, precisa avisar a HUD sobre isso
+        if (timeSpentPlaying > maxDuration
+                - Config.MINIGAME_COUNTDOWN_ON_HUD_BEGIN_AT) {
+            stateObserver.onGamePausedOrUnpaused(isPaused);
+        }
+
+        // acabou de pausar
+        if (isPaused) {
+            // interrompe o timer do minigame, salvando o momento em
+            // que o jogo foi pausado
+            this.timer.stop();
+            this.timeWhenPausedLastTime = TimeUtils.nanosToMillis(
+                    TimeUtils.nanoTime());
+
+            // libera o cursor do mouse
+            Gdx.input.setCursorCatched(false);
+
+            // salva um possível processador de input do minigame e o
+            // desabilita até que o jogo seja despausado
+            this.miniGameInputProcessor = Gdx.input.getInputProcessor();
+            Gdx.input.setInputProcessor(null);
+        } // acabou de despausar
+        else {
+            // retoma o timer, atrasando-o pelo tempo que o jogo ficou
+            // pausado
+            this.timer.start();
+            this.timer.delay(TimeUtils.nanosToMillis(
+                    TimeUtils.nanoTime()) - this.timeWhenPausedLastTime);
+
+            // recupera o possível processador de input do minigame
+            Gdx.input.setInputProcessor(this.miniGameInputProcessor);
+
+            // se a pausa foi feita durante o jogo (fora das instruções
+            // ou do final do jogo), oculta novamente o cursor
+            if (state == MiniGameState.PLAYING) {
+                Gdx.input.setCursorCatched(shouldHideMousePointer());
+            }
         }
     }
 
@@ -343,4 +348,8 @@ public abstract class MiniGame {
     public abstract String getInstructions();
 
     public abstract boolean shouldHideMousePointer();
+
+    public boolean isPaused() {
+        return isPaused;
+    }
 }

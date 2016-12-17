@@ -6,6 +6,7 @@ package br.cefetmg.games.minigames.util;
  */
 public enum MenuState {
     MENU,
+    PLAY_MODE,
     RANKING,
     CREDITS
 }

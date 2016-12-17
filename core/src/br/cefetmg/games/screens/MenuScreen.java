@@ -1,5 +1,6 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.BrushMyTeethPlzGame;
 import br.cefetmg.games.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -29,9 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -55,6 +53,8 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
     private Label rankingLabel;
     private BitmapFont monoFont, titleFont;
     private ChangeListener backToMenuListener;
+    private Table table;
+    private Table tableGameMode;
 
     /**
      * Cria uma nova tela de menu.
@@ -83,30 +83,30 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         stageRanking = new Stage(viewport);
         stageCredits = new Stage(viewport);
 
-        skin = new Skin(new FileHandle("ui/uiskin.json"));
-        monoFont = new BitmapFont(new FileHandle("fonts/ubuntu-mono.fnt"));
-        titleFont = new BitmapFont(new FileHandle("fonts/sawasdee-50.fnt"));
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+        monoFont = new BitmapFont(Gdx.files.internal("fonts/ubuntu-mono.fnt"));
+        titleFont = new BitmapFont(Gdx.files.internal("fonts/sawasdee-50.fnt"));
 
         initMainMenu();
         initRanking();
         initCredits();
-        
+
         menuMusic.setLooping(true);
         menuMusic.play();
 
         changeMenuState(MenuState.MENU);
 
-        ranking = new Ranking();
+        ranking = ((BrushMyTeethPlzGame)super.game).getRanking();
         ranking.setObserver(this);
     }
-    
+
     private void initMainMenu() {
-        final Table table = new Table();
+        table = new Table();
         table.align(1);
         table.padBottom(160);
         table.setFillParent(true);
 
-        final Table tableGameMode = new Table();
+        tableGameMode = new Table();
         tableGameMode.align(1);
         tableGameMode.padBottom(160);
         tableGameMode.setFillParent(true);
@@ -154,13 +154,12 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
                 new TextureRegionDrawable(buttonVoltarTexture));
         buttonVoltar.align(2);
         buttonVoltar.setVisible(false);
-        
+        buttonVoltar.setX(super.getVisibleWorldBounds().x);
+
         buttonIniciar.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                table.setVisible(false);
-                tableGameMode.setVisible(true);
-                buttonVoltar.setVisible(true);
+                changeMenuState(MenuState.PLAY_MODE);
             }
         });
 
@@ -205,12 +204,9 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 changeMenuState(MenuState.MENU);
-                table.setVisible(true);
-                tableGameMode.setVisible(false);
-                buttonVoltar.setVisible(false);
             }
         };
-        
+
         buttonVoltar.addListener(backToMenuListener);
 
         Image backgroundImage3Teeth = new Image(background3Teeth);
@@ -221,7 +217,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         stage.addActor(tableGameMode);
         stage.addActor(buttonVoltar);
     }
-    
+
     private void initRanking() {
         rankingLabel = new Label(Config.RANKING_WAITING_FOR, skin);
         rankingLabel.setAlignment(Align.center);
@@ -231,7 +227,9 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
 
         final ImageButton backFromRankingButton = new ImageButton(
                 new TextureRegionDrawable(buttonVoltarTexture));
-        backFromRankingButton.align(2).addListener(backToMenuListener);
+        backFromRankingButton.align(2);
+        backFromRankingButton.setX(super.getVisibleWorldBounds().x);
+        backFromRankingButton.addListener(backToMenuListener);
 
         final Label titleLabel = new Label("Ranking", skin);
         titleLabel.setStyle(new LabelStyle(titleFont, Color.BLACK));
@@ -255,20 +253,22 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         stageRanking.addActor(tableRanking);
         stageRanking.addActor(backFromRankingButton);
     }
-    
+
     private void initCredits() {
         String creditsText = getCreditsText();
 
         final ImageButton backFromCreditsButton = new ImageButton(
                 new TextureRegionDrawable(buttonVoltarTexture));
-        backFromCreditsButton.align(2).addListener(backToMenuListener);
+        backFromCreditsButton.align(2);
+        backFromCreditsButton.setX(super.getVisibleWorldBounds().x);
+        backFromCreditsButton.addListener(backToMenuListener);
 
         final Label creditsLabel = new Label(creditsText, skin);
         creditsLabel.setAlignment(Align.center);
         creditsLabel.setStyle(new LabelStyle(monoFont, Color.BLACK));
         creditsLabel.setFontScale(1F);
         creditsLabel.setWrap(true);
-        
+
         final Label titleLabel = new Label("Créditos", skin);
         titleLabel.setStyle(new LabelStyle(titleFont, Color.BLACK));
 
@@ -310,6 +310,17 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         Gdx.input.setInputProcessor(null);
     }
 
+    @Override
+    protected void onBackButtonPressed() {
+        switch (menuState) {
+            case PLAY_MODE:
+            case CREDITS:
+            case RANKING:
+                changeMenuState(MenuState.MENU);
+                break;
+        }
+    }
+    
     /**
      * Recebe <em>input</em> do jogador.
      */
@@ -339,6 +350,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         // desenha o menu propriamente dito ou o ranking
         switch (menuState) {
             case MENU:
+            case PLAY_MODE:
                 stage.draw();
                 break;
 
@@ -356,7 +368,17 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
 
     public void changeMenuState(final MenuState newMenuState) {
         switch (newMenuState) {
+            case PLAY_MODE:
+                table.setVisible(false);
+                tableGameMode.setVisible(true);
+                buttonVoltar.setVisible(true);
+                Gdx.input.setInputProcessor(stage);
+                break;
+                
             case MENU:
+                table.setVisible(true);
+                tableGameMode.setVisible(false);
+                buttonVoltar.setVisible(false);
                 Gdx.input.setInputProcessor(stage);
                 break;
 
@@ -381,39 +403,28 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
             public void run() {
                 transitionState = states.doNothing;
                 menuMusic.stop();
-                if (option == GameMode.CAMPAIGN){
+                if (option == GameMode.CAMPAIGN) {
                     game.setScreen(
-                        new Overworld(game, MenuScreen.this));
+                            new Overworld(game, MenuScreen.this));
                 } else {
                     game.setScreen(
-                        new PlayingGamesScreen(game, MenuScreen.this, option, null));
+                            new PlayingGamesScreen(game, MenuScreen.this, option, null));
                 }
             }
         }, 0.75f);// 750ms
     }
-    
+
     private String getCreditsText() {
         StringBuilder creditsText = new StringBuilder();
-        BufferedReader fileReader = null;
         try {
-            fileReader = new BufferedReader(
-                    new FileReader(Config.CREDITS_FILE_NAME));
-            String line;
-            while ((line = fileReader.readLine()) != null) {
+            FileHandle file = Gdx.files.internal(Config.CREDITS_FILE_NAME);
+            String[] lines = file.readString().split("\n");
+            for (String line : lines) {
                 creditsText = creditsText.append(line).append("\n");
             }
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n",
-                    e.getMessage());
+        } catch (RuntimeException ex) {
+            Gdx.app.error("MenuScreen", ex.getMessage(), ex);
             creditsText = new StringBuilder(Config.CREDITS_DEFAULT_MESSAGE);
-        } finally {
-            try {
-                if (fileReader != null && fileReader.ready()) {
-                    fileReader.close();
-                }
-            } catch (IOException ex) {
-                creditsText = new StringBuilder(Config.CREDITS_DEFAULT_MESSAGE);
-            }
         }
         return creditsText.toString();
     }
@@ -421,7 +432,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
     @Override
     public void onRankingChanged(List<Score> ranking) {
         StringBuilder rankingText = new StringBuilder();
-        
+
         for (Score score : ranking) {
             rankingText
                     .append(score.getName())
@@ -429,7 +440,7 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
                     .append(score.getGames())
                     .append("\n");
         }
-        
+
         rankingLabel.setText(rankingText);
     }
 }

@@ -1,5 +1,6 @@
 package br.cefetmg.games.screens;
 
+import br.cefetmg.games.BrushMyTeethPlzGame;
 import br.cefetmg.games.ranking.Ranking;
 import br.cefetmg.games.minigames.util.MenuState;
 import com.badlogic.gdx.Game;
@@ -27,12 +28,17 @@ public class RankingEntryScreen extends BaseScreen {
     private Sprite eraseButton, okButton, traco;
     private Array<StructSprite> nickname;
     private int points;
-    private Ranking rank;
+    private Ranking ranking;
     private final ShapeRenderer shapes;
 
     public RankingEntryScreen(Game game, BaseScreen previous) {
         super(game, previous);
         shapes = new ShapeRenderer();
+    }
+
+    @Override
+    protected void onBackButtonPressed() {
+        // não faz nada
     }
 
     @Override
@@ -43,7 +49,7 @@ public class RankingEntryScreen extends BaseScreen {
         this.letters = new Array<StructSprite>();
         this.nickname = new Array<StructSprite>();
         this.nome = "";
-        this.rank = new Ranking();
+        this.ranking = ((BrushMyTeethPlzGame)super.game).getRanking();
         colocaLetrasNoArray();
 
         this.eraseButton = new Sprite(new Texture("buttons_rank/erase.png"));
@@ -80,7 +86,7 @@ public class RankingEntryScreen extends BaseScreen {
                 for (int i = 0; i < nickname.size; i++) {
                     nome += (char) nickname.get(i).caracterASCII;
                 }
-                rank.writeScoreDB(nome, points);
+                ranking.writeScore(nome, points);
 
                 // chama a tela de menu
                 MenuScreen menu = new MenuScreen(super.game, this);

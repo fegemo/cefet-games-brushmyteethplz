@@ -54,6 +54,13 @@ public class PlayingGamesScreen extends BaseScreen
         this.sound = new Sounds();
     }
 
+    @Override
+    protected void onBackButtonPressed() {
+        if (this.currentGame != null) {
+            this.currentGame.setPaused(!this.currentGame.isPaused());
+        }
+    }
+
     private BaseGameSequencer initSequencer(GameMode mode, GameStage stage) {
         if (mode == GameMode.CAMPAIGN) {
             return new GameSequencer(5,

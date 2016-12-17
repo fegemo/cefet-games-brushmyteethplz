@@ -4,16 +4,17 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import br.cefetmg.games.BrushMyTeethPlzGame;
+import br.cefetmg.games.ranking.factories.LocalFileRankingFactory;
 
 public class HtmlLauncher extends GwtApplication {
 
-        @Override
-        public GwtApplicationConfiguration getConfig () {
-                return new GwtApplicationConfiguration(480, 320);
-        }
+    @Override
+    public GwtApplicationConfiguration getConfig() {
+        return new GwtApplicationConfiguration(480, 320);
+    }
 
-        @Override
-        public ApplicationListener createApplicationListener () {
-                return new BrushMyTeethPlzGame();
-        }
+    @Override
+    public ApplicationListener createApplicationListener() {
+        return new BrushMyTeethPlzGame(new LocalFileRankingFactory());
+    }
 }
