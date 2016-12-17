@@ -154,7 +154,9 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
                 new TextureRegionDrawable(buttonVoltarTexture));
         buttonVoltar.align(2);
         buttonVoltar.setVisible(false);
-        buttonVoltar.setX(super.getVisibleWorldBounds().x);
+        buttonVoltar.setPosition(
+                super.getVisibleWorldBounds().x,
+                super.getVisibleWorldBounds().y);
 
         buttonIniciar.addListener(new ChangeListener() {
             @Override
@@ -228,7 +230,9 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         final ImageButton backFromRankingButton = new ImageButton(
                 new TextureRegionDrawable(buttonVoltarTexture));
         backFromRankingButton.align(2);
-        backFromRankingButton.setX(super.getVisibleWorldBounds().x);
+        backFromRankingButton.setPosition(
+                super.getVisibleWorldBounds().x,
+                super.getVisibleWorldBounds().y);
         backFromRankingButton.addListener(backToMenuListener);
 
         final Label titleLabel = new Label("Ranking", skin);
@@ -260,7 +264,9 @@ public class MenuScreen extends BaseScreen implements RankingObserver {
         final ImageButton backFromCreditsButton = new ImageButton(
                 new TextureRegionDrawable(buttonVoltarTexture));
         backFromCreditsButton.align(2);
-        backFromCreditsButton.setX(super.getVisibleWorldBounds().x);
+        backFromCreditsButton.setPosition(
+                super.getVisibleWorldBounds().x,
+                super.getVisibleWorldBounds().y);
         backFromCreditsButton.addListener(backToMenuListener);
 
         final Label creditsLabel = new Label(creditsText, skin);

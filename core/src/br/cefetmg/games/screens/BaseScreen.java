@@ -38,6 +38,7 @@ public abstract class BaseScreen extends ScreenAdapter {
     public final SpriteBatch batch;
     public final OrthographicCamera camera;
     public Viewport viewport;
+    public Rectangle visibleWorldBounds;
     public final AssetManager assets;
     private BitmapFont messagesFont;
     protected Texture transitionTexture;
@@ -90,15 +91,13 @@ public abstract class BaseScreen extends ScreenAdapter {
      * @return a viewport que será usada.
      */
     private Viewport chooseBestViewport() {
-        int deviceWidth = Gdx.graphics.getWidth();
-        int deviceHeight = Gdx.graphics.getHeight();
-        float deviceAspectRatio = ((float) deviceWidth) / deviceHeight;
-        this.deviceAspectRatioDivergenceFromDesired = 
-                (Config.DESIRED_ASPECT_RATIO - deviceAspectRatio)
+        this.deviceAspectRatioDivergenceFromDesired
+                = (Config.DESIRED_ASPECT_RATIO - getDeviceAspectRatio())
                 / Config.DESIRED_ASPECT_RATIO;
-        
-        if (Math.abs(deviceAspectRatioDivergenceFromDesired)
-                < Config.MAXIMUM_ASPECTO_RATIO_DIFFERENCE) {
+
+        defineVisibleWorldBounds();
+
+        if (shouldFillDeviceScreen()) {
             return new FillViewport(
                     Config.WORLD_WIDTH,
                     Config.WORLD_HEIGHT,
@@ -113,25 +112,44 @@ public abstract class BaseScreen extends ScreenAdapter {
         }
     }
 
-    public Rectangle getVisibleWorldBounds() {
+    private boolean shouldFillDeviceScreen() {
+        return (Math.abs((Config.DESIRED_ASPECT_RATIO - getDeviceAspectRatio())
+                / Config.DESIRED_ASPECT_RATIO) < Config.MAXIMUM_ASPECTO_RATIO_DIFFERENCE);
+    }
+
+    private float getDeviceAspectRatio() {
+        int deviceWidth = Gdx.graphics.getWidth();
+        int deviceHeight = Gdx.graphics.getHeight();
+        return ((float) deviceWidth) / deviceHeight;
+    }
+
+    public void defineVisibleWorldBounds() {
+        if (!shouldFillDeviceScreen()) {
+            visibleWorldBounds = new Rectangle(
+                    0, 0, Config.WORLD_WIDTH, Config.WORLD_HEIGHT);
+        }
         float factor = this.deviceAspectRatioDivergenceFromDesired;
-        boolean lastingSideways =  factor > 0;
+        boolean lastingSideways = factor > 0;
         if (lastingSideways) {
-            return new Rectangle(
+            visibleWorldBounds = new Rectangle(
                     0 + (factor / 2) * Config.WORLD_WIDTH,
                     0,
-                    Config.WORLD_WIDTH - (factor/2) * Config.WORLD_WIDTH,
+                    Config.WORLD_WIDTH - (factor / 2) * Config.WORLD_WIDTH,
                     Config.WORLD_HEIGHT
             );
-            
+
         } else {
-            return new Rectangle(
+            visibleWorldBounds = new Rectangle(
                     0,
-                    0 + ((1/factor) / 2) * Config.WORLD_HEIGHT,
+                    0 + (-factor / 2) * Config.WORLD_HEIGHT,
                     Config.WORLD_WIDTH,
-                    Config.WORLD_HEIGHT - ((1/factor)/2) * Config.WORLD_HEIGHT
+                    Config.WORLD_HEIGHT - (-factor / 2) * Config.WORLD_HEIGHT
             );
         }
+    }
+    
+    public Rectangle getVisibleWorldBounds() {
+        return visibleWorldBounds;
     }
 
     @Override

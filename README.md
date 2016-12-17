@@ -52,7 +52,7 @@ As classes do projeto estão modularizadas nos seguintes pacotes:
 
 #### _Assets_
 
-Os _assets_ (recursos gráficos e de áudio) do jogo ficam na pasta `core/assets`:
+Os _assets_ (recursos gráficos e de áudio) do jogo ficam na pasta `android/assets`:
 
 ![Pasta assets dentro da pasta core](docs/folder-assets.png)
 

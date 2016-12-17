@@ -25,7 +25,7 @@ public class LocalFileRanking extends Ranking {
     public final void readScores() {
         ranking.clear();
         try {
-            FileHandle file = Gdx.files.internal("ranking.txt");
+            FileHandle file = Gdx.files.local("ranking.txt");
             String[] lines = file.readString().split("\n");
             for (String line : lines) {
                 String[] parts = line.split(" ");
@@ -58,7 +58,7 @@ public class LocalFileRanking extends Ranking {
         ranking.add(new Score(nickname, gamesPlayed));
         Collections.sort(ranking);
 
-        FileHandle file = Gdx.files.internal("ranking.txt");
+        FileHandle file = Gdx.files.local("ranking.txt");
         try {
             StringBuilder b = new StringBuilder();
             for (Score s : ranking) {
